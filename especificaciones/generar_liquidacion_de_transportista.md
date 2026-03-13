@@ -2,7 +2,6 @@
 
 > **Nota:** El trigger de esta función es el evento publicado por el Módulo de Transporte. Ver spec: `recibir_estado_final_modulo_transporte.md`
 
-Terminada
 
 **Created:** 24-02-2026
 ## User Scenarios & Testing (mandatory)
@@ -65,13 +64,9 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 - ¿Qué pasa si el cálculo del 10% del pedido arroja decimales muy largos?
 - El sistema debe redondear al precio entero más cercano para evitar problemas.
   
-<<<<<<< HEAD
-- ¿Qué pasa si la tasa de efectividad recibida desde el Módulo de Gestión de Transporte está fuera del rango 0-100%?
-- El sistema debe rechazar la operación, bloquear el cálculo y emitir una alerta de "Dato de efectividad inválido".
-=======
+
 - ¿Qué pasa si la tasa de efectividad recibida desde el Módulo de Gestión de Transporte está fuera del rango -100 a 100%?
 - El sistema debe rechazar el precio, bloquear el cálculo y emitir una alerta de "Dato de efectividad inválido".
->>>>>>> ec8b8d9b8339f42ce35fbdcb7e91ef665910be0a
 
 - ¿Qué pasa si un pedido cambia de estado después de haber sido liquidado (ejemplo, el cliente hace un reclamo posterior a la entrega)?
 
@@ -87,7 +82,7 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 ### Functional Requirements
 
 - **FR-001**: El sistema DEBE obtener el precio total del pedido desde la BD (recibido del Módulo de Inventario).
-- **FR-002**: El sistema DEBE obtener la `tasa_efectividad` directamente del evento publicado por el Módulo de Transporte (ver spec `recibir_estado_final_modulo_transporte.md`, rango válido 0-100 o valores negativos permitidos según lógica).
+- **FR-002**: El sistema DEBE obtener la `tasa_efectividad` del evento publicado por el Módulo de Transporte (ver spec `recibir_estado_final_modulo_transporte.md`, rango válido -100 a 100).
 - **FR-003**: El sistema DEBE calcular la "tarifa base" del transportista extrayendo exactamente el 10% del precio total del pedido.
 - **FR-004**: El sistema DEBE aplicar a la tarifa base la `tasa_efectividad` recibida directamente del evento. Fórmula: Monto = (Precio Pedido × 10%) × (tasa_efectividad / 100).
 - **FR-005**: El sistema DEBE bloquear y cancelar la generación de la liquidación si el precio del pedido es nulo, cero, o si no hay `tasa_efectividad`.

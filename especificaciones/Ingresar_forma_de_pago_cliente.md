@@ -1,99 +1,75 @@
-# Feature Specification - Ingresar forma de pago del cliente
+# Feature Specification - Registrar forma de pago del cliente
 
 **Status:** Terminada  
 **Created:** 24-02-2026
 
 ---
 
-## Endpoint del Sistema Financiero
+## Proceso Interno del Sistema Financiero
 
 ### Registrar Forma de Pago del Cliente
 
-**Endpoint:** `POST /api/v1/clientes/{id_cliente}/forma-pago`
+**Este es un proceso interno, no un endpoint.**
 
-**Propósito:** Registrar o actualizar la forma de pago de un cliente.
+**Flujo:**
 
-**Parámetros:**
-- `id_cliente` (path, requerido): ID del cliente en la base de datos
-- Body (JSON):
-```json
-{
-  "forma_pago": "CARTERA_COMERCIAL"
-}
-```
+1. El Asesor Comercial consulta el cliente por ID Nacional usando el endpoint `GET /api/v1/clientes/{id_nacional}` del Módulo de Gestión de Clientes (ver spec `consultar_cliente.md`).
+2. Obtiene el `id_cliente` (ID de base de datos) de la respuesta.
+3. El Sistema Financiero guarda la forma de pago asociada al `id_cliente`.
+
+**Parámetros de entrada:**
+- `id_nacional` (String): Número de documento del cliente
+- `forma_pago` (String): Forma de pago a registrar (`CONTRA_ENTREGA` o `CARTERA_COMERCIAL`)
 
 **Formas de pago válidas:**
 - `CONTRA_ENTREGA` - Pago contra entrega
 - `CARTERA_COMERCIAL` - Cartera comercial (crédito)
 
-**Respuesta exitosa (200):**
-```json
-{
-  "id_cliente": 100,
-  "forma_pago": "CARTERA_COMERCIAL",
-  "mensaje": "Forma de pago actualizada exitosamente"
-}
-```
-
-**Casos de error:**
-- Cliente no encontrado: `404 - "Cliente no encontrado con el ID proporcionado"`
-- Forma de pago inválida: `400 - "Forma de pago inválida. Valores permitidos: CONTRA_ENTREGA, CARTERA_COMERCIAL"`
-
 ---
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Asignación de modalidad de pago a cliente nuevo o existente (Priority: P1)
+### User Story 1 - Asignación de forma de pago a cliente (Priority: P1)
 
-Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o Cartera Comercial) que tendrá un cliente. Para establecer las reglas de recaudo antes de generar pedidos.
-
-**Why this priority:** Define si el conductor recibe el efectivo o se tiene en cuenta para credito  
-**Independent Test**: Seleccionar un cliente en la base de datos y asignarle "Cartera Comercial", verificando que la actualización sea exitosa.
+Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o Cartera Comercial) de un cliente. Para establecer las reglas de recaudo antes de generar pedidos.
 
 **Acceptance Scenarios:**
-1. Scenario: Asignación exitosa a cliente existente
-	- **Given:** Un cliente previamente registrado en el sistema (primero se consulta su ID de BD usando el endpoint del spec `consultar_cliente.md` con el ID Nacional)
-	- **When:** El asesor selecciona la opción Pago Contra Entrega y guarda los cambios
-	- **Then:** El perfil del cliente se actualiza con la nueva forma de pago
 
-2. Scenario: Cliente no registrado
-	- **Given**: Un intento de asignar forma de pago
-	- **When:** El asesor busca un ID Nacional y no existe en la base de datos (al consultar con el spec `consultar_cliente.md`)
-	- **Then:** El sistema solicita ejecutar Registrar cliente antes de continuar
+1. **Scenario:** Registro exitoso de forma de pago
+   - **Given:** El asesor consulta el cliente por ID Nacional y obtiene el id_cliente
+   - **When:** Selecciona "CARTERA_COMERCIAL" y guarda
+   - **Then:** Se guarda la forma de pago asociada al cliente
 
-### Edge Cases
+2. **Scenario:** Cliente no encontrado
+   - **Given:** El ID Nacional no existe en el sistema
+   - **When:** Se intenta registrar la forma de pago
+   - **Then:** Se muestra error "Cliente no encontrado"
 
-- El asesor ingresa caracteres no numéricos o espacios en blanco en el campo de búsqueda de ID Nacional?
-- El sistema debe mostrar un mensaje de error en lugar de fallar.
-
-- El cliente no existe al consultar con ID Nacional?
-- El sistema debe mostrar error y solicitar registrar al cliente primero (usar el endpoint del spec `consultar_cliente.md` para validar).
+3. **Scenario:** Forma de pago inválida
+   - **Given:** Se intenta guardar una forma de pago que no es válida
+   - **When:** Se envía el registro
+   - **Then:** Se muestra error "Forma de pago inválida"
 
 ---
-
 
 ## Requirements (mandatory)
 
 ### Functional Requirements
 
-- **FR-001**: System MUST permitir la selección entre al menos dos formas de pago: Pago Contra Entrega y Cartera Comercial.
-- **FR-002:** System MUST requerir que el cliente exista en la base de datos antes de guardar la forma de pago.
-- **FR-003:** System MUST primero consultar el ID de BD del cliente usando el endpoint del spec `consultar_cliente.md` con el ID Nacional antes de guardar la forma de pago.
-- **FR-004:** System MUST guardar la forma de pago asociada al ID de BD del cliente.
+- **FR-001:** El sistema DEBE permitir registrar la forma de pago de un cliente.
+- **FR-002:** El sistema DEBE validar que el cliente exista en la base de datos (usando el endpoint del spec `consultar_cliente.md`).
+- **FR-003:** El sistema DEBE guardar la forma de pago asociada al ID de BD del cliente.
+- **FR-004:** El sistema DEBE validar que la forma de pago sea `CONTRA_ENTREGA` o `CARTERA_COMERCIAL`.
 
 ## Key Entities *(include if feature involves data)*
 
 ### Forma_Pago_Cliente
 
-Entidad que almacena la forma de pago de cada cliente en el Sistema Financiero.
-
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
-| `id_cliente` | Integer | Sí | ID del cliente en la base de datos del Sistema Financiero |
-| `forma_pago` | String | Sí | Forma de pago del cliente: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
-| `fecha_registro` | DateTime | Sí | Fecha y hora del registro de la forma de pago |
-
-> **Nota:** El `id_cliente` se obtiene consultando primero el ID de BD del cliente mediante el endpoint del Módulo de Gestión de Clientes (spec `consultar_cliente.md`), usando el ID Nacional del cliente.
+| `id_cliente` | Integer | Sí | ID del cliente en la base de datos |
+| `forma_pago` | String | Sí | Forma de pago: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
+| `fecha_registro` | DateTime | Sí | Fecha y hora del registro |
 
 ---
 
@@ -101,5 +77,5 @@ Entidad que almacena la forma de pago de cada cliente en el Sistema Financiero.
 
 ### Measurable Outcomes
 
-- **SC-001:** Todos los clientes en la base de datos deben tener una forma de pago obligatoria asociada para poder generarles un pedido.
-- **SC-002:** El cambio de forma de pago debe actualizarse en tiempo real para no afectar los pedidos que se generen.
+- **SC-001:** El sistema debe guardar la forma de pago en menos de 500ms.
+- **SC-002:** El cambio de forma de pago debe estar disponible inmediatamente para nuevos pedidos.

@@ -55,29 +55,6 @@
 
 ---
 
-### 2. Consultar Total del Pedido
-
-**Endpoint:** `GET /api/v1/pedidos/{id_pedido}/total`
-
-**Propósito:** Obtener el valor total del pedido para calcular la liquidación.
-
-**Parámetros de consulta:**
-- `id_pedido` (path, requerido): ID del pedido
-
-**Respuesta exitosa:**
-```json
-{
-  "precio_total": 65000
-}
-```
-
-**Casos de error:**
-- Pedido no encontrado: `"Pedido no encontrado con el ID proporcionado"`
-- ID inválido: `"ID de pedido inválido"`
-
----
-
-
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Consulta de productos del pedido para facturación (Priority: P1)
@@ -148,15 +125,13 @@ Yo como Sistema Financiero necesito validar que el pedido existe antes de intent
 
 ### Measurable Outcomes
 
-- **SC-001:** El Sistema Financiero debe obtener los productos y valor total del pedido en menos de 1 segundo después de recibir la solicitud.
+- **SC-001:** El Sistema Financiero debe obtener los productos del pedido en menos de 1 segundo después de recibir la solicitud.
 
 - **SC-002:** El 100% de las consultas con IDs válidos deben retornar la información correcta.
 
-- **SC-003:** El valor total retornado debe ser exactamente igual a la suma de los subtotales de todos los productos.
+- **SC-003:** El sistema debe retornar un mensaje de error apropiado en menos de 500ms cuando el pedido no existe.
 
-- **SC-004:** El sistema debe retornar un mensaje de error apropiado en menos de 500ms cuando el pedido no existe.
-
-- **SC-005:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
+- **SC-004:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
 
 ---
 

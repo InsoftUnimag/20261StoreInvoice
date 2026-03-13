@@ -9,7 +9,7 @@
 
 ## Endpoint Consumido del Módulo de Gestión de Clientes
 
-### Consultar Cliente por ID Nacional
+### Consultar Cliente por ID Nacional (síncrono)
 
 **Endpoint:** `GET /api/v1/clientes/{id_nacional}`
 
@@ -35,9 +35,37 @@
 
 ---
 
+### Consultar Cliente por ID de BD (síncrono)
+
+**Endpoint:** `GET /api/v1/clientes/{id_cliente}`
+
+**Propósito:** Obtener los datos completos del cliente usando su ID de base de datos. Para usar en procesos internos como generación de liquidaciones.
+
+**Parámetros de consulta:**
+- `id_cliente` (path, requerido): ID del cliente en la base de datos
+
+**Respuesta exitosa:**
+```json
+{
+  "id_cliente": "100",
+  "id_nacional": "12345678",
+  "nombre": "Juan Perez",
+  "telefono": "3001234567",
+  "direccion": "Calle 123 #45-67"
+}
+```
+
+**Casos de error:**
+- Cliente no encontrado: `"Cliente no encontrado con el ID proporcionado"`
+- ID inválido: `"ID de cliente inválido"`
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Consulta de cliente por ID Nacional (Priority: P1)
+
+**Endpoint:** `GET /api/v1/clientes/{id_nacional}` (síncrono)
 
 Yo como Asesor Comercial necesito consultar un cliente utilizando su ID Nacional (número de documento) para obtener su ID de base de datos. Para poder guardar la forma de pago asociada al cliente correcto en la base de datos.
 
@@ -51,9 +79,31 @@ Yo como Asesor Comercial necesito consultar un cliente utilizando su ID Nacional
    - **Then:** El sistema retorna el ID de base de datos del cliente (ej: "100")
 
 2. **Scenario:** Cliente no encontrado por ID Nacional
-   - **Given:** No existe ningún cliente registrado con el ID Nacional proporcionado
-   - **When:** Se envía una solicitud de consulta con ese ID Nacional
-   - **Then:** El sistema retorna un error indicando que el cliente no fue encontrado
+    - **Given:** No existe ningún cliente registrado con el ID Nacional proporcionado
+    - **When:** Se envía una solicitud de consulta con ese ID Nacional
+    - **Then:** El sistema retorna un error indicando que el cliente no fue encontrado
+
+---
+
+### User Story 2 - Consulta de cliente por ID de BD (Priority: P1)
+
+**Endpoint:** `GET /api/v1/clientes/{id_cliente}` (síncrono)
+
+Yo como Sistema Financiero necesito consultar los datos de un cliente utilizando su ID de base de datos para generar liquidaciones y procesos internos.
+
+**Why this priority:** Necesario para recuperar los datos del cliente (nombre, dirección, teléfono) cuando se genera una liquidación.
+
+**Acceptance Scenarios:**
+
+1. **Scenario:** Consulta exitosa de cliente por ID de BD
+    - **Given:** Existe un cliente registrado en el sistema con ID de BD "100"
+    - **When:** El Sistema Financiero envía una solicitud de consulta con ese ID
+    - **Then:** El sistema retorna los datos completos del cliente (id_cliente, id_nacional, nombre, telefono, direccion)
+
+2. **Scenario:** Cliente no encontrado por ID de BD
+    - **Given:** No existe ningún cliente registrado con el ID de BD proporcionado
+    - **When:** Se envía una solicitud de consulta con ese ID
+    - **Then:** El sistema retorna un error indicando que el cliente no fue encontrado
 
 ---
 

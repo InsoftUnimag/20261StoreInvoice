@@ -30,8 +30,8 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 ## Proceso en Sistema Financiero
 
 1. **Recibir datos**: Se reciben los datos del pedido desde Módulo de Inventario
-2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago (función interna)
-3. **Guardar en BD**: Se guarda el registro del pedido con los datos recibidos y forma de pago
+2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago usando la función interna `buscar_forma_pago_por_id_cliente`
+3. **Guardar en BD**: Se guarda el registro del pedido con los datos recibidos y la forma de pago asociada
 4. **Esperar estado final**: Queda en espera hasta que el Módulo de Transporte envíe el evento
 
 > **Nota:** Los productos se consultan posteriormente cuando se genere el PDF (ver spec `generar_liquidacion_cliente.md`).
@@ -65,7 +65,7 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 - **FR-001:** El sistema DEBE recibir los datos del pedido desde el Módulo de Inventario (pendiente definir medio: evento o endpoint).
 - **FR-002:** El sistema DEBE validar que el cliente tenga forma de pago registrada.
 - **FR-003:** El sistema DEBE guardar el registro del pedido en la base de datos.
-- **FR-004:** El sistema DEBE consultar la forma de pago del cliente mediante función interna del servicio.
+- **FR-004:** El sistema DEBE consultar la forma de pago del cliente mediante la función interna `buscar_forma_pago_por_id_cliente`.
 - **FR-005:** El sistema DEBE rechazar el pedido si el cliente no tiene forma de pago asignada.
 
 ### Key Entities *(include if data)*
