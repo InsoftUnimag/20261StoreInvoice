@@ -77,23 +77,7 @@ Yo como Módulo de Facturación necesito consultar los productos asociados a un 
 
 ---
 
-### User Story 2 - Consulta de valor total del pedido (Priority: P1)
-
-Yo como Sistema Financiero necesito conocer el valor total del pedido para calcular la liquidación. Para garantizar que la liquidación refleje el valor exacto a cobrar.
-
-**Why this priority:** Es fundamental para la precisión de la liquidación financiera.
-
-**Acceptance Scenarios:**
-
-1. **Scenario:** Consulta exitosa del valor total
-   - **Given:** Existe un pedido con productos y precios definidos
-   - **When:** Se consulta el total del pedido por su ID
-   - **Then:** El sistema retorna el valor total del pedido
-
----
-
-
-### User Story 3 - Validación de existencia del pedido (Priority: P1)
+### User Story 2 - Validación de existencia del pedido (Priority: P1)
 
 Yo como Sistema Financiero necesito validar que el pedido existe antes de intentar procesarlo. Para evitar errores en el flujo de liquidación.
 

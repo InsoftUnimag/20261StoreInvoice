@@ -6,35 +6,47 @@
 **Created:** 24-02-2026
 ## User Scenarios & Testing (mandatory)
 
-### User Story 1 - Cálculo automatizado de liquidación según tasa de efectividad recibida (Priority: P1)
+### User Story 1 - Cálculo automatizado de liquidación según estado final y tasa de efectividad recibida (Priority: P1)
 
-Yo como Sistema Financiero (Módulo 3) necesito calcular el monto a pagar al transportista tomando como base el 10% del precio total del pedido y aplicando la tasa de efectividad recibida directamente del Módulo de Gestión de Transporte. Esto con el objetivo de asegurar el pago a los aliados de transporte según su desempeño.
+Yo como Sistema Financiero necesito calcular el monto a pagar al transportista basándose en una tarifa fija y el resultado de la entrega. Si el transportista pierde el pedido (tasa_efectividad = -100), debe asumir el valor completo del pedido. Esto con el objetivo de asegurar el pago a los aliados de transporte según su desempeño.
 
-**Why this priority:**  Es una función importante del módulo financiero; sin esto, no se puede pagar a los transportistas.
+**Why this priority:** Es una función importante del módulo financiero; sin esto, no se puede pagar a los transportistas.
 
-**Independent Test**: Añadir en la base de datos pedidos con diferentes precios y enviar diferentes tasas de efectividad, verificando que el cálculo final sea exacto: (precio × 10%) × tasa_efectividad.
+**Fórmula de cálculo:**
+- Si `tasa_efectividad = -100` (pedido perdido): `monto = precio_pedido`
+- Si no: `monto = tarifa_base × (% según matriz del estado_final)`
+
+**Matriz de porcentaje por estado final:**
+| Estado Final | % Pago Logístico |
+|-------------|------------------|
+| Entregado Completo | 100% |
+| Rechazo Parcial | 80% |
+| Devolución (Error Empresa) | 0% |
+| Faltante de Inventario | -100% |
+
+> **Nota:** La tarifa_base es un valor fijo pendiente de definir.
 
 **Acceptance Scenarios:** 
 
-1. Scenario: Liquidación con Tasa de Efectividad del 100%
-	- **Given:** El sistema obtiene exitosamente el precio del pedido consultando al Módulo de Gestión de Inventario, el Módulo de Gestión de Transporte ha reportado una `tasa_efectividad` de 100 para ese pedido.
-	- **When:** Cuando se desea generar la liquidación del transportista
-	- **Then:** El sistema calcula la tarifa (10% del precio), aplica directamente la tasa_efectividad de 100%, y genera una liquidación a pagar.
+1. Scenario: Liquidación con Entregado Completo (tasa 100)
+  	- **Given:** El sistema obtiene exitosamente el precio del pedido desde la BD local, el estado_final es "Entregado Completo" y tasa_efectividad de 100.
+  	- **When:** Cuando se desea generar la liquidación del transportista
+  	- **Then:** El sistema calcula: tarifa_base × 100%, y genera una liquidación a pagar.
 
-2. Scenario: Liquidación con Tasa de Efectividad del 80%
-	- **Given**: El sistema obtiene exitosamente el precio del pedido consultando al Módulo de Gestión de Inventario, el Módulo de Gestión de Transporte ha reportado una `tasa_efectividad` de 80 para ese pedido.
-	- **When:** Cuando se desea generar la liquidación del transportista
-	- **Then:** El sistema calcula la tarifa (10% del precio), aplica directamente la tasa_efectividad de 80%, y genera una liquidación a pagar.
+2. Scenario: Liquidación con Rechazo Parcial (tasa 80)
+ 	- **Given**: El sistema obtiene exitosamente el precio del pedido desde la BD local, el estado_final es "Rechazo Parcial" y tasa_efectividad de 80.
+ 	- **When:** Cuando se desea generar la liquidación del transportista
+ 	- **Then:** El sistema calcula: tarifa_base × 80%, y genera una liquidación a pagar.
 
-3. Scenario: Liquidación con Tasa de Efectividad Negativa (-100%)
-	- **Given**: El sistema obtiene exitosamente el precio del pedido consultando al Módulo de Gestión de Inventario, el Módulo de Gestión de Transporte ha reportado una `tasa_efectividad` de -100 para ese pedido.
-	- **When:** Cuando se desea generar la liquidación del transportista
-	- **Then:** El sistema calcula la tarifa (10% del precio), aplica directamente la tasa_efectividad de -100%, y genera una liquidación en contra del transportista.
+3. Scenario: Liquidación con Devolución (tasa 0)
+ 	- **Given**: El sistema obtiene exitosamente el precio del pedido desde la BD local, el estado_final es "Devolución (Error Empresa)" y tasa_efectividad de 0.
+ 	- **When:** Cuando se desea generar la liquidación del transportista
+ 	- **Then:** El sistema calcula: tarifa_base × 0% = 0, y registra el costo del flete como pérdida operativa.
 
-4. Scenario: Liquidación con Tasa de Efectividad del 0%
-	- **Given**: El sistema obtiene exitosamente el precio del pedido consultando al Módulo de Gestión de Inventario, el Módulo de Gestión de Transporte ha reportado una `tasa_efectividad` de 0 para ese pedido.
-	- **When:** Cuando se desea generar la liquidación del transportista
-	- **Then:** El sistema calcula la tarifa (10% del precio), aplica directamente la tasa_efectividad de 0%, resultando en una liquidación nula, y registra el costo del flete como una pérdida operativa.
+4. Scenario: Liquidación con Pedido Perdido (tasa -100)
+ 	- **Given**: El sistema obtiene exitosamente el precio del pedido desde la BD local, el estado_final es "Faltante de Inventario" y tasa_efectividad de -100.
+ 	- **When:** Cuando se desea generar la liquidación del transportista
+ 	- **Then:** El sistema calcula: precio_pedido (el transportista asume el valor completo del pedido).
 
 ### User Story 2 - Validación de datos cruzados entre módulos (Priority: P1)
 
@@ -47,29 +59,24 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 **Acceptance Scenarios:**
 
 1. **Scenario:** Intento de liquidación con datos incompletos
-	- **Given:** Tasa de efectividad registrada de un pedido, al consultar el endpoint del Módulo de Gestión de Inventario, este no retorna el precio del pedido.
-	- **When:** Cuando se desea generar la liquidación del transportista.
-	- **Then:** El sistema bloquea la operación, no genera la liquidación y muestra un error de "Falta precio del pedido".
+ 	- **Given:** El sistema intenta generar la liquidación pero no encuentra el precio del pedido en la BD local.
+ 	- **When:** Cuando se desea generar la liquidación del transportista.
+ 	- **Then:** El sistema bloquea la operación, no genera la liquidación y muestra un error de "Falta precio del pedido".
 
 2. **Scenario:** Intento de liquidación con datos incompletos
-	- **Given:** El sistema obtiene exitosamente el precio del pedido consultando al Módulo de Gestión de Inventario, no se encuentra la Tasa de efectividad registrada por el Módulo de Gestión de Transporte.
-	- **When:** Cuando se desea generar la liquidación del transportista.
-	- **Then:** El sistema bloquea la operación, no genera la liquidación y muestra un error de "Falta tasa de efectividad del pedido".
+ 	- **Given:** El sistema obtiene exitosamente el precio del pedido desde la BD local, pero no se encuentra la Tasa de efectividad o estado_final registrada por el Módulo de Gestión de Transporte.
+ 	- **When:** Cuando se desea generar la liquidación del transportista.
+ 	- **Then:** El sistema bloquea la operación, no genera la liquidación y muestra un error de "Falta tasa de efectividad o estado final del pedido".
 
 ### Edge Cases
 
 - ¿Qué pasa si la tasa de efectividad recibida es 0%?
-- El sistema calcula el 10% del pedido como tarifa base, pero al aplicar el 0%, la liquidación a pagar al transportista es de $0, y se debe generar un reporte como pérdida operativa.
+- El sistema calcula la tarifa_base × 0% = 0, resultando en liquidación nula, y registra el costo del flete como pérdida operativa.
 
-- ¿Qué pasa si el cálculo del 10% del pedido arroja decimales muy largos?
-- El sistema debe redondear al precio entero más cercano para evitar problemas.
-  
-
-- ¿Qué pasa si la tasa de efectividad recibida desde el Módulo de Gestión de Transporte está fuera del rango -100 a 100%?
-- El sistema debe rechazar el precio, bloquear el cálculo y emitir una alerta de "Dato de efectividad inválido".
+- ¿Qué pasa si la tasa de efectividad recibida está fuera del rango -100 a 100?
+- El sistema debe rechazar el dato, bloquear el cálculo y emitir una alerta de "Dato de efectividad inválido".
 
 - ¿Qué pasa si un pedido cambia de estado después de haber sido liquidado (ejemplo, el cliente hace un reclamo posterior a la entrega)?
-
 - **Pendiente de definir:** El sistema no debe modificar ni sobrescribir la liquidación original, ya que esto rompería la auditoría contable. Se debe evaluar la implementación de un mecanismo de Nota de Ajuste o Corrección Financiera. Ver spec separado para este caso.
 
 ## Requirements *(mandatory)*
@@ -82,9 +89,9 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 ### Functional Requirements
 
 - **FR-001**: El sistema DEBE obtener el precio total del pedido desde la BD (recibido del Módulo de Inventario).
-- **FR-002**: El sistema DEBE obtener la `tasa_efectividad` del evento publicado por el Módulo de Transporte (ver spec `recibir_estado_final_modulo_transporte.md`, rango válido -100 a 100).
-- **FR-003**: El sistema DEBE calcular la "tarifa base" del transportista extrayendo exactamente el 10% del precio total del pedido.
-- **FR-004**: El sistema DEBE aplicar a la tarifa base la `tasa_efectividad` recibida directamente del evento. Fórmula: Monto = (Precio Pedido × 10%) × (tasa_efectividad / 100).
+- **FR-002**: El sistema DEBE obtener la `tasa_efectividad` y `estado_final` del evento publicado por el Módulo de Transporte (ver spec `recibir_estado_final_modulo_transporte.md`).
+- **FR-003**: El sistema DEBE aplicar la fórmula de cálculo: Si tasa_efectividad = -100, monto = precio_pedido. Si no, monto = tarifa_base × (% según matriz del estado_final).
+- **FR-004**: El sistema DEBE usar la matriz de porcentaje según el estado_final: Entregado Completo (100%), Rechazo Parcial (80%), Devolución (0%), Faltante de Inventario (-100%).
 - **FR-005**: El sistema DEBE bloquear y cancelar la generación de la liquidación si el precio del pedido es nulo, cero, o si no hay `tasa_efectividad`.
 
 ### Key Entities *(include if feature involves data)*
@@ -101,6 +108,6 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 
 ### Measurable Outcomes
 
-- **SC-001**: El 100% de las liquidaciones generadas reflejan exactamente el cálculo: Monto = (Precio Pedido × 10%) × (tasa_efectividad).
+- **SC-001**: El 100% de las liquidaciones generadas reflejan exactamente la fórmula: Si tasa_efectividad = -100, monto = precio_pedido. Si no, monto = tarifa_base × (% según matriz).
 - **SC-002**: El sistema no genera ninguna liquidación con campos vacíos o nulos por falta de datos de entrada.
 - **SC-003**: El sistema no genera ninguna liquidación si la `tasa_efectividad` está fuera de los rangos permitidos o el precio es nulo/cero.

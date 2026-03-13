@@ -51,7 +51,7 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Buscar forma de pago por ID de Cliente
+### User Story 1 - Buscar forma de pago por ID de Cliente (necesidad interna)
 
 Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por su ID. Para usar en funciones internas como la generación de liquidaciones.
 

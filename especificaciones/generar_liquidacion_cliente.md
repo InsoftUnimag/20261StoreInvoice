@@ -8,7 +8,8 @@
 > **Nota:** El trigger de esta función es el evento publicado por el Módulo de Transporte. Ver spec: `recibir_estado_final_modulo_transporte.md`. Los datos del pedido fueron recibidos previamente del Módulo de Inventario (ver spec `recibir_datos_pedido_modulo_inventario.md`).
 
 **Datos previos recibidos:**
-- Los datos del pedido (id_pedido, id_cliente, total_pedido, productos) ya fueron recibidos del Módulo de Inventario y guardados en BD (ver spec `recibir_datos_pedido_modulo_inventario.md`)
+- Los datos del pedido (id_pedido, id_cliente, total_pedido) ya fueron recibidos del Módulo de Inventario y guardados en BD (ver spec `recibir_datos_pedido_modulo_inventario.md`)
+- Los productos se consultan posteriormente para generar el PDF
 
 **Evento del Módulo de Transporte:**
 Al recibir el evento, el Sistema Financiero obtiene:
@@ -23,6 +24,9 @@ Al recibir el evento, el Sistema Financiero obtiene:
 3. **Consultar datos del cliente**: Se llama al Módulo de Gestión de Clientes para obtener los datos del cliente
 4. **Generar PDF**: Se invoca la función interna `generar_pdf_liquidacion_cliente.md` que retorna la URI del PDF
 5. **Guardar liquidación**: Se guarda el registro de liquidación con la URI del PDF
+
+**Fórmula de cálculo:**
+- `total_calculado = (precio_pedido + tarifa_envío) × (tasa_efectividad / 100)`
 
 ---
 
@@ -94,7 +98,7 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 
 ### Functional Requirements
 
-- **FR-001:** El sistema DEBE recibir del evento del Módulo de Transporte el id_pedido y estado_final (ver spec `recibir_estado_final_modulo_transporte.md`).
+- **FR-001:** El sistema DEBE recibir del evento del Módulo de Transporte el id_pedido, estado_final y tasa_efectividad (ver spec `recibir_estado_final_modulo_transporte.md`).
 - **FR-002:** El sistema DEBE obtener los datos del pedido desde la BD (recibidos del Módulo de Inventario, ver spec `recibir_datos_pedido_modulo_inventario.md`).
 - **FR-003:** El sistema DEBE obtener la forma de pago del registro del pedido (ya consultada y guardada al recibir los datos del Módulo de Inventario).
 - **FR-004:** El sistema DEBE guardar el estado_final en el registro del pedido.

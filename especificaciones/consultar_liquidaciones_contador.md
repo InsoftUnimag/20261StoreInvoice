@@ -62,7 +62,7 @@ Yo como contador necesito revisar las liquidaciones de clientes y transportistas
 
 - **FR-001:** El sistema DEBE mostrar todas las liquidaciones (cliente y transportista) ordenadas cronológicamente de forma descendente.
 - **FR-002:** El sistema DEBE permitir filtrar por tipo de liquidación: "cliente", "transportista" o "todos".
-- **FR-003:** El sistema DEBE permitir filtrar por ID nacional del cliente.
+- **FR-003:** El sistema DEBE permitir filtrar por ID de cliente (ID de BD).
 - **FR-004:** El sistema DEBE permitir filtrar por ID del transportista.
 - **FR-005:** El sistema DEBE permitir filtrar por rango de fechas (fecha inicio y fecha fin).
 - **FR-006:** El sistema DEBE permitir combinar filtros (tipo + cliente/transportista + fechas).

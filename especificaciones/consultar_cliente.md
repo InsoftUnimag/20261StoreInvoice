@@ -29,6 +29,8 @@
 }
 ```
 
+> **Nota:** Los campos del cliente están pendientes de definición por parte del Módulo de Gestión de Clientes.
+
 **Casos de error:**
 - Cliente no encontrado: `"Cliente no encontrado con el ID Nacional proporcionado"`
 - ID Nacional vacío: `"El ID Nacional es requerido"`
@@ -54,6 +56,8 @@
   "direccion": "Calle 123 #45-67"
 }
 ```
+
+> **Nota:** Los campos del cliente están pendientes de definición por parte del Módulo de Gestión de Clientes.
 
 **Casos de error:**
 - Cliente no encontrado: `"Cliente no encontrado con el ID proporcionado"`

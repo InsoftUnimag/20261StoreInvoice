@@ -48,12 +48,11 @@ Yo como transportista deseo consultar mis liquidaciones desde una interfaz web. 
 - **FR-001:** El sistema DEBE identificar al transportista por su ID.
 - **FR-002:** El sistema DEBE mostrar las liquidaciones ordenadas cronológicamente de forma descendente.
 - **FR-003:** El sistema DEBE paginar los resultados (20 registros por página por defecto).
-- **FR-004:** El sistema DEBE mostrar los detalles de cada liquidación: id_liquidacion, id_pedido, id_transportista, monto_calculado, fecha_liquidacion, uri_pdf.
-- **FR-005:** El sistema DEBE permitir acceder al PDF mediante la uri_pdf.
+- **FR-004:** El sistema DEBE mostrar los detalles de cada liquidación: id_liquidacion, id_pedido, id_transportista, monto_calculado, fecha_liquidacion.
 
 ### Key Entities
 
-- **Liquidacion_Transportista:** [id_liquidacion, id_pedido, id_transportista, monto_calculado, fecha_liquidacion, uri_pdf]
+- **Liquidacion_Transportista:** [id_liquidacion, id_pedido, id_transportista, monto_calculado, fecha_liquidacion]
 
 ---
 

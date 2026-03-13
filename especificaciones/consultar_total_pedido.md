@@ -5,7 +5,7 @@
 
 ## Descripción del Flujo
 
-El Sistema de transporte me consulta el total de un pedido. La consulta es síncrona.
+El Sistema Financiero expone un endpoint para que el Módulo de Transporte consulte el total de un pedido. La consulta es síncrona.
 
 ---
 
