@@ -57,7 +57,7 @@ El Módulo de Gestión de Transporte publica un evento cuando un pedido alcanza 
 |-------|------|-----------|-------------|
 | `id_pedido` | Integer | Sí | ID del pedido |
 | `estado_final` | String | Sí | Estado final de entrega (para liquidación del cliente) |
-| `tasa_efectividad` | Integer | Sí | Porcentaje de efectividad 0-100 (para liquidación del transportista) |
+| `tasa_efectividad` | Integer | Sí | Porcentaje de efectividad -100 a 100 (para liquidación del transportista) |
 | `id_transportista` | Integer | Sí | ID del transportista |
 
 > **Nota:** 

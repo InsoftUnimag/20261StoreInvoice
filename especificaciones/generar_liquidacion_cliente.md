@@ -89,7 +89,7 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 - **¿Qué pasa si la tarifa de envío no está definida?**
   - El sistema debe rechazar y mostrar: "Tarifa de envío no configurada para la zona".
 
-- **¿Qué pasa si el porcentaje de efectividad está fuera del rango 0-100%?**
+- **¿Qué pasa si el porcentaje de efectividad está fuera del rango -100 a 100%?**
   - El sistema debe rechazar y mostrar: "Porcentaje de efectividad inválido".
 
 - **¿Qué pasa si el Módulo de Gestión de Transporte envía un estado que no existe en la matriz?**

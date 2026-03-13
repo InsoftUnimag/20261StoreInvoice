@@ -65,7 +65,7 @@ Yo como Sistema Financiero necesito validar que existan los datos de entrada req
 - ¿Qué pasa si el cálculo del 10% del pedido arroja decimales muy largos?
 - El sistema debe redondear al precio entero más cercano para evitar problemas.
   
-- ¿Qué pasa si la tasa de efectividad recibida desde el Módulo de Gestión de Transporte está fuera del rango 0-100%?
+- ¿Qué pasa si la tasa de efectividad recibida desde el Módulo de Gestión de Transporte está fuera del rango -100 a 100%?
 - El sistema debe rechazar el precio, bloquear el cálculo y emitir una alerta de "Dato de efectividad inválido".
 
 - ¿Qué pasa si un pedido cambia de estado después de haber sido liquidado (ejemplo, el cliente hace un reclamo posterior a la entrega)?

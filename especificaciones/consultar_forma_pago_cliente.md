@@ -15,23 +15,23 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 >
 > Este endpoint también es consumido por el **Módulo de Inventario** para verificar si el cliente tiene forma de pago registrada antes de crear un pedido.
 
+La búsqueda se realiza por `id_pedido` ya que la forma de pago está asociada al pedido.
+
 ---
 
 ## Endpoint del Sistema Financiero
 
 ### Consultar Forma de Pago del Cliente
 
-**Endpoint:** `GET /api/v1/clientes/{id_cliente}/forma-pago`
+**Endpoint:** `GET /api/v1/pedidos/{id_pedido}/forma-pago`
 
-**Propósito:** Obtener la forma de pago asociada a un cliente (Contra Entrega o Cartera Comercial).
+**Parámetros:**
+- `id_pedido` (path, requerido): ID del pedido
 
-**Parámetros de consulta:**
-- `id_cliente` (path, requerido): ID de base de datos del cliente
-
-**Respuesta exitosa:**
+**Respuesta:**
 ```json
 {
-  "id_cliente": "100",
+  "id_pedido": 123,
   "forma_pago": "CARTERA_COMERCIAL"
 }
 ```
@@ -41,24 +41,22 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 - `CARTERA_COMERCIAL` - Cartera comercial (crédito)
 
 **Casos de error:**
-- Cliente no encontrado: `"Cliente no encontrado con el ID proporcionado"`
+- Pedido no encontrado: `"Pedido no encontrado"`
 - Cliente sin forma de pago asignada: `"El cliente no tiene forma de pago registrada"`
 
 ---
 
 ### Verificar si Cliente tiene Forma de Pago
 
-**Endpoint:** `GET /api/v1/clientes/{id_cliente}/tiene-forma-pago`
+**Endpoint:** `GET /api/v1/pedidos/{id_pedido}/tiene-forma-pago`
 
-**Propósito:** Verificar si un cliente tiene forma de pago registrada. Consumido por el Módulo de Inventario antes de crear un pedido.
+**Parámetros:**
+- `id_pedido` (path, requerido): ID del pedido
 
-**Parámetros de consulta:**
-- `id_cliente` (path, requerido): ID de base de datos del cliente
-
-**Respuesta exitosa:**
+**Respuesta:**
 ```json
 {
-  "id_cliente": 100,
+  "id_pedido": 123,
   "tiene_forma_pago": true
 }
 ```
@@ -67,57 +65,37 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Verificar forma de pago desde Módulo de Inventario (Priority: P1)
-
-Yo como Módulo de Inventario necesito verificar si un cliente tiene forma de pago registrada antes de crear un pedido. Para evitar crear pedidos de clientes sin forma de pago asignada.
-
-**Acceptance Scenarios:**
-
-1. **Scenario:** Cliente tiene forma de pago
-   - **Input:** GET `/api/v1/clientes/100/tiene-forma-pago`
-   - **Output:** `200 OK` → `{ "id_cliente": 100, "tiene_forma_pago": true }`
-
-2. **Scenario:** Cliente no tiene forma de pago
-   - **Input:** GET `/api/v1/clientes/100/tiene-forma-pago`
-   - **Output:** `200 OK` → `{ "id_cliente": 100, "tiene_forma_pago": false }`
-
-3. **Scenario:** Cliente no encontrado
-   - **Input:** GET `/api/v1/clientes/999/tiene-forma-pago`
-   - **Output:** `404 Not Found` → `"Cliente no encontrado con el ID proporcionado"`
-
----
-
-### User Story 2 - Contrato del Endpoint
+### User Story 1 - Contrato del Endpoint
 
 **Expectativas del Endpoint:**
 
 - **Input (Qué espero recibir):**
-  - Path: `id_cliente` (Integer) - ID del cliente en la base de datos
+  - Path: `id_pedido` (Integer) - ID del pedido
 
 - **Output (Qué voy a responder):**
-  - Éxito (200): `{ "id_cliente": "100", "forma_pago": "CARTERA_COMERCIAL" }`
-  - Error (404): `"Cliente no encontrado con el ID proporcionado"`
+  - Éxito (200): `{ "id_pedido": 123, "forma_pago": "CARTERA_COMERCIAL" }`
+  - Error (404): `"Pedido no encontrado"`
   - Error (404): `"El cliente no tiene forma de pago registrada"`
 
 **Acceptance Scenarios:**
 
 1. **Scenario:** Cliente con forma de pago Contra Entrega
-   - **Input:** GET `/api/v1/clientes/100/forma-pago`
-   - **Output:** `200 OK` → `{ "id_cliente": "100", "forma_pago": "CONTRA_ENTREGA" }`
+   - **Input:** GET `/api/v1/pedidos/123/forma-pago`
+   - **Output:** `200 OK` → `{ "id_pedido": 123, "forma_pago": "CONTRA_ENTREGA" }`
 
 2. **Scenario:** Cliente con forma de pago Cartera Comercial
-   - **Input:** GET `/api/v1/clientes/100/forma-pago`
-   - **Output:** `200 OK` → `{ "id_cliente": "100", "forma_pago": "CARTERA_COMERCIAL" }`
+   - **Input:** GET `/api/v1/pedidos/123/forma-pago`
+   - **Output:** `200 OK` → `{ "id_pedido": 123, "forma_pago": "CARTERA_COMERCIAL" }`
 
-3. **Scenario:** Cliente no encontrado
-   - **Input:** GET `/api/v1/clientes/999/forma-pago`
-   - **Output:** `404 Not Found` → `"Cliente no encontrado con el ID proporcionado"`
+3. **Scenario:** Pedido no encontrado
+   - **Input:** GET `/api/v1/pedidos/999/forma-pago`
+   - **Output:** `404 Not Found` → `"Pedido no encontrado"`
 
 4. **Scenario:** Cliente sin forma de pago asignada
-   - **Input:** GET `/api/v1/clientes/100/forma-pago`
+   - **Input:** GET `/api/v1/pedidos/123/forma-pago`
    - **Output:** `404 Not Found` → `"El cliente no tiene forma de pago registrada"`
 
-### User Story 3 - Consulta interna de forma de pago para liquidación (Priority: P1)
+### User Story 2 - Consulta interna de forma de pago para liquidación (Priority: P1)
 
 Yo como Sistema Financiero necesito consultar la forma de pago de un cliente para registrar cómo debe realizarse el cobro en la liquidación. Para identificar si es recaudo en efectivo (Contra Entrega) o factura a crédito (Cartera Comercial).
 
@@ -129,25 +107,25 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente par
 
 1. **Scenario:** Consulta exitosa de forma de pago (Contra Entrega)
    - **Given:** Existe un cliente registrado con forma de pago "Contra Entrega"
-   - **When:** Se consulta la forma de pago con el id_cliente
+   - **When:** Se consulta la forma de pago con el id_pedido
    - **Then:** El sistema retorna `"forma_pago": "CONTRA_ENTREGA"`
 
 2. **Scenario:** Consulta exitosa de forma de pago (Cartera Comercial)
    - **Given:** Existe un cliente registrado con forma de pago "Cartera Comercial"
-   - **When:** Se consulta la forma de pago con el id_cliente
+   - **When:** Se consulta la forma de pago con el id_pedido
    - **Then:** El sistema retorna `"forma_pago": "CARTERA_COMERCIAL"`
 
 3. **Scenario:** Cliente sin forma de pago asignada
    - **Given:** Existe un cliente registrado pero sin forma de pago asignada
-   - **When:** Se consulta la forma de pago con el id_cliente
+   - **When:** Se consulta la forma de pago con el id_pedido
    - **Then:** El sistema retorna un error indicando que el cliente no tiene forma de pago registrada
 
 ---
 
 ### Edge Cases
 
-- **¿Qué pasa si el ID del cliente es inválido?**
-  - El sistema debe retornar un error: "Cliente no encontrado con el ID proporcionado"
+- **¿Qué pasa si el ID del pedido es inválido?**
+  - El sistema debe retornar un error: "Pedido no encontrado"
 
 - **¿Qué pasa si la consulta a la base de datos falla?**
   - El sistema debe manejar el error y retornar: "Error al consultar la forma de pago. Intente más tarde"
@@ -158,18 +136,18 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente par
 
 ### Functional Requirements
 
-- **FR-001:** El sistema DEBE exponer un endpoint GET que reciba el `id_cliente` y retorne la forma de pago registrada (para consumo del Módulo de Transporte).
-- **FR-002:** El sistema DEBE exponer una función interna de servicio que consulte la forma de pago por `id_cliente` (para uso del Sistema Financiero).
+- **FR-001:** El sistema DEBE exponer un endpoint GET que reciba el `id_pedido` y retorne la forma de pago registrada (para consumo del Módulo de Transporte).
+- **FR-002:** El sistema DEBE exponer una función interna de servicio que consulte la forma de pago por `id_pedido` (para uso del Sistema Financiero).
 - **FR-003:** El sistema DEBE retornar la forma de pago como string (`CONTRA_ENTREGA` o `CARTERA_COMERCIAL`).
-- **FR-004:** El sistema DEBE retornar un error cuando el cliente no exista en la base de datos.
+- **FR-004:** El sistema DEBE retornar un error cuando el pedido no exista en la base de datos.
 - **FR-005:** El sistema DEBE retornar un error cuando el cliente no tenga forma de pago asignada.
-- **FR-006:** El sistema DEBE exponer un endpoint GET `/api/v1/clientes/{id_cliente}/tiene-forma-pago` que retorne un booleano (para consumo del Módulo de Inventario).
+- **FR-006:** El sistema DEBE exponer un endpoint GET `/api/v1/pedidos/{id_pedido}/tiene-forma-pago` que retorne un booleano (para consumo del Módulo de Inventario).
 
 ### Key Entities *(include if feature involves data)*
 
 - **Forma_Pago_Cliente:**
-  - [id_cliente, forma_pago]
-  - Entidad que almacena la forma de pago de cada cliente.
+  - [id_pedido, id_cliente, forma_pago]
+  - Entidad que almacena la forma de pago de cada cliente. Se busca por id_pedido.
 
 ---
 
@@ -179,8 +157,8 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente par
 
 - **SC-001:** El sistema debe retornar la forma de pago en menos de 500ms después de recibir la solicitud.
 
-- **SC-002:** El 100% de las consultas con ID de cliente válido deben retornar la forma de pago correcta.
+- **SC-002:** El 100% de las consultas con ID de pedido válido deben retornar la forma de pago correcta.
 
-- **SC-003:** El sistema debe retornar un mensaje de error apropiado cuando el cliente no existe o no tiene forma de pago.
+- **SC-003:** El sistema debe retornar un mensaje de error apropiado cuando el pedido no existe o el cliente no tiene forma de pago.
 
 - **SC-004:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
