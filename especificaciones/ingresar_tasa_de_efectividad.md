@@ -1,7 +1,24 @@
-# Feature Specification: [Ingresar tasa de efectividad de la distribucion del pedido]
+# Feature Specification: Ingresar tasa de efectividad de la distribución del pedido
 
-**Created**: 21-02-2026  
+**Created:** 21-02-2026  
+**Status:** In Development
 
+## Descripción del Flujo
+
+El Módulo de Gestión de Transporteavisará al Sistema Financiero cuando un pedido alcance un estado final de entrega. En ese momento, el Sistema Financiero recibirá:
+- `id_pedido`
+- `estado_final` (ver matriz de correspondencia)
+- `tasa_efectividad` (porcentaje 0-100%)
+
+**Estados finales válidos (Matriz de Correspondencia):**
+
+| Estado Final de Entrega | Descripción |
+| :--- | :--- |
+| **Entregado Completo** | El pedido fue entregado exitosamente al cliente |
+| **Rechazo Parcial** | El cliente rechazó algunos productos |
+| **Devolución (Error Empresa)** | El pedido fue devuelto por error de la empresa |
+| **Faltante de Inventario** | No había suficientes productos en inventario |
+| **No Entregado** | El pedido no pudo ser entregado por el transportista |
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -18,20 +35,25 @@
   - Demonstrated to users independently
 -->
 
-### User Story 1 - [] (Priority: P1)
+### User Story 1 - Recepción de tasa de efectividad desde el Módulo de Gestión de Transporte (Priority: P1)
 
-Yo como desarrollador necesito que la tasa de efectividad de la distribucion del pedido se ingrese en la base de datos. Para que pueda ser consultada por el sistema y generar una liquidacion correspondiente.
+Yo como Sistema Financiero necesito recibir la tasa de efectividad, el estado final y el ID del pedido desde el Módulo de Gestión de Transporte. Para almacenar la información necesaria para calcular la liquidación del transportista y del cliente.
 
-**Why this priority**: Porque permite finalizar el flujo de ejecucion.
+**Why this priority**: Es el punto de entrada de datos para todo el proceso de liquidación.
 
-**Independent Test**: Verificar que reciba todas las tasas de efectividad de manera correcta y las guarde en la base de datos.
+**Independent Test**: Verificar que el sistema reciba correctamente todos los parámetros enviados por el Módulo de Gestión de Transporte.
 
-**Acceptance Scenarios**: En el sistema quede guardada la tasa de efectividad correspondiente al pedido
+**Acceptance Scenarios**:
 
-1. **Scenario**: Etapa logistica finalizada
-   - **Given**: El pedido tenga uno de los siguientes estados: cancelado, entregado o daño parcial 
-   - **When**: El transportista entregue o reporte un estado que no sea "entregando"
-   - **Then**: El transportista entrega la tasa de efectividad de la distribucion del pedido y esta sea recibida y guardada en la base de datos
+1. **Scenario:** Recepción exitosa de datos
+   - **Given:** El Módulo de Gestión de Transporte envía id_pedido, tasa_efectividad y estado_final válidos
+   - **When:** Se recibe la información de tasa de efectividad
+   - **Then:** El sistema guarda la tasa de efectividad asociada al pedido en la base de datos
+
+2. **Scenario:** Estado final válido
+   - **Given:** El Módulo de Gestión de Transporte envía un estado_final de la matriz de correspondencia
+   - **When:** Se recibe la información
+   - **Then:** El sistema valida que el estado sea uno de los válidos y lo almacena
 
 
 ---
@@ -41,86 +63,55 @@ Yo como desarrollador necesito que la tasa de efectividad de la distribucion del
 
 ### Edge Cases
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
+- **¿Qué pasa si el Módulo de Gestión de Transporte no envía la información?**
+  - El sistema debe registrar error y no permitir liquidación.
 
-- ¿Qué pasa si el módulo 2 no envía la información?
-  → El sistema debe registrar error y no permitir liquidación.
+- **¿Qué pasa si la tasa es mayor a 100% o menor a 0%?**
+  - El sistema debe rechazar el valor y mostrar: "Tasa de efectividad inválida. Debe estar entre 0% y 100%".
 
-- ¿Qué pasa si la tasa es mayor a 100% o menor a 0%?
-  → El sistema debe rechazar el valor.
+- **¿Qué pasa si un pedido cambia de estado después de liquidado?**
+  - Debe generarse ajuste o nota de corrección.
 
-- ¿Qué pasa si un pedido cambia de estado después de liquidado?
-  → Debe generarse ajuste o nota de corrección.
-- ¿Qué pasa si se envían datos incompletos del modulo 2?
-  → El sistema debe devolver un error 422.
+- **¿Qué pasa si se envían datos incompletos?**
+  - El sistema debe devolver un error: "Datos incompletos. Se requiere: id_pedido, tasa_efectividad, estado_final".
+
+- **¿Qué pasa si el estado_final no está en la matriz de correspondencia?**
+  - El sistema debe rechazar y mostrar: "Estado final no reconocido".
+
+- **¿Qué pasa si el id_pedido no existe en el sistema?**
+  - El sistema debe rechazar y mostrar: "Pedido no encontrado".
 
 
 ## Requirements *(mandatory)*
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
-
 ### Functional Requirements
 
-### Functional Requirements
-
-- **FR-001**: El sistema MUST recibir del módulo de Logística el estado final de cada pedido.
-- **FR-002**: El sistema MUST almacenar la tasa de efectividad asociada al pedido.
-- **FR-003**: El sistema MUST validar que la tasa esté entre 0% y 100%.
-- **FR-004**: El sistema MUST calcular automáticamente el monto a pagar al transportista.
-- **FR-006**: El sistema MUST generar historial de liquidaciones por transportista.
-
-*Example of marking unclear requirements:*
-
-FR-08: El sistema MUST autenticar a los usuarios antes de permitir la consulta de liquidaciones.
-[NEEDS CLARIFICATION: método de autenticación no definido – ¿usuario/contraseña institucional?, ¿JWT entre módulos?, ¿SSO empresarial?]
-
-FR-09: El sistema MUST conservar el historial de liquidaciones generadas.
-[NEEDS CLARIFICATION: no se ha definido el tiempo de retención legal de los registros.]
-
-FR-10: El sistema MUST aplicar penalizaciones según la tasa de efectividad.
-[NEEDS CLARIFICATION: no se ha definido la fórmula exacta de penalización.]
-
-FR-11: El sistema MUST recibir información del módulo de Logística mediante integración automática.
-[NEEDS CLARIFICATION: no se ha definido si será REST API, mensajería asíncrona o carga manual.]
+- **FR-001**: El sistema DEBE recibir del Módulo de Gestión de Transporte los siguientes datos: id_pedido, tasa_efectividad, estado_final.
+- **FR-002**: El sistema DEBE almacenar la tasa de efectividad asociada al pedido.
+- **FR-003**: El sistema DEBE validar que la tasa_efectividad esté entre 0% y 100%.
+- **FR-004**: El sistema DEBE validar que el estado_final sea uno de los estados válidos de la matriz de correspondencia.
+- **FR-005**: El sistema DEBE validar que el id_pedido exista en el sistema antes de guardar la tasa.
+- **FR-006**: El sistema DEBE rechazar datos incompletos y devolver error si falta algún parámetro requerido.
+- **FR-007**: El sistema DEBE permitir actualizar la tasa de efectividad solo si el pedido no ha sido liquidado anteriormente.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Transportista**:
-  Representa al responsable de la entrega.
-  Atributos clave: ID nacional, nombre, contrato, tarifa base.
-
-- **Pedido**:
-  Representa una orden despachada.
-  Atributos clave: ID pedido, estado final, valor del pedido, transportista asignado.
-
-- **Liquidación**:
-  Representa el balance de pago.
-  Atributos clave: ID liquidación, tasa de efectividad, monto calculado, fecha, transportista asociado.
-
-- **Tasa de Efectividad**:
-  Representa el porcentaje de cumplimiento del despacho.
-  Atributos clave: porcentaje, fecha de cálculo, pedido asociado.
+- **Tasa_Efectividad**:
+  - [id_tasa_efectividad, id_pedido, tasa_efectividad, estado_final, fecha_registro]
+  - Representa el registro de la tasa de efectividad del pedido.
+  - Entidad donde se almacena la información recibida del Módulo de Gestión de Transporte.
 
 ## Success Criteria *(mandatory)*
 
-<!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
--->
+### Measurable Outcomes
 
-SC-001: El 100% de las tasas de efectividad recibidas del módulo de Logística deben almacenarse correctamente en la base de datos sin pérdida de información.
+- **SC-001:** El 100% de las tasas de efectividad recibidas del Módulo de Gestión de Transporte deben almacenarse correctamente en la base de datos sin pérdida de información.
 
-SC-002: El sistema debe generar una liquidación en menos de 3 segundos después de recibir la tasa de efectividad.
+- **SC-002:** El sistema debe validar y guardar la tasa de efectividad en menos de 1 segundo después de recibir los datos.
 
-SC-003: Al menos el 95% de las consultas por ID nacional deben devolver resultados correctos en el primer intento.
+- **SC-003:** El sistema debe rechazar el 100% de las tasas inválidas (mayores a 100% o menores a 0%).
 
-SC-004: Reducir errores manuales en el cálculo de pago al transportista en un 85% respecto al proceso anterior manual.
+- **SC-004:** El sistema debe rechazar el 100% de los estados finales que no estén en la matriz de correspondencia.
 
-SC-005: El sistema debe procesar al menos 500 liquidaciones diarias sin fallos críticos.
+- **SC-005:** El sistema debe procesar al menos 500 registros de tasa de efectividad diarias sin fallos críticos.
 

@@ -1,77 +1,60 @@
-# Feature Specification: [Consultar liquidacion persona]
+# Feature Specification: Consultar Liquidaciones Personales del Cliente
 
-**Created**: 21-02-2026  
+**Created:** 21-02-2026  
+**Status:** In Development
+
 
 ## User Scenarios & Testing *(mandatory)*
 
-<!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
--->
+### User Story 1 - Necesidad del Cliente (P1)
 
+Yo como cliente deseo consultar mis liquidaciones personales en una lista paginada. Para tener información de mis pagos y poder descargar el PDF de cada liquidación.
 
-### User Story 1 - [] (Priority: P1)
+**Why this priority:** Transparencia de información para el cliente.
 
-Yo como cliente deseo consultar mis liquidaciones personales en una lista paginada. Para tener informacion de mis pagos
+**Acceptance Scenarios:**
 
-**Why this priority**: Transparencia de informacion
+1. **Scenario:** Consulta exitosa de liquidaciones
+   - **Given:** Usuario autenticado; Existen liquidaciones generadas para el cliente
+   - **When:** El cliente accede a "Mis liquidaciones"
+   - **Then:** Se muestra una lista paginada (20 registros por página) ordenada cronológicamente de forma descendente, con los datos de cada liquidación y el enlace al PDF
 
-**Independent Test**: Consultar una liquidacion y recibir la informacion en pantalla
+2. **Scenario:** Cliente sin liquidaciones
+   - **Given:** Cliente sin liquidaciones asociadas
+   - **When:** El cliente consulta sus liquidaciones
+   - **Then:** Se muestra un mensaje indicando que no tiene liquidaciones
 
-**Acceptance Scenarios**:
+3. **Scenario:** Navegación entre páginas
+   - **Given:** El cliente tiene más de 20 liquidaciones
+   - **When:** El cliente navega a la siguiente página
+   - **Then:** Se muestran los siguientes 20 registros
 
-1. **Scenario**: Consulta exitosa
-   - **Given**: Usuario registado; Tener liquidaciones generadas; 
-   - **When**: Cuando acceda a "Mis liquidaciones"
-   - **Then**: Se muestra los datos de la liquidacion en una lista paginada, donde cada pagina puede almacenar 20 registros ordenada de manera cronologica descendente
-
-   
 ---
-
-
-
-### Edge Cases
-
-- What happens when no haya liquidaciones asociadas a un usuario para listar?
-- How does system handle?: Mostrar un mensaje para notificar que no tiene liquidaciones asociadas
 
 ## Requirements *(mandatory)*
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
-
 ### Functional Requirements
 
-- **FR-001**: System MUST implementar la visualizacion de las liquidaciones asociadas a un usuario ordenada cronologicamente descendente. Registrando 20 registros por pagina
-- **FR-002**: System MUST Descargar las liquidaciones seleccionadas en formato pdf
-- **FR-003**: Users MUST be able to Permitir al usuario navegar entre las paginas de la lista paginada
+- **FR-001:** El sistema DEBE mostrar las liquidaciones del cliente ordenadas cronológicamente de forma descendente.
+- **FR-002:** El sistema DEBE paginar los resultados (20 registros por página por defecto).
+- **FR-003:** El sistema DEBE mostrar los detalles de cada liquidación: id_liquidacion, id_pedido, total_calculado, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf.
+- **FR-004:** El sistema DEBE mostrar un mensaje cuando el cliente no tenga liquidaciones asociadas.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities *(include if data)*
 
-- **[Liquidacion]**: ID_Liquidacion, Precio, Accion financiera, Id_Cliente, Origen_ciudad, Destinacion_ciudad;
-- **[Productos del pedido]**: ID_producto,  Precio_unitario, Cantidad_productos, M -> 1 [Liquidacion] as ID_producto
+**Liquidacion_Cliente:**
+- [id_liquidacion, id_pedido, id_cliente, precio_pedido, tarifa_envio, total_calculado, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf]
+
+---
 
 ## Success Criteria *(mandatory)*
 
-<!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
--->
-
 ### Measurable Outcomes
 
-- **SC-001**: El sistema debe listar el 100% de las liquidaciones asociadas a un usuario 
-- **SC-002**: El tiempo de respuesta al consultar "Mis liquidaciones" debe ser menor a 3 segundos
-- **SC-003**: El 90% de los usuarios debe poder descargar su ultima liquidacion en menos de 3 clics
-- **SC-004**: El pdf descargado debe contener los mismos datos que los mostrados en la interfaz web
+- **SC-001:** El sistema debe listar el 100% de las liquidaciones asociadas al cliente.
 
+- **SC-002:** El tiempo de respuesta al consultar "Mis liquidaciones" debe ser menor a 3 segundos.
+
+- **SC-003:** El 90% de los clientes debe poder acceder al PDF de su liquidación en menos de 3 clics.
+
+- **SC-004:** El PDF descargado debe contener los mismos datos que se muestran en la interfaz web.

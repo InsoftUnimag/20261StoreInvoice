@@ -1,87 +1,76 @@
-# Feature Specification: [Consultar liquidaciones]
+# Feature Specification: Consultar Liquidaciones (Para Contador)
 
-**Created**: 21-02-2026  
+**Created:** 21-02-2026  
+**Status:** In Development
+
+## Descripción del Flujo
+
+El contador consulta las liquidaciones generadas desde la interfaz (web/app). El sistema retorna una lista paginada con filtros disponibles y permite descargar el PDF de cada liquidación.
+
+---
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Consultar liquidaciones (Priority: P1)
+### User Story 1 - Necesidad del Contador (Negocio)
 
-Yo como contador necesito revisar todas las liquidaciones en la base de datos. Para fines legales.
+Yo como contador necesito revisar todas las liquidaciones en la base de datos. Para fines legales y contables.
 
-**Why this priority**: Transparencia de información.
+**Why this priority:** Transparencia de información para auditoría.
 
-**Independent Test**: Que reciba todas las liquidaciones de la base de datos.
+**Acceptance Scenarios:**
 
-**Acceptance Scenarios**:
+1. **Scenario:** Consulta general de liquidaciones
+   - **Given:** El contador accede al módulo de consultas
+   - **When:** Solicita ver todas las liquidaciones
+   - **Then:** Se muestra una lista paginada (20 por página) ordenada cronológicamente de forma descendente
 
-1. **Scenario**: Consulta exitosa
-   - **Given**: Sesion iniciada en la pagina; Debe haber liquidaciones. 
-   - **When**: Cuando las necesite para contabilizacion
-   - **Then**: Se muestra los datos de las liquidaciones
+2. **Scenario:** Consulta por cliente específico
+   - **Given:** El contador conoce el ID nacional del cliente
+   - **When:** Filtra por cliente
+   - **Then:** Se muestran las liquidaciones de ese cliente
+
+3. **Scenario:** Consulta por rango de fechas
+   - **Given:** El contador necesita información de un período contable
+   - **When:** Selecciona fecha inicio y fecha fin
+   - **Then:** Se muestran las liquidaciones dentro de ese rango
+
+4. **Scenario:** Consulta por cliente + rango de fechas
+   - **Given:** El contador necesita liquidaciones de un cliente en un período específico
+   - **When:** Filtra por cliente y rango de fechas
+   - **Then:** Se muestran las liquidaciones que coinciden con ambos filtros
+
+5. **Scenario:** Cliente sin liquidaciones
+   - **Given:** El cliente no tiene liquidaciones asociadas
+   - **When:** Se consulta ese cliente
+   - **Then:** Se muestra un mensaje indicando que no tiene liquidaciones
 
 ---
-
-### User Story 2 - Consulta de liquidaciones de cliente especifico (Priority: P2)
-
-Yo como contador quiero consultar liquidaciones de un Cliente en especifico (se usa ID nacional). Para consultar información especifica con
-fines legales
-
-**Why this priority**: Transparencia de la información.
-
-**Independent Test**: Buscar las liquidaciones de un usuario especifico y que concuerden con la base de datos. 
-
-**Acceptance Scenarios**:
-
-1. **Scenario**: Cliente no existente 
-   - **Given**: Intento de busqueda de las liquidaciones de un cliente. 
-   - **When**: El contador ingresa un ID nacional que no existe en la base de datos.
-   - **Then**: El sistema muestra mensaje de cliente no registrado.
-
----
-
-### User story 3 - Consultar liquidaciones en rango de fechas (Priority: P)
-
-Como contador quiero consultar liquidaciones en un rango determinado de fechas con el fin buscar información según sea requerida en un periodo contable.
-
-**Why this priority**: Transparencia de la información.
-
-**Independient Test**: Buscar liquidaciones en un rango de fechas determinados y que los resultados concuerden con lo requerido.
-
- **Acceptance scenarios** :
- 1. **Scenario**: Consulta exitosa
-   - **Given**: Existen liquidaciones en un rango determinado de fecha.
-   - **When**: El usuario busca liquidaciones en dicho rango.
-   - **Then**: El sistema muestra las liquidaciones correspondientes.
-
-### Edge Cases
-
-- What happens when [El usuario ingresa un ID nacional de un cliente que no existe]?
-- How does system handle [El sistema muestra mensaje de error y recomienda registrar al nuevo cliente en una ventana modal]?
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [Permitir buscar las liquidaciones de un usuario en especifico con su ID nacional (id, fecha, total)]
-- **FR-002**: System MUST [Mostrar todas las liquidaciones ordenadas en orden cronologíco descendente]  
-- **FR-003**: System MUST [Listar todas las liquidaciones en un rango de fechas ingresado por el contador]
-- **FR-004**: System MUST [Permitir buscar las liquidaciones de un usuario en especifico con su ID nacional en un rango de fechas]
-- **FR-005**: System MUST [Permitir descargar las liquidaciones]
-- **FR-006**: System MUST [El sistema debe mostrar todas las liquidaciones en orden cronológico descendente, 20 por página]
+- **FR-001:** El sistema DEBE mostrar todas las liquidaciones ordenadas cronológicamente de forma descendente.
+- **FR-002:** El sistema DEBE permitir filtrar por ID nacional del cliente.
+- **FR-003:** El sistema DEBE permitir filtrar por rango de fechas (fecha inicio y fecha fin).
+- **FR-004:** El sistema DEBE permitir combinar filtros (cliente + fechas).
+- **FR-005:** El sistema DEBE paginar los resultados (20 registros por página por defecto).
+- **FR-006:** El sistema DEBE mostrar los detalles de cada liquidación: id_liquidacion, id_pedido, id_cliente, total_calculado, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf.
+- **FR-007:** El sistema DEBE permitir acceder al PDF de cada liquidación mediante la uri_pdf.
 
+### Key Entities *(include if data)*
 
-### Key Entities *(include if feature involves data)*
+**Liquidacion_Cliente:**
+- [id_liquidacion, id_pedido, id_cliente, precio_pedido, tarifa_envio, total_calculado, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf]
 
-- **[liquidación]**: id_liquidación, id_cliente, total, fecha, id_pedido 1-> 1 con pedido
-- **[pedido]**: [id_pedido , precio, productos_pedido , peso, destino, id_cliente]
-- **[producto]**: [id_producto, nombre, peso, precio_unitario, descripción]
-- **[productos_del_pedido]**: id_producto  n -> 1 con pedido, cantidad, id_pedido n -> 1 con pedido.
-
+---
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: Al consultar liquidaciones entre dos fechas el sistema debe mostrar el 100% de las liquidaciones existentes desde las 00:00 de la fecha inicial hasta las 23:59 de la fecha final.
-- **SC-002**: El sistema debe demorar maximo 2 segundos en mostrar los resultados de busqueda.
+- **SC-001:** El sistema debe listar el 100% de las liquidaciones que coincidan con los filtros aplicados.
 
+- **SC-002:** El tiempo de respuesta al consultar liquidaciones debe ser menor a 2 segundos.
+
+- **SC-003:** La consulta por rango de fechas debe incluir liquidaciones desde las 00:00 de la fecha inicial hasta las 23:59 de la fecha final.
