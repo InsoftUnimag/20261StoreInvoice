@@ -37,12 +37,12 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 **Endpoint:** `GET /api/v1/pedidos/{id_pedido}/tiene-forma-pago`
 
 **Parámetros:**
-- `id_pedido` (path): ID del pedido
+- `id_cliente` (path): ID del cliente
 
 **Respuesta:**
 ```json
 {
-  "id_pedido": 123, //debe ser id Cliente, corregir
+  "id_cliente": 123, 
   "tiene_forma_pago": true
 }
 ```

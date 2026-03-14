@@ -34,10 +34,6 @@ Yo como transportista deseo consultar mis liquidaciones desde una interfaz web. 
    - **When:** Navega a la siguiente página
    - **Then:** Se muestran los siguientes 20 registros
 
-4. **Scenario:** Descarga de PDF
-   - **Given:** El transportista visualiza sus liquidaciones
-   - **When:** Hace clic en el enlace del PDF de una liquidación
-   - **Then:** Se descarga el PDF de la liquidación
 
 ---
 
