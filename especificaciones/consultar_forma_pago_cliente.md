@@ -42,7 +42,7 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 **Respuesta:**
 ```json
 {
-  "id_pedido": 123,
+  "id_pedido": 123, //debe ser id Cliente, corregir
   "tiene_forma_pago": true
 }
 ```
