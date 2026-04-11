@@ -6,6 +6,7 @@ Summary
 [Extract from feature spec: primary requirement + technical approach from research]
 Technical Context
 
+
 Language/Version: Java 21 (LTS)
 Primary Dependencies: Spring Boot 3.x, Spring Data JPA, Spring Security, Spring Cloud Stream (para eventos)
 Storage: PostgreSQL con modelo puertos y adaptadores (arquitectura limpia) para no acoplarse a una BD específica
@@ -28,7 +29,18 @@ Source Code (repository root)
 <!-- ACTION REQUIRED: Replace the placeholder tree below with the concrete layout for this feature. Delete unused options and expand the chosen structure with real paths (e.g., apps/admin, packages/something). The delivered plan must not include Option labels. -->
 
 # Estructura de Proyecto: Backend API (Sistema Financiero) - Arquitectura Hexagonal
-
+#
+# PRINCIPIOS DE ARQUITECTURA HEXAGONAL (PUERTOS Y ADAPTADORES):
+# - Domain (hexágono central): NO depende de nada externo. Contiene entidades, value objects, eventos de dominio
+# - Application: Depende SOLO de domain. Contiene casos de uso, puertos (interfaces), DTOs
+# - Infrastructure: Depende de application y domain. Contiene adaptadores concretos (REST, messaging, persistence)
+#
+# FLUJO DE DEPENDENCIAS: infrastructure → application → domain
+#
+# CLASIFICACIÓN DE PUERTOS:
+# - Inbound Ports (Driving/Primary): Interfaces que definen cómo se usa la aplicación (implementadas por adaptadores entrantes)
+# - Outbound Ports (Driven/Secondary): Interfaces que definen qué necesita la aplicación del exterior (implementadas por adaptadores salientes)
+#
 src/
 ├── main/
 │   ├── java/
@@ -36,237 +48,171 @@ src/
 │   │       └── storeinvoice/
 │   │           ├── StoreInvoiceApplication.java
 │   │           │
-│   │           ├── domain/                                       🟢 DOMINIO PURO (sin dependencias externas)
-│   │           │   ├── model/
+│   │           ├── domain/                              # HEXÁGONO CENTRAL - Sin dependencias externas
+│   │           │   ├── model/                           # Entidades de dominio (POJOs ricos con lógica)
 │   │           │   │   ├── Pedido.java
 │   │           │   │   ├── Cliente.java
 │   │           │   │   ├── LiquidacionCliente.java
 │   │           │   │   ├── LiquidacionTransportista.java
-│   │           │   │   ├── FormaPago.java
-│   │           │   │   ├── Transportista.java
-│   │           │   │   └── TasaEfectividad.java (Value Object)
-│   │           │   │
-│   │           │   ├── event/                                    Domain Events (hechos del negocio)
-│   │           │   │   ├── DomainEvent.java (interfaz base)
-│   │           │   │   ├── PedidoRecibidoEvent.java
-│   │           │   │   ├── LiquidacionClienteGeneradaEvent.java
-│   │           │   │   ├── LiquidacionTransportistaGeneradaEvent.java
-│   │           │   │   ├── EstadoFinalRecibidoEvent.java
-│   │           │   │   └── DomainEventPublisher.java (port)
-│   │           │   │
-│   │           │   ├── exception/                                Excepciones de negocio
-│   │           │   │   ├── ClienteNoEncontradoException.java
-│   │           │   │   ├── FormaPagoNoRegistradaException.java
-│   │           │   │   ├── ErrorGenerarPDFException.java
-│   │           │   │   ├── TasaEfectividadInvalidaException.java
-│   │           │   │   ├── PedidoNoEncontradoException.java
-│   │           │   │   └── DomainException.java (base)
-│   │           │   │
-│   │           │   └── port/                                     Contratos con el exterior
-│   │           │       ├── out/                                  Puertos de SALIDA (dependencias del dominio)
-│   │           │       │   ├── PedidoRepository.java
-│   │           │       │   ├── ClienteRepository.java
-│   │           │       │   ├── LiquidacionRepository.java
-│   │           │       │   ├── PdfGenerator.java
-│   │           │       │   ├── DomainEventPublisher.java
-│   │           │       │   └── StorageClient.java (para subir PDFs)
-│   │           │       │
-│   │           │       └── in/                                   Puertos de ENTRADA (APIs que expone el dominio)
-│   │           │           ├── ConsultarClientePort.java
-│   │           │           ├── ConsultarFormaPagoPort.java
-│   │           │           ├── ConsultarTotalPedidoPort.java
-│   │           │           ├── GenerarLiquidacionClientePort.java
-│   │           │           ├── GenerarLiquidacionTransportistaPort.java
-│   │           │           └── ConsultarLiquidacionesPort.java
+│   │           │   │   └── FormaPago.java
+│   │           │   ├── valueobject/                     # Value Objects (objetos inmutables por valor)
+│   │           │   │   ├── IdNacional.java
+│   │           │   │   ├── Direccion.java
+│   │           │   │   ├── Monto.java
+│   │           │   │   └── TasaEfectividad.java
+│   │           │   ├── event/                           # Eventos de dominio
+│   │           │   │   ├── PedidoRegistradoEvent.java
+│   │           │   │   ├── LiquidacionGeneradaEvent.java
+│   │           │   │   └── EstadoFinalEntregaEvent.java
+│   │           │   └── exception/                       # Excepciones de dominio
+│   │           │       ├── PedidoNotFoundException.java
+│   │           │       ├── ClienteNotFoundException.java
+│   │           │       ├── LiquidacionException.java
+│   │           │       └── DomainException.java
 │   │           │
-│   │           ├── application/                                  🟠 CAPA DE APLICACIÓN (Orquestación de casos de uso)
-│   │           │   ├── service/                                  Application Services / Use Cases
-│   │           │   │   ├── ConsultarClienteUseCase.java
-│   │           │   │   ├── ConsultarFormaPagoUseCase.java
-│   │           │   │   ├── ConsultarTotalPedidoUseCase.java
-│   │           │   │   ├── GenerarLiquidacionClienteUseCase.java
-│   │           │   │   ├── GenerarLiquidacionTransportistaUseCase.java
-│   │           │   │   ├── ConsultarLiquidacionesUseCase.java
-│   │           │   │   ├── ProcesarEventoPedidoUseCase.java
-│   │           │   │   ├── ProcesarEventoEstadoFinalUseCase.java
-│   │           │   │   └── IngresoFormaPagoUseCase.java
-│   │           │   │
-│   │           │   ├── dto/
-│   │           │   │   ├── input/                                DTOs de entrada
-│   │           │   │   │   ├── GenerarLiquidacionClienteRequest.java
-│   │           │   │   │   ├── GenerarLiquidacionTransportistaRequest.java
-│   │           │   │   │   ├── ConsultarClienteRequest.java
-│   │           │   │   │   ├── FiltrosLiquidacionRequest.java
-│   │           │   │   │   ├── EventoPedidoRequest.java
-│   │           │   │   │   └── EventoEstadoFinalRequest.java
-│   │           │   │   │
-│   │           │   │   └── output/                               DTOs de salida
+│   │           ├── application/                         # CAPA DE APLICACIÓN - Depende solo de domain
+│   │           │   ├── service/                         # CASOS DE USO (Application Services)
+│   │           │   │   ├── cliente/
+│   │           │   │   │   ├── ConsultarClientePorIdNacionalUseCase.java
+│   │           │   │   │   └── ConsultarFormaPagoClienteUseCase.java
+│   │           │   │   ├── pedido/
+│   │           │   │   │   ├── RegistrarPedidoUseCase.java
+│   │           │   │   │   └── ConsultarPedidoUseCase.java
+│   │           │   │   └── liquidacion/
+│   │           │   │       ├── GenerarLiquidacionesUseCase.java
+│   │           │   │       └── ConsultarLiquidacionesUseCase.java
+│   │           │   ├── dto/                             # DTOs - Transferencia de datos
+│   │           │   │   ├── command/                     # Comandos (escritura)
+│   │           │   │   │   ├── RegistrarPedidoCommand.java
+│   │           │   │   │   └── ProcesarEstadoFinalCommand.java
+│   │           │   │   ├── query/                       # Consultas (lectura con filtros)
+│   │           │   │   │   ├── ConsultarLiquidacionesQuery.java
+│   │           │   │   │   └── ConsultarClienteQuery.java
+│   │           │   │   └── response/                    # Respuestas (lectura)
 │   │           │   │       ├── ClienteResponse.java
 │   │           │   │       ├── FormaPagoResponse.java
-│   │           │   │       ├── TotalPedidoResponse.java
 │   │           │   │       ├── LiquidacionClienteResponse.java
-│   │           │   │       ├── LiquidacionTransportistaResponse.java
-│   │           │   │       ├── LiquidacionesClienteResponse.java
-│   │           │   │       ├── LiquidacionesTransportistaResponse.java
-│   │           │   │       └── LiquidacionesGeneralesResponse.java
-│   │           │   │
-│   │           │   └── mapper/                                   Mapeo entre capas
-│   │           │       ├── ClienteMapper.java
-│   │           │       ├── LiquidacionMapper.java
-│   │           │       ├── FormaPagoMapper.java
-│   │           │       └── EventoMapper.java
+│   │           │   │       └── LiquidacionTransportistaResponse.java
+│   │           │   └── exception/                       # Excepciones de aplicación
+│   │           │       ├── ApplicationException.java
+│   │           │       └── UseCaseExecutionException.java
 │   │           │
-│   │           ├── adapter/                                      🔴 INFRAESTRUCTURA (Implementaciones)
-│   │           │   │
-│   │           │   ├── in/                                       ADAPTADORES DE ENTRADA
-│   │           │   │   ├── http/
-│   │           │   │   │   ├── ClienteController.java
-│   │           │   │   │   ├── LiquidacionController.java
-│   │           │   │   │   ├── FormaPagoController.java
-│   │           │   │   │   ├── GlobalExceptionHandler.java
-│   │           │   │   │   ├── RestExceptionTranslator.java
-│   │           │   │   │   └── HttpConfig.java
-│   │           │   │   │
-│   │           │   │   └── event/
-│   │           │   │       ├── PedidoEventConsumer.java         (Consumer de eventos desde Inventario)
-│   │           │   │       ├── EstadoFinalEventConsumer.java    (Consumer de eventos desde Transporte)
-│   │           │   │       ├── EventConsumerConfig.java
-│   │           │   │       └── KafkaConsumerConfig.java
-│   │           │   │
-│   │           │   └── out/                                      ADAPTADORES DE SALIDA
-│   │           │       ├── persistence/
-│   │           │       │   ├── entity/
-│   │           │       │   │   ├── PedidoEntity.java
-│   │           │       │   │   ├── ClienteEntity.java
-│   │           │       │   │   ├── LiquidacionClienteEntity.java
-│   │           │       │   │   ├── LiquidacionTransportistaEntity.java
-│   │           │       │   │   └── FormaPagoEntity.java
-│   │           │       │   │
-│   │           │       │   ├── repository/
-│   │           │       │   │   ├── PedidoRepositoryAdapter.java
-│   │           │       │   │   ├── ClienteRepositoryAdapter.java
-│   │           │       │   │   ├── LiquidacionRepositoryAdapter.java
-│   │           │       │   │   └── RepositoryExceptionTranslator.java
-│   │           │       │   │
-│   │           │       │   ├── jpa/
-│   │           │       │   │   ├── PedidoJpaRepository.java
-│   │           │       │   │   ├── ClienteJpaRepository.java
-│   │           │       │   │   ├── LiquidacionJpaRepository.java
-│   │           │       │   │   └── FormaPagoJpaRepository.java
-│   │           │       │   │
-│   │           │       │   └── config/
-│   │           │       │       ├── PersistenceConfig.java
-│   │           │       │       └── JpaAuditingConfig.java
-│   │           │       │
-│   │           │       ├── messaging/
-│   │           │       │   ├── publisher/
-│   │           │       │   │   ├── LiquidacionEventPublisher.java
-│   │           │       │   │   └── KafkaEventPublisher.java
-│   │           │       │   │
-│   │           │       │   └── config/
-│   │           │       │       ├── KafkaProducerConfig.java
-│   │           │       │       └── MessagingConfig.java
-│   │           │       │
-│   │           │       ├── generator/
-│   │           │       │   ├── impl/
-│   │           │       │   │   ├── PdfGeneratorImpl.java
-│   │           │       │   │   └── StorageClientImpl.java
-│   │           │       │   │
-│   │           │       │   └── config/
-│   │           │       │       ├── PdfGeneratorConfig.java
-│   │           │       │       └── StorageConfig.java
-│   │           │       │
-│   │           │       └── external/                             Clientes HTTP para otros módulos
-│   │           │           ├── InventarioClient.java
-│   │           │           ├── TransporteClient.java
-│   │           │           └── config/
-│   │           │               └── ExternalServicesConfig.java
+│   │           ├── infrastructure/                      # INFRAESTRUCTURA - Adaptadores concretos
+│   │           │   ├── adapter/
+│   │           │   │   ├── inbound/                     # ADAPTADORES ENTRANTES (Driving Adapters)
+│   │           │   │   │   ├── rest/                    # Controllers REST
+│   │           │   │   │   │   ├── ClienteController.java
+│   │           │   │   │   │   ├── PedidoController.java
+│   │           │   │   │   │   └── LiquidacionController.java
+│   │           │   │   │   └── messaging/               # Consumers de eventos
+│   │           │   │   │       ├── PedidoEventConsumer.java
+│   │           │   │   │       └── EstadoFinalEventConsumer.java
+│   │           │   │   └── outbound/                    # ADAPTADORES SALIENTES (Driven Adapters)
+│   │           │   │       ├── persistence/             # Implementaciones de repositorios
+│   │           │   │       │   ├── PedidoRepositoryAdapter.java
+│   │           │   │       │   ├── ClienteRepositoryAdapter.java
+│   │           │   │       │   └── LiquidacionRepositoryAdapter.java
+│   │           │   │       └── external/                # Implementaciones de servicios externos
+│   │           │   │           ├── InventarioServiceAdapter.java
+│   │           │   │           └── TransporteServiceAdapter.java
+│   │           │   ├── persistence/                     # CONFIGURACIÓN DE PERSISTENCIA
+│   │           │   │   ├── entity/                      # Entidades JPA (mapeo a BD)
+│   │           │   │   │   ├── PedidoJpaEntity.java
+│   │           │   │   │   ├── ClienteJpaEntity.java
+│   │           │   │   │   ├── LiquidacionClienteJpaEntity.java
+│   │           │   │   │   └── LiquidacionTransportistaJpaEntity.java
+│   │           │   │   ├── mapper/                      # Mappers entre Entities y Models
+│   │           │   │   │   ├── PedidoEntityMapper.java
+│   │           │   │   │   ├── ClienteEntityMapper.java
+│   │           │   │   │   └── LiquidacionEntityMapper.java
+│   │           │   │   └── DatabaseConfig.java
+│   │           │   ├── messaging/                       # CONFIGURACIÓN DE MENSAJERÍA
+│   │           │   │   ├── EventConfig.java
+│   │           │   │   └── DeadLetterQueueConfig.java
+│   │           │   ├── security/                        # CONFIGURACIÓN DE SEGURIDAD
+│   │           │   │   ├── SecurityConfig.java
+│   │           │   │   └── JwtAuthenticationFilter.java
+│   │           │   └── pdf/                             # GENERACIÓN DE PDF
+│   │           │       ├── PdfGeneratorAdapter.java
+│   │           │       └── PdfTemplateConfig.java
+│   │           │   ├── port/                            # PUERTOS (Interfaces) - Clasificación hexagonal
+│   │           │   │   ├── inbound/                     # Inbound Ports (Driving/Primary)
+│   │           │   │   │   ├── ClienteInboundPort.java  # Interface para operaciones de cliente
+│   │           │   │   │   ├── PedidoInboundPort.java   # Interface para operaciones de pedido
+│   │           │   │   │   └── LiquidacionInboundPort.java # Interface para operaciones de liquidación
+│   │           │   │   └── outbound/                    # Outbound Ports (Driven/Secondary)
+│   │           │   │       ├── PedidoRepositoryPort.java
+│   │           │   │       ├── ClienteRepositoryPort.java
+│   │           │   │       ├── LiquidacionRepositoryPort.java
+│   │           │   │       ├── InventarioServicePort.java
+│   │           │   │       └── TransporteServicePort.java
 │   │           │
-│   │           └── config/                                       📋 CONFIGURACIÓN GLOBAL
-│   │               ├── security/
-│   │               │   └── SecurityConfig.java
-│   │               ├── properties/
-│   │               │   └── ApplicationProperties.java
-│   │               ├── bean/
-│   │               │   └── BeanConfig.java
-│   │               └── logger/
-│   │                   └── LoggingConfig.java
+│   │           └── config/                              # CONFIGURACIÓN GENERAL
+│   │               ├── ApplicationProperties.java
+│   │               └── SwaggerConfig.java
 │   │
 │   └── resources/
 │       ├── application.yml
 │       ├── application-dev.yml
 │       ├── application-prod.yml
 │       └── db/migration/
-│           ├── V1__init_schema.sql
-│           └── V2__add_indexes.sql
 │
 └── test/
     ├── java/
     │   └── com/
     │       └── storeinvoice/
-    │           ├── domain/                        Pruebas del dominio (sin dependencias externas)
+    │           ├── domain/
     │           │   ├── model/
-    │           │   │   ├── PedidoTest.java
-    │           │   │   ├── ClienteTest.java
-    │           │   │   └── TasaEfectividadTest.java
-    │           │   │
-    │           │   └── service/                    IMPORTANTE: No hay service tests porque el dominio
-    │           │       └── (vacío)                 no tiene servicios de aplicación
-    │           │
+    │           │   │   └── PedidoTest.java
+    │           │   ├── valueobject/
+    │           │   │   ├── IdNacionalTest.java
+    │           │   │   └── MontoTest.java
+    │           │   ├── event/
+    │           │   │   └── # Tests de eventos de dominio
+    │           │   └── exception/
+    │           │       └── # Tests de excepciones de dominio
     │           ├── application/
-    │           │   └── service/                    Pruebas de use cases
-    │           │       ├── ConsultarClienteUseCaseTest.java
-    │           │       ├── GenerarLiquidacionClienteUseCaseTest.java
-    │           │       ├── GenerarLiquidacionTransportistaUseCaseTest.java
-    │           │       ├── ConsultarLiquidacionesUseCaseTest.java
-    │           │       └── ProcesarEventoEstadoFinalUseCaseTest.java
-    │           │
-    │           ├── adapter/
-    │           │   ├── in/
-    │           │   │   ├── http/
-    │           │   │   │   ├── ClienteControllerTest.java
-    │           │   │   │   ├── LiquidacionControllerTest.java
-    │           │   │   │   └── GlobalExceptionHandlerTest.java
-    │           │   │   │
-    │           │   │   └── event/
-    │           │   │       ├── PedidoEventConsumerTest.java
-    │           │   │       └── EstadoFinalEventConsumerTest.java
-    │           │   │
-    │           │   └── out/
-    │           │       ├── persistence/
-    │           │       │   ├── PedidoRepositoryAdapterTest.java
-    │           │       │   ├── ClienteRepositoryAdapterTest.java
-    │           │       │   └── LiquidacionRepositoryAdapterTest.java
-    │           │       │
-    │           │       └── generator/
-    │           │           ├── PdfGeneratorImplTest.java
-    │           │           └── StorageClientImplTest.java
-    │           │
-    │           └── integration/                   Pruebas de integración (con TestContainers)
-    │               ├── ConsultarClienteIntegrationTest.java
-    │               ├── GenerarLiquidacionIntegrationTest.java
-    │               ├── RecepcionPedidoIntegrationTest.java
-    │               ├── EstadoFinalIntegrationTest.java
-    │               └── ConsultarLiquidacionesIntegrationTest.java
-    │
+    │           │   ├── port/
+    │           │   │   └── # Tests de contratos de puertos (interface tests)
+    │           │   ├── service/
+    │           │   │   ├── cliente/
+    │           │   │   │   ├── ConsultarClientePorIdNacionalUseCaseTest.java
+    │           │   │   │   └── ConsultarFormaPagoClienteUseCaseTest.java
+    │           │   │   ├── pedido/
+    │           │   │   │   ├── RegistrarPedidoUseCaseTest.java
+    │           │   │   │   └── ConsultarPedidoUseCaseTest.java
+    │           │   │   └── liquidacion/
+    │           │   │       ├── GenerarLiquidacionesUseCaseTest.java
+    │           │   │       └── ConsultarLiquidacionesUseCaseTest.java
+    │           │   └── dto/
+    │           │       └── # Tests de validación de DTOs
+    │           └── infrastructure/
+    │               ├── adapter/
+    │               │   ├── inbound/
+    │               │   │   ├── rest/
+    │               │   │   │   ├── ClienteControllerTest.java
+    │               │   │   │   ├── PedidoControllerTest.java
+    │               │   │   │   └── LiquidacionControllerTest.java
+    │               │   │   └── messaging/
+    │               │   │       ├── PedidoEventConsumerTest.java
+    │               │   │       └── EstadoFinalEventConsumerTest.java
+    │               │   └── outbound/
+    │               │       ├── persistence/
+    │               │       │   ├── PedidoRepositoryAdapterTest.java
+    │               │       │   ├── ClienteRepositoryAdapterTest.java
+    │               │       │   └── LiquidacionRepositoryAdapterTest.java
+    │               │       └── external/
+    │               │           ├── InventarioServiceAdapterTest.java
+    │               │           └── TransporteServiceAdapterTest.java
+    │               └── integration/
+    │                   ├── PedidoIntegrationTest.java
+    │                   ├── ClienteIntegrationTest.java
+    │                   └── LiquidacionIntegrationTest.java
     └── resources/
         ├── test-application.yml
-        ├── test-containers-config.yml
-        ├── fixtures/
-        │   ├── cliente-fixture.json
-        │   ├── pedido-fixture.json
-        │   └── liquidacion-fixture.json
-        └── contracts/
-            ├── consultar-cliente.yaml
-            ├── consultar-forma-pago.yaml
-            ├── consultar-liquidaciones.yaml
-            └── recibir-evento-pedido.yaml
+        └── test-containers-config.yml
 
-Structure Decision: Arquitectura Hexagonal (Puertos y Adaptadores) con Clean Architecture. El dominio es completamente independiente de frameworks (Java puro). La capa de aplicación contiene los Use Cases (orquestación de reglas de negocio). Los adaptadores implementan puertos y encapsulan toda la infraestructura (HTTP, bases de datos, eventos, almacenamiento, etc.). Esta estructura garantiza:
-✅ Testabilidad: Dominio sin dependencias externas
-✅ Mantenibilidad: Reglas de negocio centralizadas
-✅ Escalabilidad: Fácil agregar nuevos adaptadores (REST, SOAP, gRPC, etc.)
-✅ Flexibilidad de infraestructura: Cambiar BD, message broker, storage sin tocar dominio
+Structure Decision: Backend API con arquitectura limpia (Clean Architecture) basada en capas de dominio, aplicación e infraestructura. El proyecto sigue el patrón puertos y adaptadores para mantener el dominio desacoplado de la infraestructura. Se utiliza Spring Boot 3.x con Java 21 para implementar un sistema financiero que se comunica mediante eventos y APIs REST.
 
 Consideraciones de Programación Reactiva y Funcional:
 
@@ -291,10 +237,9 @@ Purpose: Project initialization and basic structure
 
     [ ] T001 Crear proyecto Maven/Gradle con Java 21 y Spring Boot 3.x
     [ ] T002 Configurar dependencias principales (Spring Data JPA, Spring Security, Spring Cloud Stream, TestContainers)
-    [ ] T003 Configurar herramientas de linting y formateo (Checkstyle, Spotless, SonarQube)
-    [ ] T004 Crear configuración base de Docker y Docker Compose para PostgreSQL y Redis
-    [ ] T005 Configurar CI/CD básico (GitHub Actions o GitLab CI)
-    [ ] T006 Crear documentación inicial del proyecto (README, arquitectura, guía de desarrollo)
+    [ ] T003 Crear configuración base de Docker y Docker Compose para PostgreSQL y Redis
+    [ ] T004 Configurar CI/CD básico (GitHub Actions o GitLab CI)
+    [ ] T005 Crear documentación inicial del proyecto (README, arquitectura, guía de desarrollo)
 
 Phase 2: Foundational (Blocking Prerequisites)
 
@@ -302,18 +247,18 @@ Purpose: Core infrastructure that MUST be complete before ANY user story can be 
 
 ⚠️ CRITICAL: No user story work can begin until this phase is complete
 
-    [ ] T007 Crear entidades base del dominio (Pedido, Cliente, LiquidacionCliente, LiquidacionTransportista, FormaPago)
-    [ ] T008 Configurar base de datos PostgreSQL con Flyway para migraciones
-    [ ] T009 Implementar capa de persistencia con JPA/Hibernate (puertos y adaptadores)
-    [ ] T010 Configurar manejo de eventos con Spring Cloud Stream (Kafka/RabbitMQ)
-    [ ] T011 Implementar configuración de logging estructurado (SLF4J + Logback)
-    [ ] T012 Configurar manejo de excepciones global y respuestas de error estandarizadas
-    [ ] T013 Implementar configuración de seguridad básica (Spring Security)
-    [ ] T014 Configurar validación de datos con Bean Validation (JSR-380)
-    [ ] T015 Crear DTOs base para transferencia de datos entre capas
-    [ ] T016 Configurar Swagger/OpenAPI para documentación de APIs
-    [ ] T017 Implementar configuración de entornos (dev, test, prod)
-    [ ] T018 Crear pruebas unitarias base para capa de dominio
+    [ ] T006 Crear entidades base del dominio (Pedido, Cliente, LiquidacionCliente, LiquidacionTransportista, FormaPago)
+    [ ] T007 Configurar base de datos PostgreSQL con Flyway para migraciones
+    [ ] T008 Implementar capa de persistencia con JPA/Hibernate (puertos y adaptadores)
+    [ ] T009 Configurar manejo de eventos con Spring Cloud Stream (RabbitMQ) // 
+    [ ] T010 Implementar configuración de logging estructurado (SLF4J + Logback)
+    [ ] T011 Configurar manejo de excepciones global y respuestas de error estandarizadas
+    [ ] T012 Implementar configuración de seguridad básica (Spring Security)
+    [ ] T013 Configurar validación de datos con Bean Validation (JSR-380)
+    [ ] T014 Crear DTOs base para transferencia de datos entre capas
+    [ ] T015 Configurar Swagger/OpenAPI para documentación de APIs
+    [ ] T016 Implementar configuración de entornos (dev, test, prod)
+    [ ] T017 Crear pruebas unitarias base para capa de dominio
 
 Checkpoint: Foundation ready - user story implementation can now begin in parallel
 
@@ -326,19 +271,19 @@ Independent Test: El endpoint debe retornar el ID de base de datos del cliente e
 
 Tests for User Story 1
 
-    [ ] T019 Crear test de contrato para GET /api/v1/clientes/{id_nacional} en tests/contract/test_consultar_cliente_id_nacional.java
-    [ ] T020 Crear test de integración para flujo completo de consulta de cliente en tests/integration/test_consulta_cliente_completa.java
+    [ ] T018 Crear test de contrato para GET /api/v1/clientes/{id_nacional} en tests/contract/test_consultar_cliente_id_nacional.java
+    [ ] T019 Crear test de integración para flujo completo de consulta de cliente en tests/integration/test_consulta_cliente_completa.java
 
 Implementation for User Story 1
 
-    [ ] T021 Crear entidad Cliente en src/main/java/com/storeinvoice/domain/model/Cliente.java
-    [ ] T022 Crear puerto ClienteRepository en src/main/java/com/storeinvoice/domain/port/out/ClienteRepository.java
-    [ ] T023 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/adapter/out/persistence/repository/ClienteRepositoryAdapter.java
-    [ ] T024 Crear ClienteMapper en src/main/java/com/storeinvoice/application/mapper/ClienteMapper.java
-    [ ] T025 Crear ConsultarClienteUseCase en src/main/java/com/storeinvoice/application/service/ConsultarClienteUseCase.java
-    [ ] T026 Crear ClienteController en src/main/java/com/storeinvoice/adapter/in/http/ClienteController.java
-    [ ] T027 Implementar endpoint GET /api/v1/clientes/{id_nacional} con validación y manejo de errores
-    [ ] T028 Crear ClienteResponse en src/main/java/com/storeinvoice/application/dto/output/ClienteResponse.java
+    [ ] T020 Crear entidad Cliente en src/main/java/com/storeinvoice/domain/model/Cliente.java
+    [ ] T021 Crear puerto ClienteRepositoryPort en src/main/java/com/storeinvoice/application/port/outbound/ClienteRepositoryPort.java
+    [ ] T022 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/infrastructure/adapter/outbound/persistence/ClienteRepositoryAdapter.java
+    [ ] T023 Crear caso de uso ConsultarClientePorIdNacionalUseCase en src/main/java/com/storeinvoice/application/service/cliente/
+    [ ] T024 Crear ClienteController en src/main/java/com/storeinvoice/infrastructure/adapter/inbound/rest/ClienteController.java
+    [ ] T025 Implementar endpoint GET /api/v1/clientes/{id_nacional} con validación y manejo de errores
+    [ ] T026 Agregar logging para operaciones de consulta de cliente
+    [ ] T027 Crear ClienteResponse en src/main/java/com/storeinvoice/application/dto/response/
 
 Checkpoint: At this point, User Story 1 should be fully functional and testable independently
 Phase 4: User Story 2 - Consulta de Forma de Pago del Cliente (Priority: P2)
@@ -349,18 +294,18 @@ Independent Test: El endpoint debe retornar la forma de pago del cliente en meno
 
 Tests for User Story 2
 
-    [ ] T029 Crear test de contrato para GET /api/v1/pedidos/{id_pedido}/forma-pago en tests/contract/test_consultar_forma_pago.java
-    [ ] T030 Crear test de integración para flujo completo de consulta de forma de pago en tests/integration/test_consulta_forma_pago_completa.java
+    [ ] T028 Crear test de contrato para GET /api/v1/pedidos/{id_pedido}/forma-pago en tests/contract/test_consultar_forma_pago.java
+    [ ] T029 Crear test de integración para flujo completo de consulta de forma de pago en tests/integration/test_consulta_forma_pago_completa.java
 
 Implementation for User Story 2
 
-    [ ] T031 Crear ConsultarFormaPagoUseCase en src/main/java/com/storeinvoice/application/service/ConsultarFormaPagoUseCase.java
-    [ ] T032 Crear FormaPagoResponse en src/main/java/com/storeinvoice/application/dto/output/FormaPagoResponse.java
-    [ ] T033 Crear endpoint GET /api/v1/pedidos/{id_pedido}/forma-pago en FormaPagoController
-    [ ] T034 Crear endpoint GET /api/v1/clientes/{id_cliente}/tiene-forma-pago en FormaPagoController
-    [ ] T035 Implementar validación de formas de pago válidas (CONTRA_ENTREGA, CARTERA_COMERCIAL)
-    [ ] T036 Agregar logging para operaciones de consulta de forma de pago
-    [ ] T037 Crear FormaPagoController en src/main/java/com/storeinvoice/adapter/in/http/FormaPagoController.java
+    [ ] T030 Crear lógica de dominio para FormaPago en src/main/java/com/storeinvoice/domain/model/FormaPago.java
+    [ ] T031 Implementar lógica para buscar forma de pago por ID de cliente
+    [ ] T032 Crear caso de uso ConsultarFormaPagoClienteUseCase en src/main/java/com/storeinvoice/application/service/cliente/
+    [ ] T033 Crear endpoint GET /api/v1/pedidos/{id_pedido}/forma-pago en ClienteController
+    [ ] T034 Implementar validación de formas de pago válidas (CONTRA_ENTREGA, CARTERA_COMERCIAL)
+    [ ] T035 Agregar logging para operaciones de consulta de forma de pago
+    [ ] T036 Crear FormaPagoResponse en src/main/java/com/storeinvoice/application/dto/response/
 
 Checkpoint: At this point, User Stories 1 AND 2 should both work independently
 Phase 5: User Story 3 - Recepción de Datos del Pedido desde Módulo de Inventario (Priority: P3)
@@ -371,20 +316,20 @@ Independent Test: El sistema debe recibir y almacenar exitosamente los datos del
 
 Tests for User Story 3
 
-    [ ] T038 Crear test de contrato para evento de recepción de pedido en tests/contract/test_recepcion_pedido_event.java
-    [ ] T039 Crear test de integración para flujo completo de recepción y almacenamiento de pedido en tests/integration/test_recepcion_pedido_completa.java
+    [ ] T037 Crear test de contrato para evento de recepción de pedido en tests/contract/test_recepcion_pedido_event.java
+    [ ] T038 Crear test de integración para flujo completo de recepción y almacenamiento de pedido en tests/integration/test_recepcion_pedido_completa.java
 
 Implementation for User Story 3
 
-    [ ] T040 Crear entidad Pedido en src/main/java/com/storeinvoice/domain/model/Pedido.java
-    [ ] T041 Crear puerto PedidoRepository en src/main/java/com/storeinvoice/domain/port/out/PedidoRepository.java
-    [ ] T042 Implementar PedidoRepositoryAdapter en src/main/java/com/storeinvoice/adapter/out/persistence/repository/PedidoRepositoryAdapter.java
-    [ ] T043 Crear ProcesarEventoPedidoUseCase en src/main/java/com/storeinvoice/application/service/ProcesarEventoPedidoUseCase.java
-    [ ] T044 Crear PedidoEventConsumer en src/main/java/com/storeinvoice/adapter/in/event/PedidoEventConsumer.java
-    [ ] T045 Implementar lógica para consultar forma de pago del cliente al recibir el pedido
-    [ ] T046 Crear EventoPedidoRequest en src/main/java/com/storeinvoice/application/dto/input/EventoPedidoRequest.java
-    [ ] T047 Implementar validación de datos del pedido recibido
-    [ ] T048 Agregar logging para operaciones de recepción de pedido
+    [ ] T039 Crear entidad Pedido en src/main/java/com/storeinvoice/domain/model/Pedido.java
+    [ ] T040 Crear puerto PedidoRepositoryPort en src/main/java/com/storeinvoice/application/port/outbound/PedidoRepositoryPort.java
+    [ ] T041 Implementar PedidoRepositoryAdapter en src/main/java/com/storeinvoice/infrastructure/adapter/outbound/persistence/PedidoRepositoryAdapter.java
+    [ ] T042 Crear caso de uso RegistrarPedidoUseCase en src/main/java/com/storeinvoice/application/service/pedido/
+    [ ] T043 Crear PedidoEventConsumer en src/main/java/com/storeinvoice/infrastructure/adapter/inbound/messaging/PedidoEventConsumer.java
+    [ ] T044 Implementar lógica para consultar forma de pago del cliente al recibir el pedido
+    [ ] T045 Crear RegistrarPedidoCommand en src/main/java/com/storeinvoice/application/dto/command/
+    [ ] T046 Implementar validación de datos del pedido recibido
+    [ ] T047 Agregar logging para operaciones de recepción de pedido
 
 Checkpoint: All user stories should now be independently functional
 
@@ -396,20 +341,20 @@ Independent Test: El sistema debe recibir el evento, validar los datos y procesa
 
 Tests for User Story 4
 
-    [ ] T049 Crear test de contrato para evento de estado final en tests/contract/test_estado_final_event.java
-    [ ] T050 Crear test de integración para flujo completo de recepción y procesamiento de liquidaciones en tests/integration/test_procesamiento_liquidaciones_completa.java
+    [ ] T048 Crear test de contrato para evento de estado final en tests/contract/test_estado_final_event.java
+    [ ] T049 Crear test de integración para flujo completo de recepción y procesamiento de liquidaciones en tests/integration/test_procesamiento_liquidaciones_completa.java
 
 Implementation for User Story 4
 
-    [ ] T051 Crear EstadoFinalEventConsumer en src/main/java/com/storeinvoice/adapter/in/event/EstadoFinalEventConsumer.java
-    [ ] T052 Crear GenerarLiquidacionClienteUseCase en src/main/java/com/storeinvoice/application/service/GenerarLiquidacionClienteUseCase.java
-    [ ] T053 Implementar lógica para generar liquidación del cliente según fórmula: (precio_pedido + tarifa_envío) × (tasa_efectividad / 100)
-    [ ] T054 Crear GenerarLiquidacionTransportistaUseCase en src/main/java/com/storeinvoice/application/service/GenerarLiquidacionTransportistaUseCase.java
-    [ ] T055 Crear PdfGeneratorImpl en src/main/java/com/storeinvoice/adapter/out/generator/impl/PdfGeneratorImpl.java
-    [ ] T056 Implementar validación de datos del evento (id_pedido, estado_final, tasa_efectividad, id_transportista)
-    [ ] T057 Crear entidades LiquidacionCliente y LiquidacionTransportista en domain/model/
-    [ ] T058 Crear puerto LiquidacionRepository en src/main/java/com/storeinvoice/domain/port/out/LiquidacionRepository.java
-    [ ] T059 Agregar logging para operaciones de generación de liquidaciones
+    [ ] T050 Crear EstadoFinalEventConsumer en src/main/java/com/storeinvoice/infrastructure/adapter/inbound/messaging/EstadoFinalEventConsumer.java
+    [ ] T051 Crear lógica de generación de liquidaciones en src/main/java/com/storeinvoice/application/service/liquidacion/GenerarLiquidacionesUseCase.java
+    [ ] T052 Implementar lógica para generar liquidación del cliente según fórmula: (precio_pedido + tarifa_envío) × (tasa_efectividad / 100)
+    [ ] T053 Implementar lógica para generar liquidación del transportista según matriz de porcentajes
+    [ ] T054 Crear PdfGeneratorAdapter en src/main/java/com/storeinvoice/infrastructure/adapter/outbound/pdf/PdfGeneratorAdapter.java
+    [ ] T055 Implementar validación de datos del evento (id_pedido, estado_final, tasa_efectividad, id_transportista)
+    [ ] T056 Crear entidades LiquidacionCliente y LiquidacionTransportista en domain/model/
+    [ ] T057 Implementar puerto LiquidacionRepositoryPort en application/port/outbound/ y adapter en infrastructure/adapter/outbound/persistence/
+    [ ] T058 Agregar logging para operaciones de generación de liquidaciones
 
 Phase 7: User Story 5 - Consulta de Liquidaciones (Priority: P5)
 
@@ -419,33 +364,33 @@ Independent Test: Los endpoints deben retornar las liquidaciones paginadas en me
 
 Tests for User Story 5
 
-    [ ] T060 Crear test de contrato para endpoints de consulta de liquidaciones en tests/contract/test_consulta_liquidaciones.java
-    [ ] T061 Crear test de integración para flujo completo de consulta de liquidaciones en tests/integration/test_consulta_liquidaciones_completa.java
+    [ ] T059 Crear test de contrato para endpoints de consulta de liquidaciones en tests/contract/test_consulta_liquidaciones.java
+    [ ] T060 Crear test de integración para flujo completo de consulta de liquidaciones en tests/integration/test_consulta_liquidaciones_completa.java
 
 Implementation for User Story 5
 
-    [ ] T062 Crear LiquidacionController en src/main/java/com/storeinvoice/adapter/in/http/LiquidacionController.java
-    [ ] T063 Crear ConsultarLiquidacionesClienteUseCase en application/service/
-    [ ] T064 Crear ConsultarLiquidacionesTransportistaUseCase en application/service/
-    [ ] T065 Crear ConsultarLiquidacionesGeneralesUseCase en application/service/
-    [ ] T066 Implementar paginación (20 registros por página por defecto)
-    [ ] T067 Implementar filtros por tipo, cliente, transportista y rango de fechas
-    [ ] T068 Crear LiquidacionClienteResponse y LiquidacionTransportistaResponse en application/dto/output/
-    [ ] T069 Agregar logging para operaciones de consulta de liquidaciones
+    [ ] T061 Crear LiquidacionController en src/main/java/com/storeinvoice/infrastructure/adapter/inbound/rest/LiquidacionController.java
+    [ ] T062 Implementar endpoint GET /api/v1/pedidos/{id_pedido}/liquidaciones para clientes
+    [ ] T063 Implementar endpoint GET /api/v1/pedidos/{id_pedido}/liquidaciones para transportistas
+    [ ] T064 Implementar endpoint GET /api/v1/liquidaciones con filtros para contadores
+    [ ] T065 Implementar paginación (20 registros por página por defecto)
+    [ ] T066 Implementar filtros por tipo, cliente, transportista y rango de fechas
+    [ ] T067 Crear LiquidacionClienteResponse y LiquidacionTransportistaResponse en application/dto/response/
+    [ ] T068 Agregar logging para operaciones de consulta de liquidaciones
 
 Phase N: Polish & Cross-Cutting Concerns
 
 Purpose: Improvements that affect multiple user stories
 
-    [ ] T070 Actualizaciones de documentación en docs/
-    [ ] T071 Limpieza y refactorización de código
-    [ ] T072 Optimización de performance en todas las historias de usuario
-    [ ] T073 Pruebas unitarias adicionales en tests/unit/
-    [ ] T074 Refuerzo de seguridad y validación de datos
-    [ ] T075 Configuración de monitoreo y métricas (Prometheus/Grafana)
-    [ ] T076 Pruebas de carga y estrés
-    [ ] T077 Documentación de API completa con ejemplos
-    [ ] T078 Guía de despliegue y operación
+    [ ] T069 Actualizaciones de documentación en docs/
+    [ ] T070 Limpieza y refactorización de código
+    [ ] T071 Optimización de performance en todas las historias de usuario
+    [ ] T072 Pruebas unitarias adicionales en tests/unit/
+    [ ] T073 Refuerzo de seguridad y validación de datos
+    [ ] T074 Configuración de monitoreo y métricas (Prometheus/Grafana)
+    [ ] T075 Pruebas de carga y estrés
+    [ ] T076 Documentación de API completa con ejemplos
+    [ ] T077 Guía de despliegue y operación
 
 Dependencies & Execution Order
 Phase Dependencies
@@ -465,13 +410,13 @@ User Story Dependencies
     User Story 4 (P4): Can start after Foundational (Phase 2) - Depende de US3 para datos del pedido
     User Story 5 (P5): Can start after Foundational (Phase 2) - Depende de US4 para datos de liquidaciones
 
-Within Each User Story (Hexagonal)
+Within Each User Story
 
-    Domain models first (no framework dependencies)
-    Define ports (interfaces for external dependencies)
-    Create use cases (application services that orchestrate domain logic)
-    Implement adapters (controllers, repositories, event consumers)
-    Tests after implementation (unit tests for domain, integration tests for adapters)
+    Models before services
+    Services before endpoints
+    Core implementation before integration
+    Story complete before moving to next priority
+    Tests after implementation
 
 Prioridades de Implementación
 
