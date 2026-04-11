@@ -1,0 +1,897 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sistema Financiero - API de Endpoints Internos",
+    "description": "API interna del Módulo 3 (Sistema Financiero) para consumo de otros módulos y interfaces web",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Equipo de Desarrollo"
+    },
+    "license": {
+      "name": "Propietario"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Servidor de desarrollo"
+    },
+    {
+      "url": "https://api.store-invoice.local",
+      "description": "Servidor de producción"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Consultas - Cliente",
+      "description": "Endpoints para consultas de clientes"
+    },
+    {
+      "name": "Consultas - Liquidaciones",
+      "description": "Endpoints para consultas de liquidaciones"
+    },
+    {
+      "name": "Consultas - Pedidos",
+      "description": "Endpoints para consultas de datos de pedidos"
+    },
+    {
+      "name": "Eventos - Asíncrono",
+      "description": "Endpoints para recepción de eventos asíncrónos de otros módulos"
+    }
+  ],
+  "paths": {
+    "/api/v1/clientes/{id_cliente}/tiene-forma-pago": {
+      "get": {
+        "tags": ["Consultas - Cliente"],
+        "summary": "Validar si cliente tiene forma de pago registrada",
+        "description": "Verifica si un cliente tiene una forma de pago registrada en el sistema",
+        "operationId": "validarFormaPagoCliente",
+        "parameters": [
+          {
+            "name": "id_cliente",
+            "in": "path",
+            "description": "ID del cliente",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidacionFormaPagoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/pedidos/{id_pedido}/forma-pago": {
+      "get": {
+        "tags": ["Consultas - Pedidos"],
+        "summary": "Obtener forma de pago del cliente de un pedido",
+        "description": "Retorna la forma de pago del cliente asociado al pedido especificado",
+        "operationId": "obtenerFormaPagoPedido",
+        "parameters": [
+          {
+            "name": "id_pedido",
+            "in": "path",
+            "description": "ID del pedido",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormaPagoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pedido no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/pedidos/{id_pedido}/total": {
+      "get": {
+        "tags": ["Consultas - Pedidos"],
+        "summary": "Consultar total de un pedido",
+        "description": "Retorna el monto total de un pedido específico",
+        "operationId": "consultarTotalPedido",
+        "parameters": [
+          {
+            "name": "id_pedido",
+            "in": "path",
+            "description": "ID del pedido",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalPedidoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pedido no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/liquidaciones/cliente/{id_cliente}": {
+      "get": {
+        "tags": ["Consultas - Liquidaciones"],
+        "summary": "Consultar liquidaciones del cliente",
+        "description": "Retorna todas las liquidaciones de un cliente específico. Endpoint consumido por la web app del cliente",
+        "operationId": "consultarLiquidacionesCliente",
+        "parameters": [
+          {
+            "name": "id_cliente",
+            "in": "path",
+            "description": "ID del cliente",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número de página (comenzando en 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Registros por página",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionesClienteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/liquidaciones/transportista/{id_transportista}": {
+      "get": {
+        "tags": ["Consultas - Liquidaciones"],
+        "summary": "Consultar liquidaciones del transportista",
+        "description": "Retorna todas las liquidaciones de un transportista específico. Endpoint consumido por la web app del transportista",
+        "operationId": "consultarLiquidacionesTransportista",
+        "parameters": [
+          {
+            "name": "id_transportista",
+            "in": "path",
+            "description": "ID del transportista",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número de página (comenzando en 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Registros por página",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionesTransportista​Response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transportista no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/liquidaciones": {
+      "get": {
+        "tags": ["Consultas - Liquidaciones"],
+        "summary": "Consultar todas las liquidaciones con filtros",
+        "description": "Retorna liquidaciones con múltiples filtros disponibles. Endpoint consumido por el contador para auditoría contable",
+        "operationId": "consultarLiquidacionesContador",
+        "parameters": [
+          {
+            "name": "tipo",
+            "in": "query",
+            "description": "Tipo de liquidación a filtrar",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["cliente", "transportista", "todos"],
+              "default": "todos"
+            }
+          },
+          {
+            "name": "id_cliente",
+            "in": "query",
+            "description": "Filtrar por ID de cliente",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "id_transportista",
+            "in": "query",
+            "description": "Filtrar por ID de transportista",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "fecha_inicio",
+            "in": "query",
+            "description": "Fecha inicio en formato ISO 8601 (YYYY-MM-DD)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "fecha_fin",
+            "in": "query",
+            "description": "Fecha fin en formato ISO 8601 (YYYY-MM-DD)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número de página (comenzando en 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Registros por página",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/api/v1/pedidos/eventos/recibir-datos": {
+      "post": {
+        "tags": ["Eventos - Asíncrono"],
+        "summary": "Recibir datos de pedido desde Módulo de Inventario",
+        "description": "Endpoint para recibir evento asíncrono con datos del pedido desde el módulo de inventario",
+        "operationId": "recibirDatosPedidoInventario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventoDatosPedidoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Evento recibido y procesado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de evento inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al procesar evento"
+          }
+        }
+      }
+    },
+    "/api/v1/transporte/eventos/recibir-estado-final": {
+      "post": {
+        "tags": ["Eventos - Asíncrono"],
+        "summary": "Recibir estado final de pedido desde Módulo de Transporte",
+        "description": "Endpoint para recibir evento asíncrono con estado final del pedido desde el módulo de transporte. Dispara generación de liquidaciones",
+        "operationId": "recibirEstadoFinalTransporte",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventoEstadoFinalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Evento recibido y procesado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de evento inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al procesar evento"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ValidacionFormaPagoResponse": {
+        "type": "object",
+        "required": ["id_cliente", "tiene_forma_pago"],
+        "properties": {
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del cliente"
+          },
+          "tiene_forma_pago": {
+            "type": "boolean",
+            "description": "Indica si el cliente tiene forma de pago registrada"
+          },
+          "forma_pago": {
+            "type": "string",
+            "enum": ["CONTRA_ENTREGA", "CARTERA_COMERCIAL"],
+            "description": "Forma de pago del cliente (solo si tiene_forma_pago es true)"
+          }
+        }
+      },
+      "FormaPagoResponse": {
+        "type": "object",
+        "required": ["id_cliente", "forma_pago"],
+        "properties": {
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del cliente"
+          },
+          "forma_pago": {
+            "type": "string",
+            "enum": ["CONTRA_ENTREGA", "CARTERA_COMERCIAL"],
+            "description": "Forma de pago del cliente"
+          }
+        }
+      },
+      "TotalPedidoResponse": {
+        "type": "object",
+        "required": ["id_pedido", "total_pedido"],
+        "properties": {
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del pedido"
+          },
+          "total_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Monto total del pedido en la moneda base"
+          }
+        }
+      },
+      "LiquidacionCliente": {
+        "type": "object",
+        "required": ["id_liquidacion", "id_pedido", "id_cliente", "forma_pago", "estado_liquidacion", "fecha_liquidacion"],
+        "properties": {
+          "id_liquidacion": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID de la liquidación"
+          },
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del pedido"
+          },
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del cliente"
+          },
+          "forma_pago": {
+            "type": "string",
+            "enum": ["CONTRA_ENTREGA", "CARTERA_COMERCIAL"],
+            "description": "Forma de pago aplicada"
+          },
+          "estado_liquidacion": {
+            "type": "string",
+            "description": "Estado de la liquidación (Generada, Pagada, etc.)"
+          },
+          "fecha_liquidacion": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de generación de la liquidación"
+          },
+          "uri_pdf": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL del PDF de la liquidación"
+          }
+        }
+      },
+      "LiquidacionTransportista": {
+        "type": "object",
+        "required": ["id_liquidacion", "id_pedido", "id_transportista", "monto_calculado", "fecha_liquidacion"],
+        "properties": {
+          "id_liquidacion": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID de la liquidación"
+          },
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del pedido"
+          },
+          "id_transportista": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del transportista"
+          },
+          "monto_calculado": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Monto calculado para el transportista"
+          },
+          "fecha_liquidacion": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de generación de la liquidación"
+          }
+        }
+      },
+      "LiquidacionesClienteResponse": {
+        "type": "object",
+        "required": ["total", "page", "size", "liquidaciones"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total de liquidaciones del cliente"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Página actual"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Registros por página"
+          },
+          "liquidaciones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LiquidacionCliente"
+            }
+          }
+        }
+      },
+      "LiquidacionesTransportista​Response": {
+        "type": "object",
+        "required": ["total", "page", "size", "liquidaciones"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total de liquidaciones del transportista"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Página actual"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Registros por página"
+          },
+          "liquidaciones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LiquidacionTransportista"
+            }
+          }
+        }
+      },
+      "LiquidacionUnificada": {
+        "type": "object",
+        "properties": {
+          "id_liquidacion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": ["cliente", "transportista"],
+            "description": "Tipo de liquidación"
+          },
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "id_transportista": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "forma_pago": {
+            "type": "string",
+            "enum": ["CONTRA_ENTREGA", "CARTERA_COMERCIAL"],
+            "nullable": true
+          },
+          "estado_liquidacion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monto_calculado": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "description": "Solo para liquidaciones de transportista"
+          },
+          "fecha_liquidacion": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "uri_pdf": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        }
+      },
+      "LiquidacionesResponse": {
+        "type": "object",
+        "required": ["total", "page", "size", "liquidaciones"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total de liquidaciones"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Página actual"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Registros por página"
+          },
+          "liquidaciones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LiquidacionUnificada"
+            }
+          }
+        }
+      },
+      "ProductoPedido": {
+        "type": "object",
+        "required": ["id_producto", "nombre", "cantidad", "precio_unitario", "subtotal"],
+        "properties": {
+          "id_producto": {
+            "type": "string",
+            "description": "ID del producto"
+          },
+          "nombre": {
+            "type": "string",
+            "description": "Nombre del producto"
+          },
+          "cantidad": {
+            "type": "integer",
+            "description": "Cantidad de unidades"
+          },
+          "precio_unitario": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Precio unitario del producto"
+          },
+          "subtotal": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Subtotal (cantidad × precio_unitario)"
+          }
+        }
+      },
+      "EventoDatosPedidoRequest": {
+        "type": "object",
+        "required": ["id_pedido", "id_cliente", "productos", "total_pedido", "forma_pago"],
+        "properties": {
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del pedido"
+          },
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del cliente"
+          },
+          "productos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductoPedido"
+            },
+            "description": "Lista de productos del pedido"
+          },
+          "total_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Monto total del pedido"
+          },
+          "forma_pago": {
+            "type": "string",
+            "enum": ["CONTRA_ENTREGA", "CARTERA_COMERCIAL"],
+            "description": "Forma de pago seleccionada"
+          }
+        }
+      },
+      "EventoEstadoFinalRequest": {
+        "type": "object",
+        "required": ["id_pedido", "id_transportista", "estado_final", "tasa_efectividad"],
+        "properties": {
+          "id_pedido": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del pedido"
+          },
+          "id_transportista": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del transportista"
+          },
+          "estado_final": {
+            "type": "string",
+            "description": "Estado final del pedido (Entregado, No entregado, etc.)"
+          },
+          "tasa_efectividad": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": -100,
+            "maximum": 100,
+            "description": "Tasa de efectividad del transportista (-100 a 100)"
+          }
+        }
+      },
+      "EventoResponse": {
+        "type": "object",
+        "required": ["evento_id", "estado", "timestamp"],
+        "properties": {
+          "evento_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID único del evento procesado"
+          },
+          "estado": {
+            "type": "string",
+            "enum": ["PROCESADO", "EN_COLA", "ERROR"],
+            "description": "Estado del procesamiento del evento"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Hora de procesamiento del evento"
+          },
+          "mensaje": {
+            "type": "string",
+            "description": "Mensaje adicional del procesamiento"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error", "timestamp"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Descripción del error"
+          },
+          "codigo_error": {
+            "type": "string",
+            "description": "Código de error interno"
+          },
+          "detalles": {
+            "type": "string",
+            "description": "Detalles adicionales del error"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Hora en que ocurrió el error"
+          }
+        }
+      }
+    }
+  }
+}
