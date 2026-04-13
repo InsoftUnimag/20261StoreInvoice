@@ -26,12 +26,8 @@ public class ConsultarLiquidacionesClienteUseCase {
     }
 
     public List<LiquidacionClienteResponse> execute(final Long idCliente, final int pagina, final int tamañoPagina) {
-        LOG.info("Consultando liquidaciones para cliente: {}, pagina: {}, tamaño: {}", idCliente, pagina, tamañoPagina);
-        
         final var query = new ConsultarLiquidacionesQuery(idCliente, pagina, tamañoPagina);
         final List<LiquidacionCliente> liquidaciones = liquidacionRepository.findByIdCliente(query);
-        
-        LOG.info("Se encontraron {} liquidaciones para cliente: {}", liquidaciones.size(), idCliente);
         
         if (liquidaciones.isEmpty()) {
             LOG.warn("No se encontraron liquidaciones para cliente: {}", idCliente);
