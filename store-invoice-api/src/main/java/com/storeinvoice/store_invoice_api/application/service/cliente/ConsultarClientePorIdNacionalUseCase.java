@@ -24,8 +24,6 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
 
     @Override
     public ClienteResponse consultarClientePorIdNacional(String idNacional) {
-        log.info("Iniciando consulta de cliente por ID Nacional: {}", idNacional);
-
         if (idNacional == null || idNacional.isBlank()) {
             log.error("ID Nacional es requerido pero está vacío o nulo");
             throw new ClienteNotFoundException("El ID Nacional es requerido");
@@ -34,12 +32,9 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
         var response = clienteServiceClient.consultarClientePorIdNacional(idNacional);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            ClienteClientResponse cliente = response.getBody();
-            log.info("Cliente encontrado con ID Nacional {} - ID BD: {}", idNacional, cliente.idCliente());
-            return mapToClienteResponse(cliente);
+            return mapToClienteResponse(response.getBody());
         }
 
-        log.warn("Cliente no encontrado con ID Nacional: {}", idNacional);
         throw new ClienteNotFoundException("Cliente no encontrado con el ID Nacional proporcionado");
     }
 
@@ -55,8 +50,6 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
 
     @Override
     public ClienteResponse consultarClientePorIdCliente(String idCliente) {
-        log.info("Iniciando consulta de cliente por ID de BD: {}", idCliente);
-
         if (idCliente == null || idCliente.isBlank()) {
             log.error("ID de cliente es requerido pero está vacío o nulo");
             throw new ClienteNotFoundException("ID de cliente inválido");
@@ -65,12 +58,9 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
         var response = clienteServiceClient.consultarClientePorIdCliente(idCliente);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            ClienteClientResponse cliente = response.getBody();
-            log.info("Cliente encontrado con ID de BD: {}", idCliente);
-            return mapToClienteResponse(cliente);
+            return mapToClienteResponse(response.getBody());
         }
 
-        log.warn("Cliente no encontrado con ID de BD: {}", idCliente);
         throw new ClienteNotFoundException("Cliente no encontrado con el ID proporcionado");
     }
 }

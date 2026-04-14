@@ -28,13 +28,11 @@ El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para
 
 ### User Story 1 - Consulta de Cliente por ID Nacional (Priority: P1)
 
-**Endpoint externo consumido:** `GET /api/v1/clientes/{id_nacional}`  
 **Endpoint expuesto:** `GET /api/v1/clientes/nacional/{id_nacional}`
 
 ### User Story 2 - Consulta de Cliente por ID de BD (Priority: P1)
 
-**Endpoint externo consumido:** `GET /api/v1/clientes/{id_cliente}`  
-**Endpoint expuesto:** `GET /api/v1/clientes/bd/{id_cliente}`
+**Endpoint expuesto:** `GET /api/v1/clientes/{id_cliente}`
 
 ---
 
@@ -76,9 +74,6 @@ src/
 │                   │
 │                   └── infrastructure/
 │                       └── adapter/
-│                           ├── inbound/
-│                           │   └── rest/
-│                           │       └── ClienteController.java
 │                           └── outbound/
 │                               └── external/
 │                                   └── ClienteServiceClient.java
@@ -104,11 +99,11 @@ src/
 
 - [x] T001 ClienteServiceClient ya existe en `infrastructure/adapter/outbound/external/ClienteServiceClient.java`
 - [x] T002 ConsultarClientePorIdNacionalUseCase ya existe en `application/service/cliente/ConsultarClientePorIdNacionalUseCase.java`
-- [x] T003 ClienteController ya existe en `infrastructure/adapter/inbound/rest/ClienteController.java`
-- [x] T004 ClienteResponse ya existe en `application/dto/response/ClienteResponse.java`
-- [x] T005 ClienteClientResponse ya existe en `application/dto/client/ClienteClientResponse.java`
-- [x] T006 ClienteInboundPort ya existe en `application/port/inbound/ClienteInboundPort.java`
-- [x] T007 ClienteNotFoundException ya existe en `domain/exception/ClienteNotFoundException.java`
+- [x] T003 ClienteResponse ya existe en `application/dto/response/ClienteResponse.java`
+- [x] T004 ClienteClientResponse ya existe en `application/dto/client/ClienteClientResponse.java`
+- [x] T005 ClienteInboundPort ya existe en `application/port/inbound/ClienteInboundPort.java`
+- [x] T006 ClienteNotFoundException ya existe en `domain/exception/ClienteNotFoundException.java`
+- [x] T007 ClienteController **ELIMINADO** - No se expone endpoint, solo se consume servicio externo
 
 ### Phase 2: Tasks Pendientes
 
@@ -134,22 +129,6 @@ src/
 - Tests unitarios
 
 ⚠️ **Pendiente:** Dependencias Feign no configuradas en build.gradle (error de compilación)
-
----
-
-## Estado de Implementación
-
-✅ **COMPLETADO** - Todos los componentes están implementados:
-- ClienteServiceClient (consumo externo via Feign)
-- ConsultarClientePorIdNacionalUseCase (use case con ambos endpoints)
-- ClienteController (exposición de endpoints)
-- ClienteResponse / ClienteClientResponse (DTOs)
-- ClienteInboundPort (puerto inbound)
-- ClienteNotFoundException / InvalidClientIdException (excepciones)
-- GlobalExceptionHandler (manejo de errores incluyendo conexión)
-- Tests unitarios
-- Dependencias Feign agregadas en build.gradle
-- @EnableFeignClients agregado en StoreInvoiceApiApplication
 
 ---
 
