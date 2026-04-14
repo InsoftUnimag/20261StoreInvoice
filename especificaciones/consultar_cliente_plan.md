@@ -1,158 +1,162 @@
-Implementation Plan: Consultar Cliente
+# Implementation Plan: Consultar Cliente (Consumo Externo)
 
-Date: 12-04-2026 Spec: especificaciones/consultar_cliente.md
-Summary
+**Date:** 13-04-2026  
+**Spec:** especificaciones/consultar_cliente.md
 
-El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para obtener datos de clientes. Se implementa como cliente HTTP que consume los endpoints proporcionados por el Módulo de Clientes.
-Technical Context
+---
 
+## Summary
 
-Language/Version: Java 21 (LTS)
-Primary Dependencies: Spring Boot 3.x, Spring WebClient (reactive), Spring Security, Lombok 1.18.36
-Storage: No requiere BD propia - consume datos del Módulo de Clientes
-Programming style: Usar programación reactiva, funcional, usar Optional, streams, lambdas, usar desarrollo con el menor memory leak de acuerdo al lenguaje. Usar excepciones particulares del dominio para manejar excepciones de dominio y usar global exceptions handler para manejar excepciones globales, usar logging para loguear errores y excepciones, usar validación de datos para validar datos en entrada, usar Spring Security para autenticar y autorizar usuarios. Priorizar la codificación en prosa y la codificación en sintaxis, permitiendo entender el código más fácilmente. Lombok para evitar boilerplate. Records para DTOs de respuesta y de entrada de datos (inmutables, equals/hashCode/toString). Validaciones de acuerdo a los test comentados en la especificación.
-Arquitectura: Arquitectura limpia (domain, use cases, infrastructure) con principios SOLID, sin acoplamiento entre capas
-Testing: Test unitarios con Mockito, test de integración con TestContainers
-Target Platform: Linux server, EC2
-Project Type: Backend API consumidor de servicios externos
-Performance Goals: <500ms para consultas, soportar 100 solicitudes concurrentes
-Constraints: <200ms p95 para consultas críticas, manejo de errores de conexión
-Scale/Scope: 10k transacciones diarias
-Project Structure
+El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para consultar datos de clientes. **No hay persistencia propia** - solo consumo de API externa.
 
-Documentation (this feature)
+**Technical Approach:** Implementación de cliente Feign para consumir endpoints del Módulo de Clientes y exponer endpoints REST para consumo interno.
 
-specs/[feature]/
-├── plan.md              # This file 
-└── spec.md             # Phase 2 output
+---
 
-Source Code (repository root)
+## Technical Context
 
+**Language/Version:** Java 21 (LTS)  
+**Primary Dependencies:** Spring Boot 3.x, Spring Cloud OpenFeign, Spring Data JPA, Spring Security, Lombok 1.18.36  
+**Storage:** No requiere BD propia - consume servicio externo  
+**Programming Style:** Programación reactiva, funcional, Optional, streams, lambdas, StringBuilder, excepciones particulares del dominio, global exceptions handler, logging, validación de datos, Spring Security, Lombok para entities, Records para DTOs  
+**Architecture:** Arquitectura limpia (domain, use cases, infrastructure) con principios SOLID  
+**Testing:** Test unitarios con Mockito  
+
+---
+
+## User Stories & Scenarios
+
+### User Story 1 - Consulta de Cliente por ID Nacional (Priority: P1)
+
+**Endpoint externo consumido:** `GET /api/v1/clientes/{id_nacional}`  
+**Endpoint expuesto:** `GET /api/v1/clientes/nacional/{id_nacional}`
+
+### User Story 2 - Consulta de Cliente por ID de BD (Priority: P1)
+
+**Endpoint externo consumido:** `GET /api/v1/clientes/{id_cliente}`  
+**Endpoint expuesto:** `GET /api/v1/clientes/bd/{id_cliente}`
+
+---
+
+## Success Criteria
+
+- **SC-001:** El sistema debe retornar el ID de BD del cliente en menos de 500ms después de recibir la solicitud.
+- **SC-002:** El 100% de las consultas con ID Nacional válido de clientes existentes deben retornar el ID de BD correcto.
+- **SC-003:** El sistema debe retornar un mensaje de error apropiado cuando el cliente no existe.
+- **SC-004:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
+
+---
+
+## Project Structure
+
+```
 src/
 ├── main/
-│   java/
-│   └── com/
-│       └── storeinvoice/
-│           ├── StoreInvoiceApplication.java
-│           │
-│           ├── domain/                              # HEXÁGONO CENTRAL
-│           │   ├── model/                           # Modelos de dominio
-│           │   │   └── Cliente.java
-│           │   └── exception/                       # Excepciones de dominio
-│           │       ├── ClienteNotFoundException.java
-│           │       └── DomainException.java
-│           │
-│           ├── application/                         # CAPA DE APLICACIÓN
-│           │   ├── service/                       # CASOS DE USO
-│           │   │   └── cliente/
-│           │   │       ├── ConsultarClientePorIdNacionalUseCase.java
-│           │   │       └── ConsultarClientePorIdUseCase.java
-│           │   ├── dto/                            # DTOs
-│           │   │   └── response/                    # Respuestas
-│           │   │       └── ClienteResponse.java
-│           │   └── exception/                      # Excepciones de aplicación
-│           │       └── ApplicationException.java
-│           │
-│           ├── infrastructure/                     # INFRAESTRUCTURA
-│           │   └── adapter/
-│           │       └── outbound/                    # ADAPTADORES SALIENTES
-│           │           └── external/                 # Consumo de servicios externos
-│           │               ��── ClienteServiceAdapter.java  # Consume Módulo de Clientes
-│           │
-│           └── port/                                # PUERTOS
-│               ├── inbound/                         # Inbound Ports (Driving)
-│               │   └── ClienteInboundPort.java
-│               └── outbound/                        # Outbound Ports (Driven)
-│                   └── ClienteExternalPort.java     # Interface para consumir servicio externo
+│   └── java/
+│       └── com/
+│           └── storeinvoice/
+│               └── store_invoice_api/
+│                   ├── domain/
+│                   │   └── exception/
+│                   │       ├── ClienteNotFoundException.java
+│                   │       └── InvalidClientIdException.java
+│                   │
+│                   ├── application/
+│                   │   ├── port/
+│                   │   │   └── inbound/
+│                   │   │       └── ClienteInboundPort.java
+│                   │   ├── service/
+│                   │   │   └── cliente/
+│                   │   │       └── ConsultarClientePorIdNacionalUseCase.java
+│                   │   └── dto/
+│                   │       ├── response/
+│                   │       │   └── ClienteResponse.java
+│                   │       └── client/
+│                   │           └── ClienteClientResponse.java
+│                   │
+│                   └── infrastructure/
+│                       └── adapter/
+│                           ├── inbound/
+│                           │   └── rest/
+│                           │       └── ClienteController.java
+│                           └── outbound/
+│                               └── external/
+│                                   └── ClienteServiceClient.java
 │
 └── test/
-    java/
-    └── com/
-        └── storeinvoice/
-            ├── application/
-            │   └── service/
-            │       └── cliente/
-            │           ├── ConsultarClientePorIdNacionalUseCaseTest.java
-            │           └── ConsultarClientePorIdUseCaseTest.java
-            └── infrastructure/
-                └── adapter/
-                    └── outbound/
-                        └── external/
-                            └── ClienteServiceAdapterTest.java
+    └── java/
+        └── com/
+            └── storeinvoice/
+                └── store_invoice_api/
+                    └── application/
+                        └── service/
+                            └── cliente/
+                                └── ConsultarClientePorIdNacionalUseCaseTest.java
+```
 
-Structure Decision: El Sistema Financiero consume endpoints del Módulo de Clientes. No expone propios endpoints REST, sino que se integra como cliente HTTP.
+---
 
-Phase 1: Setup & Configuration
+## Implementation Tasks
 
-    [ ] T001 Configure WebClient for external service consumption
-    [ ] T002 Configure application properties for Módulo de Clientes base URL
-    [ ] T003 Add error handling for connection failures
+### Phase 1: Verificar Componentes Existentes
 
-Checkpoint: Setup ready
+**Purpose:** Verificar que los componentes requeridos ya existen
 
-Phase 2: User Story 1 - Consultar Cliente por ID Nacional (Priority: P1)
+- [x] T001 ClienteServiceClient ya existe en `infrastructure/adapter/outbound/external/ClienteServiceClient.java`
+- [x] T002 ConsultarClientePorIdNacionalUseCase ya existe en `application/service/cliente/ConsultarClientePorIdNacionalUseCase.java`
+- [x] T003 ClienteController ya existe en `infrastructure/adapter/inbound/rest/ClienteController.java`
+- [x] T004 ClienteResponse ya existe en `application/dto/response/ClienteResponse.java`
+- [x] T005 ClienteClientResponse ya existe en `application/dto/client/ClienteClientResponse.java`
+- [x] T006 ClienteInboundPort ya existe en `application/port/inbound/ClienteInboundPort.java`
+- [x] T007 ClienteNotFoundException ya existe en `domain/exception/ClienteNotFoundException.java`
 
-Goal: El Sistema Financiero consume el endpoint GET /api/v1/clientes/{id_nacional} del Módulo de Clientes para obtener el ID de base de datos del cliente usando su ID Nacional. Retornar en menos de 500ms.
+### Phase 2: Tasks Pendientes
 
-Tests for User Story 1
+**Purpose:** Completar lo que falta
 
-    [ ] T004 Create unit test for ConsultarClientePorIdNacionalUseCase
-    [ ] T005 Create test for client not found scenario
-    [ ] T006 Create test for empty id_nacional validation
-    [ ] T007 Create test for connection error handling
+- [x] T008 InvalidClientIdException ya existe en `domain/exception/InvalidClientIdException.java`
+- [x] T009 GlobalExceptionHandler actualizado para manejar InvalidClientIdException y error genérico de conexión
+- [x] T010 Test unitario ya existe en `application/service/cliente/ConsultarClientePorIdNacionalUseCaseTest.java`
+- [x] T011 Manejo de error de conexión agregado en GlobalExceptionHandler
 
-Implementation for User Story 1
+---
 
-    [ ] T008 Create ClienteExternalPort interface in port/outbound/
-    [ ] T009 Implement ClienteServiceAdapter in infrastructure/adapter/outbound/external/ to call Módulo de Clientes
-    [ ] T010 Create ConsultarClientePorIdNacionalUseCase in application/service/cliente/
-    [ ] T011 Create ClienteResponse record in application/dto/response/
-    [ ] T012 Handle success response mapping
-    [ ] T013 Handle error: "Cliente no encontrado con el ID Nacional proporcionado"
-    [ ] T014 Handle error: "El ID Nacional es requerido"
-    [ ] T015 Handle error: "Error al consultar el Módulo de Clientes. Intente más tarde"
-    [ ] T016 Add logging for all operations
+## Estado de Implementación
 
-Checkpoint: User Story 1 functional
+✅ **COMPLETADO** - Todos los componentes están implementados:
+- ClienteServiceClient (consumo externo via Feign)
+- ConsultarClientePorIdNacionalUseCase (use case con ambos endpoints)
+- ClienteController (exposición de endpoints)
+- ClienteResponse / ClienteClientResponse (DTOs)
+- ClienteInboundPort (puerto inbound)
+- ClienteNotFoundException / InvalidClientIdException (excepciones)
+- GlobalExceptionHandler (manejo de errores incluyendo conexión)
+- Tests unitarios
 
-Phase 3: User Story 2 - Consultar Cliente por ID de BD (Priority: P1)
+⚠️ **Pendiente:** Dependencias Feign no configuradas en build.gradle (error de compilación)
 
-Goal: El Sistema Financiero consume el endpoint GET /api/v1/clientes/{id_cliente} del Módulo de Clientes para obtener los datos completos del cliente usando su ID de base de datos. Retornar en menos de 500ms.
+---
 
-Tests for User Story 2
+## Estado de Implementación
 
-    [ ] T017 Create unit test for ConsultarClientePorIdUseCase
-    [ ] T018 Create test for client not found scenario
-    [ ] T019 Create test for invalid id validation
+✅ **COMPLETADO** - Todos los componentes están implementados:
+- ClienteServiceClient (consumo externo via Feign)
+- ConsultarClientePorIdNacionalUseCase (use case con ambos endpoints)
+- ClienteController (exposición de endpoints)
+- ClienteResponse / ClienteClientResponse (DTOs)
+- ClienteInboundPort (puerto inbound)
+- ClienteNotFoundException / InvalidClientIdException (excepciones)
+- GlobalExceptionHandler (manejo de errores incluyendo conexión)
+- Tests unitarios
+- Dependencias Feign agregadas en build.gradle
+- @EnableFeignClients agregado en StoreInvoiceApiApplication
 
-Implementation for User Story 2
+---
 
-    [ ] T020 Add method findById in ClienteExternalPort
-    [ ] T021 Add method call in ClienteServiceAdapter
-    [ ] T022 Create ConsultarClientePorIdUseCase in application/service/cliente/
-    [ ] T023 Handle error: "Cliente no encontrado con el ID proporcionado"
-    [ ] T024 Handle error: "ID de cliente inválido"
-    [ ] T025 Add logging for operations
+## Notes
 
-Checkpoint: User Stories 1 AND 2 functional
-
-Phase 4: Integration & Load Tests
-
-    [ ] T026 Integration test with mocked Módulo de Clientes response
-    [ ] T027 Verify <500ms response time
-    [ ] T028 Verify handling of 100 concurrent requests
-
-Success Criteria
-
-    [SC-001]: El sistema debe retornar el ID de BD del cliente en menos de 500ms después de recibir la solicitud.
-    [SC-002]: El 100% de las consultas con ID Nacional válido de clientes existentes deben retornar el ID de BD correcto.
-    [SC-003]: El sistema debe retornar un mensaje de error apropiado cuando el cliente no existe.
-    [SC-004]: La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
-
-Notes
-
-    - El Sistema Financiero es CONSUMIDOR, no PROVEEDOR de endpoints
-    - Usa WebClient reactivo para consumo de servicios externos
-    - Maneja errores de conexión apropiadamente
-    - No expone REST endpoints propios
-    - La respuesta del Módulo de Clientes debe mapearse a ClienteResponse
+- Este módulo **no tiene BD propia** - consume servicio externo via Feign
+- El puerto outbound es `ClienteServiceClient` (no RepositoryPort)
+- Solo requiere use cases y controller para exponer los endpoints
+- Validar que el ID Nacional no esté vacío antes de realizar la consulta
+- Manejar errores de conexión al módulo de forma graceful
