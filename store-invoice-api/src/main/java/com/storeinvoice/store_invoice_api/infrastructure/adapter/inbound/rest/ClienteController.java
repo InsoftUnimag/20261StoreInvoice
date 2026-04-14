@@ -23,7 +23,7 @@ public class ClienteController {
         this.clienteInboundPort = clienteInboundPort;
     }
 
-    @GetMapping("/{id_nacional}")
+    @GetMapping("/nacional/{id_nacional}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorIdNacional(
             @PathVariable("id_nacional") String idNacional) {
         LOG.info("consultarClientePorIdNacional: {}", idNacional);
@@ -32,7 +32,7 @@ public class ClienteController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/id/{id_cliente}")
+    @GetMapping("/{id_cliente}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorId(
             @PathVariable("id_cliente") String idCliente) {
         LOG.info("consultarClientePorId: {}", idCliente);

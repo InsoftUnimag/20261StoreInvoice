@@ -28,7 +28,7 @@ public class ClienteWebClient {
     public Mono<ClienteClientResponse> consultarClientePorIdNacional(String idNacional) {
         LOG.info("Consultando cliente por ID nacional: {}", idNacional);
         return webClient.get()
-                .uri("/api/v1/clientes/{id_nacional}", idNacional)
+                .uri("/api/v1/clientes/nacional/{id_nacional}", idNacional)
                 .retrieve()
                 .bodyToMono(ClienteClientResponse.class)
                 .doOnSuccess(r -> LOG.info("Cliente encontrado: {}", r.idCliente()));

@@ -30,7 +30,7 @@ El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para
 
 ### User Story 1 - Consulta de Cliente por ID Nacional (Priority: P1)
 
-**Consumo externo:** `GET /api/v1/clientes/{id_nacional}` del Módulo de Clientes
+**Consumo externo:** `GET /api/v1/clientes/nacional/{id_nacional}` del Módulo de Clientes
 
 ### User Story 2 - Consulta de Cliente por ID de BD (Priority: P1)
 

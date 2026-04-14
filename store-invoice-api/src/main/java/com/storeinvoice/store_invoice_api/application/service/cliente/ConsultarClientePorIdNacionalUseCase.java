@@ -4,6 +4,7 @@ import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientRe
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import com.storeinvoice.store_invoice_api.infrastructure.port.inbound.ClienteInboundPort;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.store_invoice_api.domain.exception.InvalidClientIdException;
 import com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external.ClienteWebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
     public Mono<ClienteResponse> consultarClientePorIdNacional(String idNacional) {
         if (idNacional == null || idNacional.isBlank()) {
             log.error("ID Nacional es requerido pero está vacío o nulo");
-            return Mono.error(new ClienteNotFoundException("El ID Nacional es requerido"));
+            return Mono.error(new InvalidClientIdException("El ID Nacional es requerido"));
         }
 
         return clienteWebClient.consultarClientePorIdNacional(idNacional)
@@ -47,7 +48,7 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
     public Mono<ClienteResponse> consultarClientePorIdCliente(String idCliente) {
         if (idCliente == null || idCliente.isBlank()) {
             log.error("ID de cliente es requerido pero está vacío o nulo");
-            return Mono.error(new ClienteNotFoundException("ID de cliente inválido"));
+            return Mono.error(new InvalidClientIdException("ID de cliente inválido"));
         }
 
         return clienteWebClient.consultarClientePorIdCliente(idCliente)
