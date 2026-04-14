@@ -11,7 +11,7 @@
 
 ### Consultar Cliente por ID Nacional (síncrono)
 
-**Endpoint:** `GET /api/v1/clientes/{id_nacional}`
+**Endpoint:** `GET /api/v1/clientes/nacional/{id_nacional}`
 
 **Propósito:** Obtener el ID de base de datos del cliente usando su ID Nacional (número de documento) para poder guardar la forma de pago o asociar liquidaciones.
 
@@ -69,7 +69,7 @@
 
 ### User Story 1 - Consulta de cliente por ID Nacional (Priority: P1)
 
-**Endpoint:** `GET /api/v1/clientes/{id_nacional}` (síncrono)
+**Endpoint:** `GET /api/v1/clientes/nacional/{id_nacional}` (síncrono)
 
 Yo como Asesor Comercial necesito consultar un cliente utilizando su ID Nacional (número de documento) para obtener su ID de base de datos. Para poder guardar la forma de pago asociada al cliente correcto en la base de datos.
 
