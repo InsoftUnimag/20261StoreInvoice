@@ -12,9 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -87,5 +84,65 @@ class LiquidacionControllerTest {
 
         assertEquals(200, resultado.getStatusCode().value());
         assertEquals(0, resultado.getBody().size());
+    }
+
+    @Test
+    void consultarLiquidaciones_tamano_negativo_usa_default() {
+        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(respuestas);
+
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
+                controller.consultarLiquidaciones(idCliente, 0, -5);
+
+        assertEquals(200, resultado.getStatusCode().value());
+    }
+
+    @Test
+    void consultarLiquidaciones_pagina_negativa_pasa_valor() {
+        when(consultarLiquidacionesUseCase.execute(idCliente, -1, 20)).thenReturn(respuestas);
+
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
+                controller.consultarLiquidaciones(idCliente, -1, 20);
+
+        assertEquals(200, resultado.getStatusCode().value());
+    }
+
+    @Test
+    void consultarLiquidaciones_cliente_id_muy_grande() {
+        when(consultarLiquidacionesUseCase.execute(Long.MAX_VALUE, 0, 20)).thenReturn(List.of());
+
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
+                controller.consultarLiquidaciones(Long.MAX_VALUE, 0, 20);
+
+        assertEquals(200, resultado.getStatusCode().value());
+    }
+
+    @Test
+    void consultarLiquidaciones_primer_pagina_vacia() {
+        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(respuestas);
+        when(consultarLiquidacionesUseCase.execute(idCliente, 1, 20)).thenReturn(List.of());
+
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado0 = 
+                controller.consultarLiquidaciones(idCliente, 0, 20);
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado1 = 
+                controller.consultarLiquidaciones(idCliente, 1, 20);
+
+        assertEquals(200, resultado0.getStatusCode().value());
+        assertEquals(2, resultado0.getBody().size());
+        assertEquals(200, resultado1.getStatusCode().value());
+        assertEquals(0, resultado1.getBody().size());
+    }
+
+    @Test
+    void consultarLiquidaciones_lista_grande_retorna_todos() {
+        final List<LiquidacionClienteResponse> listaGrande = java.util.Collections.nCopies(100, 
+                new LiquidacionClienteResponse(1L, 100L, idCliente, "CONTRA_ENTREGA", "PENDIENTE",
+                        LocalDateTime.now(), "/pdf/1.pdf", new BigDecimal("1500.00")));
+        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 100)).thenReturn(listaGrande);
+
+        final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
+                controller.consultarLiquidaciones(idCliente, 0, 100);
+
+        assertEquals(200, resultado.getStatusCode().value());
+        assertEquals(100, resultado.getBody().size());
     }
 }

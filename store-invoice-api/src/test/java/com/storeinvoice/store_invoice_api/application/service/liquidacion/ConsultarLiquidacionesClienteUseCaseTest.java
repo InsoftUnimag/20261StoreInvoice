@@ -42,16 +42,16 @@ class ConsultarLiquidacionesClienteUseCaseTest {
     @BeforeEach
     void setUp() {
         idCliente = 1L;
-        liquidacionMock = new LiquidacionCliente(
-                1L,
-                100L,
-                idCliente,
-                "CONTRA_ENTREGA",
-                "PENDIENTE",
-                LocalDateTime.now(),
-                "/pdf/liquidacion-1.pdf",
-                new BigDecimal("1500.00")
-        );
+        liquidacionMock = new LiquidacionCliente();
+        liquidacionMock.setIdLiquidacion(1L);
+        liquidacionMock.setIdPedido(100L);
+        liquidacionMock.setIdCliente(idCliente);
+        liquidacionMock.setFormaPago("CONTRA_ENTREGA");
+        liquidacionMock.setEstadoLiquidacion("PENDIENTE");
+        liquidacionMock.setFechaLiquidacion(LocalDateTime.now());
+        liquidacionMock.setUriPdf("/pdf/liquidacion-1.pdf");
+        liquidacionMock.setMontoLiquidado(new BigDecimal("1500.00"));
+
         responseMock = new LiquidacionClienteResponse(
                 1L, 100L, idCliente, "CONTRA_ENTREGA", "PENDIENTE",
                 LocalDateTime.now(), "/pdf/liquidacion-1.pdf", new BigDecimal("1500.00")
@@ -97,5 +97,47 @@ class ConsultarLiquidacionesClienteUseCaseTest {
         useCase.execute(idCliente, 2, 50);
 
         verify(liquidacionRepository).findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 2, 50));
+    }
+
+    @Test
+    void execute_pagina_cero_retorna_resultados() {
+        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 20)))
+                .thenReturn(List.of(liquidacionMock));
+        when(liquidacionMapper.toResponseList(any())).thenReturn(List.of(responseMock));
+
+        final List<LiquidacionClienteResponse> resultado = useCase.execute(idCliente, 0, 20);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void execute_pagina_negativa_trata_como_cero() {
+        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, -1, 20)))
+                .thenReturn(List.of(liquidacionMock));
+        when(liquidacionMapper.toResponseList(any())).thenReturn(List.of(responseMock));
+
+        final List<LiquidacionClienteResponse> resultado = useCase.execute(idCliente, -1, 20);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    void execute_tamano_pagina_muy_grande_maneja_memoria() {
+        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 10000)))
+                .thenReturn(List.of(liquidacionMock));
+        when(liquidacionMapper.toResponseList(any())).thenReturn(List.of(responseMock));
+
+        final List<LiquidacionClienteResponse> resultado = useCase.execute(idCliente, 0, 10000);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    void execute_lista_vacia_retorna_excepcion() {
+        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 20)))
+                .thenReturn(List.of());
+
+        assertThrows(ClienteNotFoundException.class, () -> useCase.execute(idCliente, 0, 20));
     }
 }
