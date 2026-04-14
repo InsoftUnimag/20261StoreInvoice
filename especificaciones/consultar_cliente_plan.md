@@ -9,7 +9,7 @@
 
 El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para consultar datos de clientes. **No hay persistencia propia** - solo consumo de API externa.
 
-**Technical Approach:** Implementación de cliente Feign para consumir endpoints del Módulo de Clientes y exponer endpoints REST para consumo interno.
+**Technical Approach:** Implementación de cliente Feign para consumir endpoints del Módulo de Clientes.
 
 ---
 
@@ -28,11 +28,11 @@ El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para
 
 ### User Story 1 - Consulta de Cliente por ID Nacional (Priority: P1)
 
-**Endpoint expuesto:** `GET /api/v1/clientes/nacional/{id_nacional}`
+**Consumo externo:** `GET /api/v1/clientes/{id_nacional}` del Módulo de Clientes
 
 ### User Story 2 - Consulta de Cliente por ID de BD (Priority: P1)
 
-**Endpoint expuesto:** `GET /api/v1/clientes/{id_cliente}`
+**Consumo externo:** `GET /api/v1/clientes/{id_cliente}` del Módulo de Clientes
 
 ---
 
@@ -60,9 +60,6 @@ src/
 │                   │       └── InvalidClientIdException.java
 │                   │
 │                   ├── application/
-│                   │   ├── port/
-│                   │   │   └── inbound/
-│                   │   │       └── ClienteInboundPort.java
 │                   │   ├── service/
 │                   │   │   └── cliente/
 │                   │   │       └── ConsultarClientePorIdNacionalUseCase.java
@@ -73,6 +70,9 @@ src/
 │                   │           └── ClienteClientResponse.java
 │                   │
 │                   └── infrastructure/
+│                       ├── port/
+│                       │   └── inbound/
+│                       │       └── ClienteInboundPort.java
 │                       └── adapter/
 │                           └── outbound/
 │                               └── external/
@@ -101,7 +101,7 @@ src/
 - [x] T002 ConsultarClientePorIdNacionalUseCase ya existe en `application/service/cliente/ConsultarClientePorIdNacionalUseCase.java`
 - [x] T003 ClienteResponse ya existe en `application/dto/response/ClienteResponse.java`
 - [x] T004 ClienteClientResponse ya existe en `application/dto/client/ClienteClientResponse.java`
-- [x] T005 ClienteInboundPort ya existe en `application/port/inbound/ClienteInboundPort.java`
+- [x] T005 ClienteInboundPort ya existe en `infrastructure/port/inbound/ClienteInboundPort.java`
 - [x] T006 ClienteNotFoundException ya existe en `domain/exception/ClienteNotFoundException.java`
 - [x] T007 ClienteController **ELIMINADO** - No se expone endpoint, solo se consume servicio externo
 
@@ -120,22 +120,22 @@ src/
 
 ✅ **COMPLETADO** - Todos los componentes están implementados:
 - ClienteServiceClient (consumo externo via Feign)
-- ConsultarClientePorIdNacionalUseCase (use case con ambos endpoints)
-- ClienteController (exposición de endpoints)
+- ConsultarClientePorIdNacionalUseCase (use case)
+- ClienteInboundPort (puerto inbound en infrastructure)
 - ClienteResponse / ClienteClientResponse (DTOs)
-- ClienteInboundPort (puerto inbound)
 - ClienteNotFoundException / InvalidClientIdException (excepciones)
 - GlobalExceptionHandler (manejo de errores incluyendo conexión)
 - Tests unitarios
-
-⚠️ **Pendiente:** Dependencias Feign no configuradas en build.gradle (error de compilación)
+- Dependencias Feign configuradas en build.gradle
+- @EnableFeignClients agregado en StoreInvoiceApiApplication
 
 ---
 
 ## Notes
 
 - Este módulo **no tiene BD propia** - consume servicio externo via Feign
-- El puerto outbound es `ClienteServiceClient` (no RepositoryPort)
-- Solo requiere use cases y controller para exponer los endpoints
+- Puerto inbound va en `infrastructure/port/inbound/` (no en application)
+- Puerto outbound es `ClienteServiceClient` (Feign client)
+- Sin Controller - no expone endpoints
 - Validar que el ID Nacional no esté vacío antes de realizar la consulta
 - Manejar errores de conexión al módulo de forma graceful

@@ -2,7 +2,7 @@ package com.storeinvoice.store_invoice_api.application.service.cliente;
 
 import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientResponse;
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
-import com.storeinvoice.store_invoice_api.application.port.inbound.ClienteInboundPort;
+import com.storeinvoice.store_invoice_api.infrastructure.port.inbound.ClienteInboundPort;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external.ClienteServiceClient;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.storeinvoice.store_invoice_api.application.port.inbound;
+package com.storeinvoice.store_invoice_api.infrastructure.port.inbound;
 
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 
