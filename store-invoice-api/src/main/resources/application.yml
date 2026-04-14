@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: store-invoice-api
+  main:
+    web-application-type: servlet
+
+server:
+  port: 8080
+
+external:
+  cliente:
+    module:
+      base-url: ${CLIENTE_MODULE_URL:http://localhost:8081}
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 5000
+        loggerLevel: basic
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      clienteService:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+  retry:
+    instances:
+      clienteService:
+        maxAttempts: 3
+        waitDuration: 500ms
+
+logging:
+  level:
+    com.storeinvoice: INFO
+    com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external: DEBUG
