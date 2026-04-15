@@ -3,6 +3,7 @@ package com.storeinvoice.store_invoice_api.application.service.liquidacion;
 import com.storeinvoice.store_invoice_api.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.store_invoice_api.application.dto.response.LiquidacionClienteResponse;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.store_invoice_api.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.store_invoice_api.domain.model.LiquidacionCliente;
 import com.storeinvoice.store_invoice_api.infrastructure.persistence.mapper.LiquidacionEntityMapper;
 import com.storeinvoice.store_invoice_api.infrastructure.port.outbound.LiquidacionRepositoryPort;
@@ -80,8 +81,8 @@ class ConsultarLiquidacionesClienteUseCaseTest {
         when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 20)))
                 .thenReturn(List.of());
 
-        final ClienteNotFoundException excepcion = assertThrows(
-                ClienteNotFoundException.class,
+        final LiquidacionNotFoundException excepcion = assertThrows(
+                LiquidacionNotFoundException.class,
                 () -> useCase.execute(idCliente, 0, 20)
         );
 
@@ -138,6 +139,6 @@ class ConsultarLiquidacionesClienteUseCaseTest {
         when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 20)))
                 .thenReturn(List.of());
 
-        assertThrows(ClienteNotFoundException.class, () -> useCase.execute(idCliente, 0, 20));
+        assertThrows(LiquidacionNotFoundException.class, () -> useCase.execute(idCliente, 0, 20));
     }
 }
