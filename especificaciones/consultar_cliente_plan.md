@@ -16,7 +16,7 @@ El Sistema Financiero consume endpoints del Módulo de Gestión de Clientes para
 ## Technical Context
 
 **Language/Version:** Java 21 (LTS)  
-**Primary Dependencies:** Spring Boot 4.x, Spring WebFlux (WebClient), Spring Data JPA, Spring Security, Lombok 1.18.36  
+**Primary Dependencies:** Spring Boot 3.4.0, Spring WebFlux (WebClient), Spring Data JPA, Spring Security, Lombok 1.18.36  
 **Storage:** No requiere BD propia - consume servicio externo  
 **Programming Style:** Programación reactiva, funcional, Optional, streams, lambdas, StringBuilder, excepciones particulares del dominio, global exceptions handler, logging, validación de datos, Spring Security, Lombok para entities, Records para DTOs  
 **Architecture:** Arquitectura limpia (domain, use cases, infrastructure) con principios SOLID  
