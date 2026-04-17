@@ -2,6 +2,8 @@ package com.storeinvoice.store_invoice_api.application.service.liquidacion;
 
 import com.storeinvoice.store_invoice_api.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.store_invoice_api.application.dto.response.LiquidacionClienteResponse;
+import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.store_invoice_api.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.store_invoice_api.domain.model.LiquidacionCliente;
 import com.storeinvoice.store_invoice_api.infrastructure.persistence.mapper.LiquidacionEntityMapper;
 import com.storeinvoice.store_invoice_api.infrastructure.port.outbound.LiquidacionRepositoryPort;
@@ -28,6 +30,11 @@ public class ConsultarLiquidacionesClienteUseCase {
         final int paginaNormalizada = Math.max(0, pagina);
         final var query = new ConsultarLiquidacionesQuery(idCliente, paginaNormalizada, tamañoPagina);
         final List<LiquidacionCliente> liquidaciones = liquidacionRepository.findByIdCliente(query);
+
+        if (liquidaciones.isEmpty()) {
+            LOG.warn("No se encontraron liquidaciones para el cliente ID: {}", idCliente);
+            throw new LiquidacionNotFoundException("No se encontraron liquidaciones para el cliente ID: " + idCliente);
+        }
 
         return liquidacionMapper.toResponseList(liquidaciones);
     }

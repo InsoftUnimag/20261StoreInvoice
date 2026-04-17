@@ -8,10 +8,10 @@ Implementar endpoint REST para que el cliente pueda consultar sus liquidaciones 
 Technical Context
 
 Language/Version: Java 21 (LTS)
-Primary Dependencies: Spring Boot 3.x, Spring Data JPA, Spring Security, Lombok 1.18.36, MapStruct 1.6.3
+Primary Dependencies: Spring Boot 3.4.0, Spring Data JPA, Spring WebFlux, Spring Security, Lombok 1.18.36, MapStruct 1.6.3, TestContainers
 Storage: PostgreSQL con modelo puertos y adaptadores
-Programming style: Programación reactiva, funcional, Optional, streams, lambdas. StringBuilder para concatenación. Excepciones de dominio. Global exception handler. Logging estructurado. Bean Validation. Spring Security. Lombok para entities/adapters. **Records para DTOs response** (inmutables, equals/hashCode/toString generados automáticamente). MapStruct para mappings entre entidades JPA y modelos de dominio. Principios SOLID.
-Arquitectura: Arquitectura limpia (domain, application, infrastructure) con puertos y adaptadores
+Programming style: Programación reactiva, funcional, Optional, streams, lambdas. StringBuilder para concatenación. Excepciones de dominio. Global exception handler. Logging estructurado. Bean Validation. Spring Security. Lombok para entities/adapters. Records para DTOs response (inmutables, equals/hashCode/toString generados automáticamente). MapStruct para mappings entre entidades JPA y modelos de dominio. Principios SOLID.
+Architecture: Arquitectura limpia (domain, application, infrastructure) con puertos y adaptadores
 Testing: Test unitarios con Mockito, test de integración con TestContainers
 Target Platform: Linux server, EC2
 Project Type: Backend API REST (sistema financiero)
@@ -24,44 +24,44 @@ src/
 │   └── java/
 │       └── com/
 │           └── storeinvoice/
-│               ├── domain/
-│               │   ├── model/
-│               │   │   ├── LiquidacionCliente.java          # Entidad dominio (Lombok @Entity)
-│               │   │   └── Cliente.java
-│               │   └── exception/
-│               │       ├── LiquidacionNotFoundException.java
-│               │       └── ClienteNotFoundException.java    # Excepciones de dominio
-│               │
-│               ├── application/
-│               │   ├── service/
-│               │   │   └── liquidacion/
-│               │   │       └── ConsultarLiquidacionesClienteUseCase.java
-│               │   ├── dto/
-│               │   │   ├── query/
-│               │   │   │   └── ConsultarLiquidacionesQuery.java  # Query DTO (record)
-│               │   │   └── response/
-│               │   │       └── LiquidacionClienteResponse.java    # Response DTO (record)
-│               │   └── port/
-│               │       └── outbound/
-│               │           └── LiquidacionRepositoryPort.java     # Puerto outbound (interfaz)
-│               │
-│               └── infrastructure/
-│                   ├── adapter/
-│                   │   ├── inbound/
-│                   │   │   └── rest/
-│                   │   │       └── LiquidacionController.java
-│                   │   └── outbound/
-│                   │       └── persistence/
-│                   │           └── LiquidacionRepositoryAdapter.java  # Adapter (Lombok @Repository)
-│                   ├── persistence/
-│                   │   ├── entity/
-│                   │   │   └── LiquidacionClienteJpaEntity.java      # JPA Entity (Lombok)
-│                   │   └── mapper/
-│                   │       └── LiquidacionEntityMapper.java          # MapStruct mapper
+│               └── store_invoice_api/
+│                   ├── domain/
+│                   │   ├── model/
+│                   │   │   ├── LiquidacionCliente.java          # Entidad dominio (Lombok @Entity)
+│                   │   │   └── Cliente.java
+│                   │   └── exception/
+│                   │       ├── LiquidacionNotFoundException.java
+│                   │       └── ClienteNotFoundException.java    # Excepciones de dominio
+│                   │
+│                   ├── application/
+│                   │   ├── service/
+│                   │   │   └── liquidacion/
+│                   │   │       └── ConsultarLiquidacionesClienteUseCase.java
+│                   │   └── dto/
+│                   │       ├── query/
+│                   │       │   └── ConsultarLiquidacionesQuery.java  # Query DTO (record)
+│                   │       └── response/
+│                   │           └── LiquidacionClienteResponse.java    # Response DTO (record)
+│                   │
+│                   └── infrastructure/
+│                       ├── adapter/
+│                       │   ├── inbound/
+│                       │   │   └── rest/
+│                       │   │       └── LiquidacionController.java
+│                       │   └── outbound/
+│                       │       └── persistence/
+│                       │           └── LiquidacionRepositoryAdapter.java  # Adapter (Lombok @Repository)
+│                       ├── persistence/
+│                       │   ├── entity/
+│                       │   │   └── LiquidacionClienteJpaEntity.java      # JPA Entity (Lombok)
+│                       │   └── mapper/
+│                       │       └── LiquidacionEntityMapper.java          # MapStruct mapper
+│                       └── port/
+│                           └── outbound/
+│                               └── LiquidacionRepositoryPort.java     # Puerto outbound (interfaz)
 
 Tests structure:
-
-src/test/java/com/storeinvoice/
+src/test/java/com/storeinvoice/store_invoice_api/
 ├── application/service/liquidacion/
 │   └── ConsultarLiquidacionesClienteUseCaseTest.java
 └── infrastructure/adapter/inbound/rest/
