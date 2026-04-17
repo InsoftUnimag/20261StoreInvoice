@@ -27,7 +27,8 @@ public class ConsultarLiquidacionesClienteUseCase {
     }
 
     public List<LiquidacionClienteResponse> execute(final Long idCliente, final int pagina, final int tamañoPagina) {
-        final var query = new ConsultarLiquidacionesQuery(idCliente, pagina, tamañoPagina);
+        final int paginaNormalizada = Math.max(0, pagina);
+        final var query = new ConsultarLiquidacionesQuery(idCliente, paginaNormalizada, tamañoPagina);
         final List<LiquidacionCliente> liquidaciones = liquidacionRepository.findByIdCliente(query);
 
         if (liquidaciones.isEmpty()) {

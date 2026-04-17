@@ -91,7 +91,7 @@ Independent Test: El endpoint debe retornar liquidaciones paginadas en menos de 
 
 Tests
 
-    [x] T001 Crear test de contrato para GET /api/v1/clientes/{id_cliente}/liquidaciones
+    [x] T001 Crear test de contrato para GET /api/v1/clientes/{idCliente}/liquidaciones
     [x] T002 Crear test de integración para flujo completo de consulta
 
 Implementation
@@ -106,9 +106,9 @@ Implementation
     [x] T010 Crear ConsultarLiquidacionesQuery (record) en application/dto/query/
     [x] T011 Crear LiquidacionClienteResponse (record) en application/dto/response/
     [x] T012 Crear LiquidacionController en infrastructure/adapter/inbound/rest/
-    [x] T013 Implementar GET /api/v1/clientes/{id_cliente}/liquidaciones con paginación (20 por defecto)
-    [x] T014 Implementar ordenamiento cronológico descendente por fecha_liquidacion
-    [x] T015 Implementar validación de id_cliente (Bean Validation)
+    [x] T013 Implementar GET /api/v1/clientes/{idCliente}/liquidaciones con paginación (20 por defecto)
+    [x] T014 Implementar ordenamiento cronológico descendente por fechaLiquidacion
+    [x] T015 Implementar validación de idCliente (Bean Validation)
     [x] T016 Agregar logging para operaciones de consulta
 
 Dependencies & Execution Order
@@ -133,5 +133,5 @@ Functional Requirements (from spec)
     FR-001: Identificar al cliente por ID de cliente
     FR-002: Ordenar cronológicamente descendente
     FR-003: Paginación 20 registros por defecto
-    FR-004: Mostrar: id_liquidacion, id_pedido, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf
-    FR-005: Acceso a PDF mediante uri_pdf
+    FR-004: Mostrar: idLiquidacion, idPedido, idCliente, formaPago, estadoLiquidacion, fechaLiquidacion, uriPdf, montoLiquidado
+    FR-005: Acceso a PDF mediante uriPdf
