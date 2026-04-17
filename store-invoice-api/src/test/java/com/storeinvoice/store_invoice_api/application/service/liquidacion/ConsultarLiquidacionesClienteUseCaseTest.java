@@ -113,7 +113,7 @@ class ConsultarLiquidacionesClienteUseCaseTest {
 
     @Test
     void execute_pagina_negativa_trata_como_cero() {
-        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, -1, 20)))
+        when(liquidacionRepository.findByIdCliente(new ConsultarLiquidacionesQuery(idCliente, 0, 20)))
                 .thenReturn(List.of(liquidacionMock));
         when(liquidacionMapper.toResponseList(any())).thenReturn(List.of(responseMock));
 

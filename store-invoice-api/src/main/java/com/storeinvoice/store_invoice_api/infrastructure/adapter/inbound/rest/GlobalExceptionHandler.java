@@ -1,6 +1,7 @@
 package com.storeinvoice.store_invoice_api.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.store_invoice_api.domain.exception.LiquidacionNotFoundException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ClienteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleClienteNotFound(final ClienteNotFoundException ex) {
         LOG.warn("Cliente no encontrado: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(LiquidacionNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleLiquidacionNotFound(final LiquidacionNotFoundException ex) {
+        LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
     }

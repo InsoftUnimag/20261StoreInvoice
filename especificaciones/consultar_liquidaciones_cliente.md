@@ -48,12 +48,12 @@ Yo como cliente deseo consultar mis liquidaciones desde una interfaz web. Para v
 - **FR-001:** El sistema DEBE identificar al cliente por su ID de cliente.
 - **FR-002:** El sistema DEBE mostrar las liquidaciones ordenadas cronológicamente de forma descendente.
 - **FR-003:** El sistema DEBE paginar los resultados (20 registros por página por defecto).
-- **FR-004:** El sistema DEBE mostrar los detalles de cada liquidación: id_liquidacion, id_pedido, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf.
-- **FR-005:** El sistema DEBE permitir acceder al PDF mediante la uri_pdf.
+- **FR-004:** El sistema DEBE mostrar los detalles de cada liquidación: idLiquidacion, idPedido, idCliente, formaPago, estadoLiquidacion, fechaLiquidacion, uriPdf, montoLiquidado.
+- **FR-005:** El sistema DEBE permitir acceder al PDF mediante la uriPdf.
 
 ### Key Entities
 
-- **Liquidacion_Cliente:** [id_liquidacion, id_pedido, id_cliente, forma_pago, estado_liquidacion, fecha_liquidacion, uri_pdf]
+- **Liquidacion_Cliente:** [idLiquidacion, idPedido, idCliente, formaPago, estadoLiquidacion, fechaLiquidacion, uriPdf, montoLiquidado]
 
 ---
 
