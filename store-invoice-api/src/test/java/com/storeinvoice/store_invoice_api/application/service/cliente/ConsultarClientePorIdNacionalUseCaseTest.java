@@ -3,6 +3,7 @@ package com.storeinvoice.store_invoice_api.application.service.cliente;
 import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientResponse;
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.store_invoice_api.domain.exception.InvalidClientIdException;
 import com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external.ClienteWebClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,7 @@ class ConsultarClientePorIdNacionalUseCaseTest {
     void consultarClientePorIdNacional_idNacionalVacio_lanzaExcepcion() {
         useCase.consultarClientePorIdNacional("")
                 .as(StepVerifier::create)
-                .expectError(ClienteNotFoundException.class)
+                .expectError(InvalidClientIdException.class)
                 .verify();
     }
 
@@ -79,7 +80,7 @@ class ConsultarClientePorIdNacionalUseCaseTest {
     void consultarClientePorIdNacional_idNacionalNull_lanzaExcepcion() {
         useCase.consultarClientePorIdNacional(null)
                 .as(StepVerifier::create)
-                .expectError(ClienteNotFoundException.class)
+                .expectError(InvalidClientIdException.class)
                 .verify();
     }
 
