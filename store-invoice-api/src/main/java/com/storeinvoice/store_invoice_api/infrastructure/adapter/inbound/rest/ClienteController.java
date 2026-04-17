@@ -2,8 +2,6 @@ package com.storeinvoice.store_invoice_api.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import com.storeinvoice.store_invoice_api.infrastructure.port.inbound.ClienteInboundPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +13,6 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1/clientes")
 public class ClienteController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ClienteController.class);
-
     private final ClienteInboundPort clienteInboundPort;
 
     public ClienteController(ClienteInboundPort clienteInboundPort) {
@@ -26,7 +22,6 @@ public class ClienteController {
     @GetMapping("/nacional/{id_nacional}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorIdNacional(
             @PathVariable("id_nacional") String idNacional) {
-        LOG.info("consultarClientePorIdNacional: {}", idNacional);
         return clienteInboundPort.consultarClientePorIdNacional(idNacional)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -35,7 +30,6 @@ public class ClienteController {
     @GetMapping("/{id_cliente}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorId(
             @PathVariable("id_cliente") String idCliente) {
-        LOG.info("consultarClientePorId: {}", idCliente);
         return clienteInboundPort.consultarClientePorIdCliente(idCliente)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

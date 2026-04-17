@@ -52,7 +52,6 @@ src/
 │   │               ├── domain/                              # HEXÁGONO CENTRAL - Sin dependencias externas
 │   │               │   ├── model/                           # Entidades de dominio (POJOs ricos con lógica)
 │   │               │   │   ├── Pedido.java
-│   │               │   │   ├── Cliente.java
 │   │               │   │   ├── LiquidacionCliente.java
 │   │               │   │   ├── LiquidacionTransportista.java
 │   │               │   │   └── FormaPago.java
@@ -112,21 +111,19 @@ src/
 │   │               │   │   │       └── EstadoFinalEventConsumer.java
 │   │               │   │   └── outbound/                    # ADAPTADORES SALIENTES (Driven Adapters)
 │   │               │   │       ├── persistence/             # Implementaciones de repositorios
-│   │               │   │       │   ├── PedidoRepositoryAdapter.java
-│   │               │   │       │   ├── ClienteRepositoryAdapter.java
-│   │               │   │       │   └── LiquidacionRepositoryAdapter.java
+│   │               │   │           │   ├── PedidoRepositoryAdapter.java
+│   │               │   │           │   └── LiquidacionRepositoryAdapter.java
 │   │               │   │       └── external/                # Implementaciones de servicios externos
+│   │               │   │           ├── ClienteWebClient.java
 │   │               │   │           ├── InventarioServiceAdapter.java
 │   │               │   │           └── TransporteServiceAdapter.java
 │   │               │   ├── persistence/                     # CONFIGURACIÓN DE PERSISTENCIA
 │   │               │   │   ├── entity/                      # Entidades JPA (mapeo a BD)
 │   │               │   │   │   ├── PedidoJpaEntity.java
-│   │               │   │   │   ├── ClienteJpaEntity.java
 │   │               │   │   │   ├── LiquidacionClienteJpaEntity.java
 │   │               │   │   │   └── LiquidacionTransportistaJpaEntity.java
 │   │               │   │   ├── mapper/                      # Mappers entre Entities y Models
 │   │               │   │   │   ├── PedidoEntityMapper.java
-│   │               │   │   │   ├── ClienteEntityMapper.java
 │   │               │   │   │   └── LiquidacionEntityMapper.java
 │   │               │   │   └── DatabaseConfig.java
 │   │               │   ├── messaging/                       # CONFIGURACIÓN DE MENSAJERÍA
@@ -145,7 +142,6 @@ src/
 │   │               │       │   └── LiquidacionInboundPort.java # Interface para operaciones de liquidación
 │   │               │       └── outbound/                    # Outbound Ports (Driven/Secondary)
 │   │               │           ├── PedidoRepositoryPort.java
-│   │               │           ├── ClienteRepositoryPort.java
 │   │               │           ├── LiquidacionRepositoryPort.java
 │   │               │           ├── InventarioServicePort.java
 │   │               │           └── TransporteServicePort.java
@@ -201,7 +197,6 @@ src/
     │                   │   └── outbound/
     │                   │       ├── persistence/
     │                   │       │   ├── PedidoRepositoryAdapterTest.java
-    │                   │       │   ├── ClienteRepositoryAdapterTest.java
     │                   │       │   └── LiquidacionRepositoryAdapterTest.java
     │                   │       └── external/
     │                   │           ├── InventarioServiceAdapterTest.java
@@ -249,7 +244,7 @@ Purpose: Core infrastructure that MUST be complete before ANY user story can be 
 
 ⚠️ CRITICAL: No user story work can begin until this phase is complete
 
-    [ ] T006 Crear entidades base del dominio (Pedido, Cliente, LiquidacionCliente, LiquidacionTransportista, FormaPago)
+    [ ] T006 Crear entidades base del dominio (Pedido, LiquidacionCliente, LiquidacionTransportista, FormaPago)
     [ ] T007 Configurar base de datos PostgreSQL con Flyway para migraciones
     [ ] T008 Implementar capa de persistencia con JPA/Hibernate (puertos y adaptadores)
     [ ] T009 Configurar manejo de eventos con Spring Cloud Stream (RabbitMQ) // 
@@ -278,14 +273,12 @@ Tests for User Story 1
 
 Implementation for User Story 1
 
-    [ ] T020 Crear entidad Cliente en src/main/java/com/storeinvoice/store_invoice_api/domain/model/Cliente.java
-    [ ] T021 Crear puerto ClienteRepositoryPort en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/port/outbound/ClienteRepositoryPort.java
-    [ ] T022 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/persistence/ClienteRepositoryAdapter.java
     [ ] T023 Crear caso de uso ConsultarClientePorIdNacionalUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/cliente/
     [ ] T024 Crear ClienteController en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/rest/ClienteController.java
-    [ ] T025 Implementar endpoint GET /api/v1/clientes/{id_nacional} con validación y manejo de errores
-    [ ] T026 Agregar logging para operaciones de consulta de cliente
-    [ ] T027 Crear ClienteResponse en src/main/java/com/storeinvoice/store_invoice_api/application/dto/response/
+    [ ] T025 Implementar ClienteWebClient para consumo del Módulo de Clientes (WebClient reactivo)
+    [ ] T026 Implementar endpoint GET /api/v1/clientes/nacional/{id_nacional} con validación y manejo de errores
+    [ ] T027 Agregar logging para operaciones de consulta de cliente
+    [ ] T028 Crear ClienteResponse en src/main/java/com/storeinvoice/store_invoice_api/application/dto/response/
 
 Checkpoint: At this point, User Story 1 should be fully functional and testable independently
 Phase 4: User Story 2 - Consulta de Forma de Pago del Cliente (Priority: P2)
