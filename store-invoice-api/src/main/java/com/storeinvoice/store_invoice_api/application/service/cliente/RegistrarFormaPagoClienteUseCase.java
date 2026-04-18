@@ -8,6 +8,8 @@ import com.storeinvoice.store_invoice_api.domain.valueobject.FormaPago;
 import com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external.ClienteWebClient;
 import com.storeinvoice.store_invoice_api.infrastructure.port.inbound.FormaPagoInboundPort;
 import com.storeinvoice.store_invoice_api.infrastructure.port.outbound.FormaPagoClienteRepositoryPort;
+import com.storeinvoice.store_invoice_api.infrastructure.persistence.mapper.CommandFormaPagoClienteMapper;
+import com.storeinvoice.store_invoice_api.infrastructure.persistence.mapper.ResponseFormaPagoClienteMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,18 @@ public class RegistrarFormaPagoClienteUseCase implements FormaPagoInboundPort {
 
     private final FormaPagoClienteRepositoryPort formaPagoClienteRepositoryPort;
     private final ClienteWebClient clienteWebClient;
+    private final CommandFormaPagoClienteMapper commandMapper;
+    private final ResponseFormaPagoClienteMapper responseMapper;
 
     public RegistrarFormaPagoClienteUseCase(
             FormaPagoClienteRepositoryPort formaPagoClienteRepositoryPort,
-            ClienteWebClient clienteWebClient) {
+            ClienteWebClient clienteWebClient,
+            CommandFormaPagoClienteMapper commandMapper,
+            ResponseFormaPagoClienteMapper responseMapper) {
         this.formaPagoClienteRepositoryPort = formaPagoClienteRepositoryPort;
         this.clienteWebClient = clienteWebClient;
+        this.commandMapper = commandMapper;
+        this.responseMapper = responseMapper;
     }
 
     public Mono<FormaPagoResponse> registrarFormaPago(RegistrarFormaPagoCommand command) {
@@ -35,7 +43,7 @@ public class RegistrarFormaPagoClienteUseCase implements FormaPagoInboundPort {
                 .flatMap(this::validarFormaPago)
                 .flatMap(this::verificarClienteExiste)
                 .flatMap(this::guardarFormaPago)
-                .map(this::mapToResponse);
+                .map(responseMapper::toResponse);
     }
 
     private Mono<RegistrarFormaPagoCommand> validarEntrada(RegistrarFormaPagoCommand command) {
@@ -64,21 +72,7 @@ public class RegistrarFormaPagoClienteUseCase implements FormaPagoInboundPort {
     }
 
     private Mono<FormaPagoCliente> guardarFormaPago(RegistrarFormaPagoCommand command) {
-        FormaPago formaPago = FormaPago.fromValue(command.formaPago());
-        FormaPagoCliente formaPagoCliente = new FormaPagoCliente(
-                command.idCliente(),
-                formaPago,
-                LocalDateTime.now()
-        );
-        FormaPagoCliente saved = formaPagoClienteRepositoryPort.save(formaPagoCliente);
-        return Mono.just(saved);
-    }
-
-    private FormaPagoResponse mapToResponse(FormaPagoCliente formaPagoCliente) {
-        return new FormaPagoResponse(
-                formaPagoCliente.getIdCliente(),
-                formaPagoCliente.getFormaPago().getValue(),
-                formaPagoCliente.getFechaRegistro()
-        );
+        FormaPagoCliente formaPagoCliente = commandMapper.toDomain(command);
+        return Mono.fromCallable(() -> formaPagoClienteRepositoryPort.save(formaPagoCliente));
     }
 }
