@@ -1,6 +1,6 @@
 package com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external;
 
-import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientResponse;
+import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -21,17 +21,17 @@ public class ClienteWebClient {
                 .build();
     }
 
-    public Mono<ClienteClientResponse> consultarClientePorIdNacional(String idNacional) {
+    public Mono<ClienteResponse> consultarClientePorIdNacional(String idNacional) {
         return webClient.get()
                 .uri("/api/v1/clientes/nacional/{id_nacional}", idNacional)
                 .retrieve()
-                .bodyToMono(ClienteClientResponse.class);
+                .bodyToMono(ClienteResponse.class);
     }
 
-    public Mono<ClienteClientResponse> consultarClientePorIdCliente(String idCliente) {
+    public Mono<ClienteResponse> consultarClientePorIdCliente(String idCliente) {
         return webClient.get()
                 .uri("/api/v1/clientes/{id_cliente}", idCliente)
                 .retrieve()
-                .bodyToMono(ClienteClientResponse.class);
+                .bodyToMono(ClienteResponse.class);
     }
 }

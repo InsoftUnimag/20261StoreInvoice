@@ -1,6 +1,5 @@
 package com.storeinvoice.store_invoice_api.application.service.cliente;
 
-import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientResponse;
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import com.storeinvoice.store_invoice_api.infrastructure.port.inbound.ClienteInboundPort;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
@@ -30,18 +29,7 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
         }
 
         return clienteWebClient.consultarClientePorIdNacional(idNacional)
-                .map(this::mapToClienteResponse)
                 .switchIfEmpty(Mono.error(new ClienteNotFoundException("Cliente no encontrado con el ID Nacional proporcionado")));
-    }
-
-    private ClienteResponse mapToClienteResponse(ClienteClientResponse cliente) {
-        return new ClienteResponse(
-            cliente.idCliente(),
-            cliente.idNacional(),
-            cliente.nombre(),
-            cliente.telefono(),
-            cliente.direccion()
-        );
     }
 
     @Override
@@ -52,7 +40,6 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
         }
 
         return clienteWebClient.consultarClientePorIdCliente(idCliente)
-                .map(this::mapToClienteResponse)
                 .switchIfEmpty(Mono.error(new ClienteNotFoundException("Cliente no encontrado con el ID proporcionado")));
     }
 }

@@ -1,6 +1,5 @@
 package com.storeinvoice.store_invoice_api.application.service.cliente;
 
-import com.storeinvoice.store_invoice_api.application.dto.client.ClienteClientResponse;
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.store_invoice_api.domain.exception.InvalidClientIdException;
@@ -26,11 +25,11 @@ class ConsultarClientePorIdNacionalUseCaseTest {
     @InjectMocks
     private ConsultarClientePorIdNacionalUseCase useCase;
 
-    private ClienteClientResponse clienteResponse;
+    private ClienteResponse clienteResponse;
 
     @BeforeEach
     void setUp() {
-        clienteResponse = new ClienteClientResponse(
+        clienteResponse = new ClienteResponse(
                 "100",
                 "12345678",
                 "Juan Perez",
