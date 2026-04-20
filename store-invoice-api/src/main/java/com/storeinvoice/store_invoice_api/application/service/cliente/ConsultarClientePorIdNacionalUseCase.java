@@ -24,7 +24,7 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
     @Override
     public Mono<ClienteResponse> consultarClientePorIdNacional(String idNacional) {
         if (idNacional == null || idNacional.isBlank()) {
-            log.error("ID Nacional es requerido pero está vacío o nulo");
+            log.warn("ID Nacional es requerido pero está vacío o nulo");
             return Mono.error(new InvalidClientIdException("El ID Nacional es requerido"));
         }
 
@@ -35,7 +35,7 @@ public class ConsultarClientePorIdNacionalUseCase implements ClienteInboundPort 
     @Override
     public Mono<ClienteResponse> consultarClientePorIdCliente(String idCliente) {
         if (idCliente == null || idCliente.isBlank()) {
-            log.error("ID de cliente es requerido pero está vacío o nulo");
+            log.warn("ID de cliente es requerido pero está vacío o nulo");
             return Mono.error(new InvalidClientIdException("ID de cliente inválido"));
         }
 

@@ -1,10 +1,12 @@
 package com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external;
 
 import com.storeinvoice.store_invoice_api.application.dto.response.ClienteResponse;
+import com.storeinvoice.store_invoice_api.domain.exception.ServiceConnectionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -25,13 +27,17 @@ public class ClienteWebClient {
         return webClient.get()
                 .uri("/api/v1/clientes/nacional/{id_nacional}", idNacional)
                 .retrieve()
-                .bodyToMono(ClienteResponse.class);
+                .bodyToMono(ClienteResponse.class)
+                .onErrorMap(ex -> ex instanceof WebClientRequestException,
+                        ex -> new ServiceConnectionException("Error de conexión con el servicio externo", ex));
     }
 
     public Mono<ClienteResponse> consultarClientePorIdCliente(String idCliente) {
         return webClient.get()
                 .uri("/api/v1/clientes/{id_cliente}", idCliente)
                 .retrieve()
-                .bodyToMono(ClienteResponse.class);
+                .bodyToMono(ClienteResponse.class)
+                .onErrorMap(ex -> ex instanceof WebClientRequestException,
+                        ex -> new ServiceConnectionException("Error de conexión con el servicio externo", ex));
     }
 }

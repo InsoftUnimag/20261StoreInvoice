@@ -68,8 +68,6 @@ src/
 │                   │   └── dto/
 │                   │       ├── response/
 │                   │       │   └── ClienteResponse.java
-│                   │       └── client/
-│                   │           └── ClienteClientResponse.java
 │                   │
 │                   └── infrastructure/
 │                       ├── port/
@@ -106,7 +104,6 @@ src/
 - [x] T001 ClienteWebClient existe en `infrastructure/adapter/outbound/external/ClienteWebClient.java`
 - [x] T002 ConsultarClientePorIdNacionalUseCase existe en `application/service/cliente/ConsultarClientePorIdNacionalUseCase.java`
 - [x] T003 ClienteResponse existe en `application/dto/response/ClienteResponse.java`
-- [x] T004 ClienteClientResponse existe en `application/dto/client/ClienteClientResponse.java`
 - [x] T005 ClienteInboundPort existe en `infrastructure/port/inbound/ClienteInboundPort.java`
 - [x] T006 ClienteNotFoundException existe en `domain/exception/ClienteNotFoundException.java`
 - [x] T007 ClienteController existe en `infrastructure/adapter/inbound/rest/ClienteController.java`
@@ -140,7 +137,7 @@ src/
 - ClienteWebClient (consumo externo via WebClient reactivo)
 - ConsultarClientePorIdNacionalUseCase (use case reactivo)
 - ClienteInboundPort (puerto inbound reactivo en infrastructure)
-- ClienteResponse / ClienteClientResponse (DTOs)
+- ClienteResponse (DTO)
 - ClienteNotFoundException / InvalidClientIdException (excepciones)
 - GlobalExceptionHandler (manejo de errores incluyendo conexión)
 - ClienteController (expone endpoints REST reactivos)
