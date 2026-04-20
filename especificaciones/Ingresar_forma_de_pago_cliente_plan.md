@@ -58,7 +58,7 @@ src/main/java/com/storeinvoice/store_invoice_api/
         └── mapper/
             └── FormaPagoClienteMapper.java      # Mapper MapStruct
 
-Structure Decision: Proceso interno basado en arquitectura hexagonal. La forma de pago se guarda en tabla separada `formas_pago_cliente` asociada al id_cliente del sistema externo. No requiere nuevo controller REST.
+Structure Decision: API REST basada en Spring WebFlux. La forma de pago se guarda en tabla separada `formas_pago_cliente` asociada al id_cliente del sistema externo. Exposición mediante `FormaPagoController` en `/api/v1/clientes/forma-pago`.
 
 Phase 1: Domain Layer - Modelo de Forma de Pago Cliente
 
@@ -93,15 +93,14 @@ Purpose: Guardar forma de pago en base de datos
 
 Checkpoint: Infrastructure layer ready
 
-Phase 4: Tests
+Phase 5: API REST Exposure & Integration Tests
 
-Purpose: Verificar funcionamiento
+Purpose: Expose endpoint and verify integration
 
-    [x] T013 Crear test unitario para FormaPago enum en test/java/domain/valueobject/FormaPagoTest.java
-    [x] T014 Crear test unitario para RegistrarFormaPagoClienteUseCase en test/java/application/service/cliente/RegistrarFormaPagoClienteUseCaseTest.java
-    [ ] T015 Crear test de integración (pendiente - sin estructura de integración existente)
+    [x] T016 Crear FormaPagoController en infrastructure/adapter/inbound/rest/FormaPagoController.java
+    [x] T017 Crear test de integración para el endpoint usando WebTestClient (test/java/infrastructure/adapter/inbound/rest/FormaPagoControllerIntegrationTest.java)
 
-Checkpoint: Unit tests pass - integración pendiente
+Checkpoint: API REST ready and tested
 
 Dependencies & Execution Order
 
@@ -110,6 +109,7 @@ Dependencies & Execution Order
         Phase 2 (Application): Depends on Phase 1 - Domain model must exist
         Phase 3 (Infrastructure): Depends on Phase 2 - Use case must be defined
         Phase 4 (Tests): Depends on all implementation phases
+        Phase 5 (API REST): Depends on Phase 2 and Phase 3 - Use case and repository ready
 
     User Story Dependencies
         This feature depends on User Story 1 (Consultar Cliente por ID Nacional) - existing implementation provides ClienteRepositoryPort
@@ -119,11 +119,14 @@ Prioridades de Implementación
     P1 (Alta): Extender domain layer para forma de pago
     P2 (Alta): Implementar caso de uso
     P3 (Media): Actualizar persistencia
-    P4 (Baja): Tests
+    P4 (Baja): Tests unitarios
+    P5 (Alta): API REST Exposure
 
 Notes
 
-    [Feature] This is an internal process, NOT a REST endpoint
+Notes
+
+    [Feature] This is an API REST endpoint, exposed at `/api/v1/clientes/forma-pago`
     The forma_pago is stored in separate table "formas_pago_cliente" associated to id_cliente (from external system)
     Valid payment methods: CONTRA_ENTREGA, CARTERA_COMERCIAL only
     Validation: Must verify cliente exists in external system before saving
