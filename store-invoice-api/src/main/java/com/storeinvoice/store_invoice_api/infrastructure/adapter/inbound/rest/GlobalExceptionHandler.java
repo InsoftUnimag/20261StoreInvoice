@@ -1,7 +1,7 @@
 package com.storeinvoice.store_invoice_api.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.store_invoice_api.domain.exception.ClienteNotFoundException;
-import com.storeinvoice.store_invoice_api.domain.exception.InvalidClientIdException;
+import com.storeinvoice.store_invoice_api.domain.exception.LiquidacionNotFoundException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +22,11 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(InvalidClientIdException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidClientId(final InvalidClientIdException ex) {
-        LOG.warn("ID de cliente inválido: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LiquidacionNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleLiquidacionNotFound(final LiquidacionNotFoundException ex) {
+        LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(final Exception ex) {
-        LOG.error("Error al consultar el Módulo de Clientes. Intente más tarde", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Error al consultar el Módulo de Clientes. Intente más tarde"));
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
