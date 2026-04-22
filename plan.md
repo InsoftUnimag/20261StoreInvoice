@@ -32,13 +32,20 @@ Source Code (repository root)
 #
 # PRINCIPIOS DE ARQUITECTURA HEXAGONAL (PUERTOS Y ADAPTADORES):
 # - Domain (hexágono central): NO depende de nada externo. Contiene entidades, value objects, eventos de dominio
-# - Application: Depende SOLO de domain. Contiene casos de uso, puertos (interfaces), DTOs
+# - Application: Depende SOLO de domain. Contiene casos de uso, puertos (interfaces), DTOs, mappers
 # - Infrastructure: Depende de application y domain. Contiene adaptadores concretos (REST, messaging, persistence)
 #
 # FLUJO DE DEPENDENCIAS: infrastructure → application → domain
 #
+# CONSIDERACIONES ARQUITECTÓNICAS:
+# 1. Puertos outbound (interfaces puras, sin tecnología) van en application/port/outbound/
+# 2. Mappers Domain ↔ DTO van en application/mapper/
+# 3. Mappers JPA ↔ Domain van en infrastructure/mapper/
+# 4. Los use cases implementan inbound ports (no necesitan interfaz adicional para controllers)
+# 5. Los controllers injectan los use cases directamente (el use case ES el inbound port)
+#
 # CLASIFICACIÓN DE PUERTOS:
-# - Inbound Ports (Driving/Primary): Interfaces que definen cómo se usa la aplicación (implementadas por adaptadores entrantes)
+# - Inbound Ports (Driving/Primary): Interfaces que definen cómo se usa la aplicación (implementadas por use cases)
 # - Outbound Ports (Driven/Secondary): Interfaces que definen qué necesita la aplicación del exterior (implementadas por adaptadores salientes)
 #
 src/
@@ -72,7 +79,7 @@ src/
 │   │               │       └── DomainException.java
 │   │               │
 │   │               ├── application/                         # CAPA DE APLICACIÓN - Depende solo de domain
-│   │               │   ├── service/                         # CASOS DE USO (Application Services)
+│   │               │   ├── service/                         # CASOS DE USO (Application Services) - Implementan Inbound Ports
 │   │               │   │   ├── cliente/
 │   │               │   │   │   ├── ConsultarClientePorIdNacionalUseCase.java
 │   │               │   │   │   └── ConsultarFormaPagoClienteUseCase.java
@@ -82,6 +89,15 @@ src/
 │   │               │   │   └── liquidacion/
 │   │               │   │       ├── GenerarLiquidacionesUseCase.java
 │   │               │   │       └── ConsultarLiquidacionesUseCase.java
+│   │               │   ├── port/                            # PUERTOS (Interfaces puras - sin tecnología)
+│   │               │   │   └── outbound/                    # Outbound Ports (Driven/Secondary)
+│   │               │   │       ├── LiquidacionRepositoryPort.java
+│   │               │   │       ├── ClienteRepositoryPort.java
+│   │               │   │       └── PedidoRepositoryPort.java
+│   │               │   ├── mapper/                          # MAPPERS Domain ↔ DTO
+│   │               │   │   ├── LiquidacionEntityMapper.java
+│   │               │   │   ├── ClienteEntityMapper.java
+│   │               │   │   └── PedidoEntityMapper.java
 │   │               │   ├── dto/                             # DTOs - Transferencia de datos
 │   │               │   │   ├── command/                     # Comandos (escritura)
 │   │               │   │   │   ├── RegistrarPedidoCommand.java
@@ -103,7 +119,7 @@ src/
 │   │               ├── infrastructure/                      # INFRAESTRUCTURA - Adaptadores concretos
 │   │               │   ├── adapter/
 │   │               │   │   ├── inbound/                     # ADAPTADORES ENTRANTES (Driving Adapters)
-│   │               │   │   │   ├── rest/                    # Controllers REST
+│   │               │   │   │   ├── rest/                    # Controllers REST (consumen Use Cases/Inbound Ports)
 │   │               │   │   │   │   ├── ClienteController.java
 │   │               │   │   │   │   ├── PedidoController.java
 │   │               │   │   │   │   └── LiquidacionController.java
@@ -116,6 +132,7 @@ src/
 │   │               │   │       │   ├── ClienteRepositoryAdapter.java
 │   │               │   │       │   └── LiquidacionRepositoryAdapter.java
 │   │               │   │       └── external/                # Implementaciones de servicios externos
+│   │               │   │           ├── ClienteWebClient.java
 │   │               │   │           ├── InventarioServiceAdapter.java
 │   │               │   │           └── TransporteServiceAdapter.java
 │   │               │   ├── persistence/                     # CONFIGURACIÓN DE PERSISTENCIA
@@ -124,10 +141,10 @@ src/
 │   │               │   │   │   ├── ClienteJpaEntity.java
 │   │               │   │   │   ├── LiquidacionClienteJpaEntity.java
 │   │               │   │   │   └── LiquidacionTransportistaJpaEntity.java
-│   │               │   │   ├── mapper/                      # Mappers entre Entities y Models
-│   │               │   │   │   ├── PedidoEntityMapper.java
-│   │               │   │   │   ├── ClienteEntityMapper.java
-│   │               │   │   │   └── LiquidacionEntityMapper.java
+│   │               │   │   ├── mapper/                      # MAPPERS JPA ↔ Domain
+│   │               │   │   │   ├── PedidoJpaMapper.java
+│   │               │   │   │   ├── ClienteJpaMapper.java
+│   │               │   │   │   └── LiquidacionJpaMapper.java
 │   │               │   │   └── DatabaseConfig.java
 │   │               │   ├── messaging/                       # CONFIGURACIÓN DE MENSAJERÍA
 │   │               │   │   ├── EventConfig.java
@@ -279,7 +296,7 @@ Tests for User Story 1
 Implementation for User Story 1
 
     [ ] T020 Crear entidad Cliente en src/main/java/com/storeinvoice/store_invoice_api/domain/model/Cliente.java
-    [ ] T021 Crear puerto ClienteRepositoryPort en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/port/outbound/ClienteRepositoryPort.java
+    [ ] T021 Crear puerto ClienteRepositoryPort en src/main/java/com/storeinvoice/store_invoice_api/application/port/outbound/ClienteRepositoryPort.java
     [ ] T022 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/persistence/ClienteRepositoryAdapter.java
     [ ] T023 Crear caso de uso ConsultarClientePorIdNacionalUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/cliente/
     [ ] T024 Crear ClienteController en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/rest/ClienteController.java
@@ -324,7 +341,7 @@ Tests for User Story 3
 Implementation for User Story 3
 
     [ ] T039 Crear entidad Pedido en src/main/java/com/storeinvoice/store_invoice_api/domain/model/Pedido.java
-    [ ] T040 Crear puerto PedidoRepositoryPort en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/port/outbound/PedidoRepositoryPort.java
+    [ ] T040 Crear puerto PedidoRepositoryPort en src/main/java/com/storeinvoice/store_invoice_api/application/port/outbound/PedidoRepositoryPort.java
     [ ] T041 Implementar PedidoRepositoryAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/persistence/PedidoRepositoryAdapter.java
     [ ] T042 Crear caso de uso RegistrarPedidoUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/pedido/
     [ ] T043 Crear PedidoEventConsumer en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/messaging/PedidoEventConsumer.java
@@ -355,7 +372,7 @@ Implementation for User Story 4
     [ ] T054 Crear PdfGeneratorAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/pdf/PdfGeneratorAdapter.java
     [ ] T055 Implementar validación de datos del evento (id_pedido, estado_final, tasa_efectividad, id_transportista)
     [ ] T056 Crear entidades LiquidacionCliente y LiquidacionTransportista en domain/model/
-    [ ] T057 Implementar puerto LiquidacionRepositoryPort en infrastructure/port/outbound/ y adapter en infrastructure/adapter/outbound/persistence/
+    [ ] T057 Implementar puerto LiquidacionRepositoryPort en application/port/outbound/ y adapter en infrastructure/adapter/outbound/persistence/
     [ ] T058 Agregar logging para operaciones de generación de liquidaciones
 
 Phase 7: User Story 5 - Consulta de Liquidaciones (Priority: P5)
@@ -393,6 +410,17 @@ Purpose: Improvements that affect multiple user stories
     [ ] T075 Pruebas de carga y estrés
     [ ] T076 Documentación de API completa con ejemplos
     [ ] T077 Guía de despliegue y operación
+
+Phase N+1: Correcciones Arquitectura Hexagonal
+
+Purpose: Ajustar la estructura del proyecto para cumplir estrictamente con arquitectura hexagonal
+
+    [ ] T078 Crear puertos outbound en application/port/outbound/ (ya están bien ubicados)
+    [ ] T079 Separar mappers: mover mappers Domain ↔ DTO a application/mapper/
+    [ ] T080 Crear mappers JPA ↔ Domain en infrastructure/mapper/
+    [ ] T081 Crear puertos outbound para servicios externos (ClienteWebClient → ClienteRepositoryPort)
+    [ ] T082 Refactorizar use cases para depender de puertos, no de adaptadores concretos
+    [ ] T083 Eliminar dependencias de infrastructure en capa application (mappers, adaptadores)
 
 Dependencies & Execution Order
 Phase Dependencies

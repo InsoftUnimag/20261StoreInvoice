@@ -1,0 +1,12 @@
+package com.storeinvoice.storeinvoiceapi.domain.exception;
+
+public class InvalidClientIdException extends RuntimeException {
+    
+    public InvalidClientIdException(String message) {
+        super(message);
+    }
+    
+    public InvalidClientIdException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
