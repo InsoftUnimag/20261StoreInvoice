@@ -1,7 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ClienteResponse;
-import com.storeinvoice.storeinvoiceapi.application.port.inbound.ClienteInboundPort;
+import com.storeinvoice.storeinvoiceapi.infrastructure.port.inbound.ClienteInboundPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

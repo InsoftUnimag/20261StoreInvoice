@@ -1,6 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.application.service.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.client.ClienteClientResponse;
+import com.storeinvoice.storeinvoiceapi.application.dto.response.ClienteResponse;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.ClienteWebClient;

@@ -1,10 +1,11 @@
-package com.storeinvoice.storeinvoiceapi.application.mapper;
+package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionClienteResponse;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.LiquidacionClienteJpaEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 

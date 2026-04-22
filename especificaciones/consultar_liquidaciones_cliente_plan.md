@@ -67,13 +67,7 @@ src/test/java/com/storeinvoice/store_invoice_api/
 └── infrastructure/adapter/inbound/rest/
     └── LiquidacionControllerTest.java
 
-Consideraciones de Arquitectura Hexagonal:
-
-- **Domain**: Pojos/Modelos del dominio (ej: LiquidacionCliente). Sin dependencias externas.
-- **Application**: DTOs, Use Cases. Los use cases apuntan a modelos del dominio y tienen @Transactional.
-- **Infrastructure**: Mappers (MapStruct), JPA Entities, Adapters. Los mappers mapean de JPA Entity ↔ Domain Model ↔ DTO.
-
-Flujo: Controller → UseCase → Port (interface) → Adapter → Mapper → JPA Entity
+Consideraciones de Programación:
 
 - Utilizar streams y lambdas para transformaciones de datos
 - Usar Optional para evitar NullPointerExceptions

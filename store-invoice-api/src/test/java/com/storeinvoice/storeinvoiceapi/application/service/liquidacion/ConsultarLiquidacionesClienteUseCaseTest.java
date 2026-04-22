@@ -2,10 +2,11 @@ package com.storeinvoice.storeinvoiceapi.application.service.liquidacion;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionClienteResponse;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
-import com.storeinvoice.storeinvoiceapi.application.mapper.LiquidacionEntityMapper;
-import com.storeinvoice.storeinvoiceapi.application.port.outbound.LiquidacionRepositoryPort;
+import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.LiquidacionEntityMapper;
+import com.storeinvoice.storeinvoiceapi.infrastructure.port.outbound.LiquidacionRepositoryPort;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

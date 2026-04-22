@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.port.outbound;
+package com.storeinvoice.storeinvoiceapi.infrastructure.port.outbound;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;

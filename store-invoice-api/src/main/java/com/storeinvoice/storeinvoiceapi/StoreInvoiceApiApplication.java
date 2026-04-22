@@ -7,9 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
     "com.storeinvoice.storeinvoiceapi",
-    "com.storeinvoice.infrastructure",
-    "com.storeinvoice.application",
-    "com.storeinvoice.domain"
 })
 public class StoreInvoiceApiApplication {
 
