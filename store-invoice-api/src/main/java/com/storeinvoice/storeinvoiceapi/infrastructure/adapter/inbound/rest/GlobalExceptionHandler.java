@@ -1,7 +1,9 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +24,25 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidClientIdException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidClientId(final InvalidClientIdException ex) {
+        LOG.warn("ID de cliente inválido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(LiquidacionNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleLiquidacionNotFound(final LiquidacionNotFoundException ex) {
         LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ServiceConnectionException.class)
+    public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
+        LOG.error("Error de conexión con el Módulo de Clientes: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)

@@ -1,7 +1,10 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ClienteResponse;
-import com.storeinvoice.storeinvoiceapi.infrastructure.port.inbound.ClienteInboundPort;
+import com.storeinvoice.storeinvoiceapi.application.service.cliente.ConsultarClientePorIdNacionalUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.cliente.ConsultarClientePorIdUseCase;
+import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.ClienteMapper;
+import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,28 +18,32 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1/clientes")
 public class ClienteController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ClienteController.class);
+    private final ConsultarClientePorIdNacionalUseCase consultarClientePorIdNacionalUseCase;
+    private final ConsultarClientePorIdUseCase consultarClientePorIdUseCase;
+    private final ClienteMapper clienteMapper;
 
-    private final ClienteInboundPort clienteInboundPort;
-
-    public ClienteController(ClienteInboundPort clienteInboundPort) {
-        this.clienteInboundPort = clienteInboundPort;
+    public ClienteController(ConsultarClientePorIdNacionalUseCase consultarClientePorIdNacionalUseCase,
+                           ConsultarClientePorIdUseCase consultarClientePorIdUseCase,
+                           ClienteMapper clienteMapper) {
+        this.consultarClientePorIdNacionalUseCase = consultarClientePorIdNacionalUseCase;
+        this.consultarClientePorIdUseCase = consultarClientePorIdUseCase;
+        this.clienteMapper = clienteMapper;
     }
 
-    @GetMapping("/nacional/{id_nacional}")
+    @GetMapping("/nacional/{idNacional}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorIdNacional(
-            @PathVariable("id_nacional") String idNacional) {
-        LOG.info("consultarClientePorIdNacional: {}", idNacional);
-        return clienteInboundPort.consultarClientePorIdNacional(idNacional)
+            @PathVariable @NotBlank String idNacional) {
+        return consultarClientePorIdNacionalUseCase.ejecutar(idNacional)
+                .map(clienteMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{id_cliente}")
+    @GetMapping("/{idCliente}")
     public Mono<ResponseEntity<ClienteResponse>> consultarClientePorId(
-            @PathVariable("id_cliente") String idCliente) {
-        LOG.info("consultarClientePorId: {}", idCliente);
-        return clienteInboundPort.consultarClientePorIdCliente(idCliente)
+            @PathVariable @NotBlank String idCliente) {
+        return consultarClientePorIdUseCase.ejecutar(idCliente)
+                .map(clienteMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
