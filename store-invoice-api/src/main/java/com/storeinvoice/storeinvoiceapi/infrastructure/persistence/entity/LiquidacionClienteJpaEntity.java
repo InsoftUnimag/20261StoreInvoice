@@ -1,5 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
 
+import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
+import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,11 +29,13 @@ public class LiquidacionClienteJpaEntity {
     @Column(name = "id_cliente", nullable = false)
     private Long idCliente;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "forma_pago", nullable = false, length = 50)
-    private String formaPago;
+    private FormaPago formaPago;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado_liquidacion", nullable = false, length = 50)
-    private String estadoLiquidacion;
+    private EstadoLiquidacion estadoLiquidacion;
 
     @Column(name = "fecha_liquidacion", nullable = false)
     private LocalDateTime fechaLiquidacion;

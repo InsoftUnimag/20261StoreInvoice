@@ -3,9 +3,9 @@ package com.storeinvoice.storeinvoiceapi.application.dto.query;
 public record ConsultarLiquidacionesQuery(
         Long idCliente,
         int pagina,
-        int tamañoPagina
+        int tamanoPagina
 ) {
     public int offset() {
-        return pagina * tamañoPagina;
+        return pagina * tamanoPagina;
     }
 }
