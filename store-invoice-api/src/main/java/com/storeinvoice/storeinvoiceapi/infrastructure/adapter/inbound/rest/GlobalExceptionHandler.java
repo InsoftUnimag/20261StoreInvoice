@@ -2,6 +2,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,19 @@ public class GlobalExceptionHandler {
         LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(PedidoNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePedidoNotFound(final PedidoNotFoundException ex) {
+        LOG.warn("Pedido no encontrado: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(org.springframework.beans.TypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(final org.springframework.beans.TypeMismatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Parametros invalidos"));
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
