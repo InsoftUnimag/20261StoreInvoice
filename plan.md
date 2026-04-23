@@ -41,15 +41,20 @@ Source Code (repository root)
 # 1. Repositorios (interfaces puras, sin tecnología) van en application/repository/
 # 2. Implementaciones de repositorios van en infrastructure/adapter/outbound/persistence/
 # 3. Todos los mappers van en infrastructure/mapper/
-# 4. Los use cases implementan inbound ports (no necesitan interfaz adicional para controllers)
-# 5. Los controllers injectan los use cases directamente (el use case ES el inbound port)
+# 4. Use cases retornan DOMAIN MODELS (no DTOs) - el use case ES el inbound port
+# 5. Controllers inyectan los use cases directamente
+# 6. FLUJO DE DATOS:
+#    - Controller (entrada): Request DTO → Domain Model
+#    - Controller (salida): Domain Model → Response DTO
+#    - Use Case: Trabaja con Domain Models (retorna Domain Model)
+#    - Repository Adapter: Domain Model ↔ JPA Entity
 #
 src/
 ├── main/
 │   ├── java/
 │   │   └── com/
 │   │       └── storeinvoice/
-│   │           └── store_invoice_api/
+│   │           └── storeinvoiceapi/
 │   │               ├── StoreInvoiceApiApplication.java
 │   │               │
 │   │               ├── domain/                              # HEXÁGONO CENTRAL - Sin dependencias externas
@@ -161,7 +166,7 @@ src/
     ├── java/
     │   └── com/
     │       └── storeinvoice/
-    │           └── store_invoice_api/
+    │           └── storeinvoiceapi/
     │               ├── domain/
     │               │   ├── model/
     │               │   │   └── PedidoTest.java
@@ -275,14 +280,14 @@ Tests for User Story 1
 
 Implementation for User Story 1
 
-    [ ] T020 Crear entidad Cliente en src/main/java/com/storeinvoice/store_invoice_api/domain/model/Cliente.java
-    [ ] T021 Crear repositorio ClienteRepository en src/main/java/com/storeinvoice/store_invoice_api/application/repository/ClienteRepository.java
-    [ ] T022 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/persistence/ClienteRepositoryAdapter.java
-    [ ] T023 Crear caso de uso ConsultarClientePorIdNacionalUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/cliente/
-    [ ] T024 Crear ClienteController en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/rest/ClienteController.java
+    [ ] T020 Crear entidad Cliente en src/main/java/com/storeinvoice/storeinvoiceapi/domain/model/Cliente.java
+    [ ] T021 Crear repositorio ClienteRepository en src/main/java/com/storeinvoice/storeinvoiceapi/application/repository/ClienteRepository.java
+    [ ] T022 Implementar ClienteRepositoryAdapter en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/outbound/persistence/ClienteRepositoryAdapter.java
+    [ ] T023 Crear caso de uso ConsultarClientePorIdNacionalUseCase en src/main/java/com/storeinvoice/storeinvoiceapi/application/service/cliente/
+    [ ] T024 Crear ClienteController en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/inbound/rest/ClienteController.java
     [ ] T025 Implementar endpoint GET /api/v1/clientes/{id_nacional} con validación y manejo de errores
     [ ] T026 Agregar logging para operaciones de consulta de cliente
-    [ ] T027 Crear ClienteResponse en src/main/java/com/storeinvoice/store_invoice_api/application/dto/response/
+    [ ] T027 Crear ClienteResponse en src/main/java/com/storeinvoice/storeinvoiceapi/application/dto/response/
 
 Checkpoint: At this point, User Story 1 should be fully functional and testable independently
 Phase 4: User Story 2 - Consulta de Forma de Pago del Cliente (Priority: P2)
@@ -298,13 +303,13 @@ Tests for User Story 2
 
 Implementation for User Story 2
 
-    [ ] T030 Crear lógica de dominio para FormaPago en src/main/java/com/storeinvoice/store_invoice_api/domain/model/FormaPago.java
+    [ ] T030 Crear lógica de dominio para FormaPago en src/main/java/com/storeinvoice/storeinvoiceapi/domain/model/FormaPago.java
     [ ] T031 Implementar lógica para buscar forma de pago por ID de cliente
-    [ ] T032 Crear caso de uso ConsultarFormaPagoClienteUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/cliente/
+    [ ] T032 Crear caso de uso ConsultarFormaPagoClienteUseCase en src/main/java/com/storeinvoice/storeinvoiceapi/application/service/cliente/
     [ ] T033 Crear endpoint GET /api/v1/pedidos/{id_pedido}/forma-pago en ClienteController
     [ ] T034 Implementar validación de formas de pago válidas (CONTRA_ENTREGA, CARTERA_COMERCIAL)
     [ ] T035 Agregar logging para operaciones de consulta de forma de pago
-    [ ] T036 Crear FormaPagoResponse en src/main/java/com/storeinvoice/store_invoice_api/application/dto/response/
+    [ ] T036 Crear FormaPagoResponse en src/main/java/com/storeinvoice/storeinvoiceapi/application/dto/response/
 
 Checkpoint: At this point, User Stories 1 AND 2 should both work independently
 Phase 5: User Story 3 - Recepción de Datos del Pedido desde Módulo de Inventario (Priority: P3)
@@ -320,13 +325,13 @@ Tests for User Story 3
 
 Implementation for User Story 3
 
-    [ ] T039 Crear entidad Pedido en src/main/java/com/storeinvoice/store_invoice_api/domain/model/Pedido.java
-    [ ] T040 Crear repositorio PedidoRepository en src/main/java/com/storeinvoice/store_invoice_api/application/repository/PedidoRepository.java
-    [ ] T041 Implementar PedidoRepositoryAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/persistence/PedidoRepositoryAdapter.java
-    [ ] T042 Crear caso de uso RegistrarPedidoUseCase en src/main/java/com/storeinvoice/store_invoice_api/application/service/pedido/
-    [ ] T043 Crear PedidoEventConsumer en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/messaging/PedidoEventConsumer.java
+    [ ] T039 Crear entidad Pedido en src/main/java/com/storeinvoice/storeinvoiceapi/domain/model/Pedido.java
+    [ ] T040 Crear repositorio PedidoRepository en src/main/java/com/storeinvoice/storeinvoiceapi/application/repository/PedidoRepository.java
+    [ ] T041 Implementar PedidoRepositoryAdapter en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/outbound/persistence/PedidoRepositoryAdapter.java
+    [ ] T042 Crear caso de uso RegistrarPedidoUseCase en src/main/java/com/storeinvoice/storeinvoiceapi/application/service/pedido/
+    [ ] T043 Crear PedidoEventConsumer en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/inbound/messaging/PedidoEventConsumer.java
     [ ] T044 Implementar lógica para consultar forma de pago del cliente al recibir el pedido
-    [ ] T045 Crear RegistrarPedidoCommand en src/main/java/com/storeinvoice/store_invoice_api/application/dto/command/
+    [ ] T045 Crear RegistrarPedidoCommand en src/main/java/com/storeinvoice/storeinvoiceapi/application/dto/command/
     [ ] T046 Implementar validación de datos del pedido recibido
     [ ] T047 Agregar logging para operaciones de recepción de pedido
 
@@ -345,11 +350,11 @@ Tests for User Story 4
 
 Implementation for User Story 4
 
-    [ ] T050 Crear EstadoFinalEventConsumer en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/messaging/EstadoFinalEventConsumer.java
-    [ ] T051 Crear lógica de generación de liquidaciones en src/main/java/com/storeinvoice/store_invoice_api/application/service/liquidacion/GenerarLiquidacionesUseCase.java
+    [ ] T050 Crear EstadoFinalEventConsumer en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/inbound/messaging/EstadoFinalEventConsumer.java
+    [ ] T051 Crear lógica de generación de liquidaciones en src/main/java/com/storeinvoice/storeinvoiceapi/application/service/liquidacion/GenerarLiquidacionesUseCase.java
     [ ] T052 Implementar lógica para generar liquidación del cliente según fórmula: (precio_pedido + tarifa_envío) × (tasa_efectividad / 100)
     [ ] T053 Implementar lógica para generar liquidación del transportista según matriz de porcentajes
-    [ ] T054 Crear PdfGeneratorAdapter en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/outbound/pdf/PdfGeneratorAdapter.java
+    [ ] T054 Crear PdfGeneratorAdapter en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/outbound/pdf/PdfGeneratorAdapter.java
     [ ] T055 Implementar validación de datos del evento (id_pedido, estado_final, tasa_efectividad, id_transportista)
     [ ] T056 Crear entidades LiquidacionCliente y LiquidacionTransportista en domain/model/
     [ ] T057 Implementar repositorio LiquidacionRepository en application/repository/ y adapter en infrastructure/adapter/outbound/persistence/
@@ -368,7 +373,7 @@ Tests for User Story 5
 
 Implementation for User Story 5
 
-    [ ] T061 Crear LiquidacionController en src/main/java/com/storeinvoice/store_invoice_api/infrastructure/adapter/inbound/rest/LiquidacionController.java
+    [ ] T061 Crear LiquidacionController en src/main/java/com/storeinvoice/storeinvoiceapi/infrastructure/adapter/inbound/rest/LiquidacionController.java
     [ ] T062 Implementar endpoint GET /api/v1/pedidos/{id_pedido}/liquidaciones para clientes
     [ ] T063 Implementar endpoint GET /api/v1/pedidos/{id_pedido}/liquidaciones para transportistas
     [ ] T064 Implementar endpoint GET /api/v1/liquidaciones con filtros para contadores
@@ -395,11 +400,13 @@ Phase N+1: Correcciones Arquitectura Hexagonal
 
 Purpose: Ajustar la estructura del proyecto para cumplir estrictamente con arquitectura hexagonal
 
-    [ ] T078 Crear repositorios en application/repository/ (ya están bien ubicados)
-    [ ] T079 Mover mappers a infrastructure/mapper/ (todos los mappers van en infrastructure)
+    [ ] T078 Crear repositorios en application/repository/ (puertos outbound - interfaces puras)
+    [ ] T079 Mappers en infrastructure/mapper/ (Domain ↔ JPA)
     [ ] T080 Crear puertos para servicios externos (ClienteServicePort → ClienteServiceAdapter)
-    [ ] T081 Refactorizar use cases para depender de repositorios/interfaces, no de adaptadores concretos
-    [ ] T082 Eliminar dependencias de infrastructure en capa application
+    [ ] T081 Use cases retornan DOMAIN MODELS (no DTOs)
+    [ ] T082 Controllers convierten: Domain Model → Response DTO (salida) / Request DTO → Domain Model (entrada)
+    [ ] T083 Repository adapters convierten: Domain Model ↔ JPA Entity
+    [ ] T084 Refactorizar use cases para depender de puertos/interfaces, no de adaptadores concretos
 
 Dependencies & Execution Order
 Phase Dependencies
