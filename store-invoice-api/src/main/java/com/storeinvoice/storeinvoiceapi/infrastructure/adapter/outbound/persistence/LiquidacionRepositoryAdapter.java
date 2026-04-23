@@ -1,10 +1,10 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;
+import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.LiquidacionClienteJpaEntity;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.LiquidacionEntityMapper;
-import com.storeinvoice.storeinvoiceapi.infrastructure.port.outbound.LiquidacionRepositoryPort;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class LiquidacionRepositoryAdapter implements LiquidacionRepositoryPort {
+public class LiquidacionRepositoryAdapter implements LiquidacionRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -31,7 +31,7 @@ public class LiquidacionRepositoryAdapter implements LiquidacionRepositoryPort {
         final TypedQuery<LiquidacionClienteJpaEntity> typedQuery = entityManager.createQuery(jpql, LiquidacionClienteJpaEntity.class);
         typedQuery.setParameter("idCliente", query.idCliente());
         typedQuery.setFirstResult(query.offset());
-        typedQuery.setMaxResults(query.tamañoPagina());
+        typedQuery.setMaxResults(query.tamanoPagina());
         
         return liquidacionMapper.toDomainList(typedQuery.getResultList());
     }
