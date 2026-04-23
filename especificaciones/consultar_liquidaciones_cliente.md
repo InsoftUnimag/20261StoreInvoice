@@ -55,6 +55,21 @@ Yo como cliente deseo consultar mis liquidaciones desde una interfaz web. Para v
 
 - **Liquidacion_Cliente:** [idLiquidacion, idPedido, idCliente, formaPago, estadoLiquidacion, fechaLiquidacion, uriPdf, montoLiquidado]
 
+### Enums (Domain)
+
+#### FormaPago
+```
+- CONTRA_ENTREGA: Pago al momento de la entrega
+- CARTERA_COMERCIAL: Pago a cuenta del comercio
+```
+
+#### EstadoLiquidacion
+```
+- PENDIENTE: Liquidacion generada, pendiente de pago
+- PAGADA: Liquidacion pagada al cliente
+- CANCELADA: Liquidacion cancelada
+```
+
 ---
 
 ## Success Criteria
