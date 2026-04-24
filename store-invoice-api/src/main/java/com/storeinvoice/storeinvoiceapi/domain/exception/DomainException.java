@@ -1,6 +1,6 @@
 package com.storeinvoice.storeinvoiceapi.domain.exception;
 
-public sealed class DomainException extends RuntimeException permits LiquidacionNotFoundException, ClienteNotFoundException, PedidoNotFoundException {
+public sealed class DomainException extends RuntimeException permits LiquidacionNotFoundException, ClienteNotFoundException, PedidoNotFoundException, ServiceConnectionException {
 
     protected DomainException(final String message) {
         super(message);
