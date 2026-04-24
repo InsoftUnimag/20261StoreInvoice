@@ -5,7 +5,6 @@ import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdExceptio
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,3 +59,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
     }
+}

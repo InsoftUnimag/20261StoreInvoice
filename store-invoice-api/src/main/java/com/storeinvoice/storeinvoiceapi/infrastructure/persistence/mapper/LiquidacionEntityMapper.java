@@ -15,6 +15,8 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface LiquidacionEntityMapper {
 
+    LiquidacionClienteJpaEntity toJpaEntity(LiquidacionCliente domain);
+
     LiquidacionCliente toDomain(LiquidacionClienteJpaEntity entity);
 
     List<LiquidacionCliente> toDomainList(List<LiquidacionClienteJpaEntity> entities);
@@ -23,3 +25,4 @@ public interface LiquidacionEntityMapper {
 
     List<LiquidacionClienteResponse> toResponseList(List<LiquidacionCliente> entities);
 }
+

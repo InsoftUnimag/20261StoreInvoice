@@ -1,7 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionClienteResponse;
-import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.ConsultarLiquidacionesClienteUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ConsultarLiquidacionesClienteUseCase;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
@@ -101,7 +101,7 @@ class LiquidacionControllerTest {
 
     @Test
     void consultarLiquidaciones_tamano_cero_usa_default() {
-        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(liquidaciones);
+        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 0)).thenReturn(liquidaciones);
         when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
@@ -124,7 +124,7 @@ class LiquidacionControllerTest {
 
     @Test
     void consultarLiquidaciones_tamano_negativo_usa_default() {
-        when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(liquidaciones);
+        when(consultarLiquidacionesUseCase.execute(idCliente, 0, -5)).thenReturn(liquidaciones);
         when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
