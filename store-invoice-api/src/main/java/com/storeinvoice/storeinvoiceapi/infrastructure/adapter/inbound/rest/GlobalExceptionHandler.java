@@ -1,7 +1,9 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import java.util.Map;
@@ -24,6 +26,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidClientIdException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidClientId(final InvalidClientIdException ex) {
+        LOG.warn("ID de cliente inválido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(LiquidacionNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleLiquidacionNotFound(final LiquidacionNotFoundException ex) {
         LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
@@ -38,12 +47,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(org.springframework.beans.TypeMismatchException.class)
-    public ResponseEntity<Map<String, String>> handleTypeMismatch(final org.springframework.beans.TypeMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Parametros invalidos"));
-    }
-
     @ExceptionHandler(ServiceConnectionException.class)
     public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
         LOG.error("Error de conexión con servicio externo: {}", ex.getMessage());
@@ -52,7 +55,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(final jakarta.validation.ConstraintViolationException ex) {
+    public ResponseEntity<Map<String, String>> handleValidation(
+            final jakarta.validation.ConstraintViolationException ex) {
         LOG.warn("Validación fallida: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));

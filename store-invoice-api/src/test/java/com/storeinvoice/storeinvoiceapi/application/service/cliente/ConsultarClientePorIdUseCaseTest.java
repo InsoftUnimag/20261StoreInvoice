@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConsultarClientePorIdNacionalUseCaseTest {
+class ConsultarClientePorIdUseCaseTest {
 
     @Mock
     private ClienteServicePort clienteServicePort;
 
     @InjectMocks
-    private ConsultarClientePorIdNacionalUseCase useCase;
+    private ConsultarClientePorIdUseCase useCase;
 
     private Cliente cliente;
 
@@ -33,25 +33,25 @@ class ConsultarClientePorIdNacionalUseCaseTest {
 
     @Test
     void ejecutar_exitoso_retornaCliente() {
-        when(clienteServicePort.findByIdNacional("12345678"))
+        when(clienteServicePort.findById("100"))
                 .thenReturn(Mono.just(cliente));
 
-        useCase.ejecutar("12345678")
+        useCase.ejecutar("100")
                 .as(StepVerifier::create)
                 .assertNext(result -> {
                     assertNotNull(result);
                     assertEquals("100", result.idCliente());
-                    assertEquals("12345678", result.idNacional());
+                    assertEquals("Juan Perez", result.nombre());
                 })
                 .verifyComplete();
     }
 
     @Test
     void ejecutar_clienteNoExistente_lanzaExcepcion() {
-        when(clienteServicePort.findByIdNacional("99999999"))
+        when(clienteServicePort.findById("999"))
                 .thenReturn(Mono.empty());
 
-        useCase.ejecutar("99999999")
+        useCase.ejecutar("999")
                 .as(StepVerifier::create)
                 .expectError(ClienteNotFoundException.class)
                 .verify();
