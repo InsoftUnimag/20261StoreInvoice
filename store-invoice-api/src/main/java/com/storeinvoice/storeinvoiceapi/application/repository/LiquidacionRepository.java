@@ -26,4 +26,5 @@ public interface LiquidacionRepository {
     LiquidacionTransportista saveTransportista(LiquidacionTransportista liquidacion);
 
     Optional<LiquidacionTransportista> findTransportistaById(Long idLiquidacion);
+    Optional<LiquidacionCliente> findByIdPedido(Long idPedido);
 }
