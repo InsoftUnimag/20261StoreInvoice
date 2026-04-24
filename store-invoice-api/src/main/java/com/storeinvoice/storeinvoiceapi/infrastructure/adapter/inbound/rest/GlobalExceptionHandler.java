@@ -1,18 +1,21 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
+import com.storeinvoice.storeinvoiceapi.application.dto.response.ErrorResponse;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
-import java.util.Map;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoAlreadyExistsException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidFormaPagoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ServerWebExchange;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,43 +23,98 @@ public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ClienteNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleClienteNotFound(final ClienteNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleClienteNotFound(final ClienteNotFoundException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Cliente no encontrado: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Cliente no encontrado",
+                        exchange.getRequest().getPath().value()
+                ));
     }
 
     @ExceptionHandler(InvalidClientIdException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidClientId(final InvalidClientIdException ex) {
-        LOG.warn("ID de cliente inválido: {}", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidClientId(final InvalidClientIdException ex,
+            final ServerWebExchange exchange) {
+        LOG.error("ID de cliente inválido: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", ex.getMessage()));
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "ID de cliente inválido",
+                        exchange.getRequest().getPath().value()
+                ));
     }
 
     @ExceptionHandler(LiquidacionNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleLiquidacionNotFound(final LiquidacionNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleLiquidacionNotFound(final LiquidacionNotFoundException ex,
+            final ServerWebExchange exchange) {
         LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Liquidación no encontrada",
+                        exchange.getRequest().getPath().value()
+                ));
     }
 
     @ExceptionHandler(PedidoNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlePedidoNotFound(final PedidoNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handlePedidoNotFound(final PedidoNotFoundException ex,
+            final ServerWebExchange exchange) {
         LOG.warn("Pedido no encontrado: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Pedido no encontrado",
+                        exchange.getRequest().getPath().value()
+                ));
     }
 
     @ExceptionHandler(ServiceConnectionException.class)
-    public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
+    public ResponseEntity<ErrorResponse> handleServiceConnection(final ServiceConnectionException ex,
+            final ServerWebExchange exchange) {
         LOG.error("Error de conexión con servicio externo: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
+                .body(ErrorResponse.of(
+                        HttpStatus.SERVICE_UNAVAILABLE.value(),
+                        "Servicio temporalmente no disponible. Por favor intente más tarde.",
+                        exchange.getRequest().getPath().value()
+                ));
     }
 
-    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(
-            final jakarta.validation.ConstraintViolationException ex) {
-        LOG.warn("Validación fallida: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
+    @ExceptionHandler(FormaPagoNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleFormaPagoNotFound(final FormaPagoNotFoundException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Forma de pago no encontrada: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "El cliente no tiene forma de pago registrada",
+                        exchange.getRequest().getPath().value()
+                ));
     }
+
+    @ExceptionHandler(FormaPagoAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleFormaPagoAlreadyExists(final FormaPagoAlreadyExistsException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Forma de pago ya existe: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(
+                        HttpStatus.CONFLICT.value(),
+                        "El cliente ya tiene forma de pago registrada",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(InvalidFormaPagoException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFormaPago(final InvalidFormaPagoException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Forma de pago inválida: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Forma de pago inválida. Valores válidos: CONTRA_ENTREGA, CARTERA_COMERCIAL",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+}

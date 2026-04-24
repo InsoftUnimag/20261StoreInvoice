@@ -15,4 +15,6 @@ public interface LiquidacionRepository {
     boolean existsByIdCliente(Long idCliente);
 
     Optional<BigDecimal> findMontoLiquidadoByIdPedido(Long idPedido);
+
+    Optional<LiquidacionCliente> findByIdPedido(Long idPedido);
 }

@@ -9,8 +9,7 @@
 
 ### Registrar Forma de Pago del Cliente
 
-**Este es un proceso interno, no un endpoint.**
-
+**Este es un endpoint que para fronted**
 **Flujo:**
 
 1. El Asesor Comercial consulta el cliente por ID Nacional usando el endpoint `GET /api/v1/clientes/{id_nacional}` del Módulo de Gestión de Clientes (ver spec `consultar_cliente.md`).

@@ -22,13 +22,26 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 ```json
 {
   "id_pedido": 123,
-  "forma_pago": "CARTERA_COMERCIAL"
+  "forma_pago": "CONTRA_ENTREGA",
+  "total_pedido": 150000.00
 }
 ```
 
+```json
+{
+  "id_pedido": 123,
+  "forma_pago": "CARTERA_COMERCIAL",
+  "total_pedido": null
+}
+```
+
+**Regla de negocio sobre `total_pedido`:**
+- Si `forma_pago == CONTRA_ENTREGA`: el campo `total_pedido` debe contener el monto liquidado (`monto_liquidado` de la tabla `liquidacion_cliente`).
+- Si `forma_pago == CARTERA_COMERCIAL`: el campo `total_pedido` debe ser `null` (el pago se gestiona por cartera, no se cobra en entrega).
+
 **Casos de error:**
-- Pedido no encontrado: `"Pedido no encontrado"`
-- Cliente sin forma de pago: `"El cliente no tiene forma de pago registrada"`
+- Pedido no encontrado: `404 - "Pedido no encontrado"`
+- Cliente sin forma de pago: `422 - "El cliente no tiene forma de pago registrada"`
 
 ---
 
@@ -53,7 +66,7 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ### User Story 1 - Buscar forma de pago por ID de Cliente (necesidad interna)
 
-Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por su ID. Para usar en funciones internas como la generación de liquidaciones.
+Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por su ID. Para usar en funciones internas como la generación de liquidaciones, es una funcion que se necesita.
 
 **Why this priority:** Necesario para el proceso de liquidación del cliente.
 
