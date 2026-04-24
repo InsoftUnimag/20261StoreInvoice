@@ -62,6 +62,10 @@ src/
 │                   │       └── PedidoNotFoundException.java       # Excepción de dominio (si no existe)
 │                   │
 │                   ├── application/
+│                   │   ├── dto/
+│                   │   │   └── product/
+│                   │   │       ├── ProductoExternalDTO.java # Representa el producto individual JSON
+│                   │   │       └── ProductosPedidoResponseExternalDTO.java # Envoltorio del JSON {"productos": [...]}
 │                   │   ├── port/
 │                   │   │   └── InventarioServicePort.java         # Puerto de Salida (Outbound Port)
 │                   │   └── service/
@@ -69,16 +73,14 @@ src/
 │                   │           └── ConsultarProductosPedidoUseCase.java # Lógica de Negocio
 │                   │
 │                   └── infrastructure/
-│                       └── adapter/
-│                           └── outbound/
-│                               └── external/
-│                                   ├── InventarioWebClient.java   # Adaptador de Salida (WebClient)
-│                                   ├── InventarioMockAdapter.java # Adaptador Mock para desarrollo local (!prod)
-│                                   ├── dto/
-│                                   │   ├── ProductoExternalDTO.java # Representa el producto individual JSON
-│                                   │   └── ProductosPedidoResponseExternalDTO.java # Envoltorio del JSON {"productos": [...]}
-│                                   └── mapper/
-│                                       └── ProductoExternalMapper.java # MapStruct: ExternalDTO -> Domain Model
+│                       ├── adapter/
+│                       │   └── outbound/
+│                       │       └── external/
+│                       │           ├── InventarioWebClient.java   # Adaptador de Salida (WebClient)
+│                       │           └── InventarioMockAdapter.java # Adaptador Mock para desarrollo local (!prod)
+│                       └── persistence/
+│                           └── mapper/
+│                               └── ProductoExternalMapper.java # MapStruct: ExternalDTO -> Domain Model
 │
 └── test/
     └── java/
@@ -102,28 +104,28 @@ src/
 
 ### Phase 1: Capa de Dominio (Domain)
 **Propósito:** Definir el modelo puro y las excepciones del negocio sin dependencias.
-- [ ] **T001:** Crear clase `Producto.java` en `domain/model/` (campos: idProducto, nombre, cantidad, precioUnitario, subtotal) sin anotaciones de BD ni librerías externas.
-- [ ] **T002:** Verificar existencia de `PedidoNotFoundException` en `domain/exception/` o crearla si no existe.
+- [x] **T001:** Crear clase `Producto.java` en `domain/model/` (campos: idProducto, nombre, cantidad, precioUnitario, subtotal) sin anotaciones de BD ni librerías externas.
+- [x] **T002:** Verificar existencia de `PedidoNotFoundException` en `domain/exception/` o crearla si no existe.
 
 ### Phase 2: Capa de Aplicación (Application)
 **Propósito:** Definir el contrato (Port) y la lógica de negocio (UseCase).
-- [ ] **T003:** Crear interfaz `InventarioServicePort.java` en `application/port/` que defina el método `Mono<List<Producto>> consultarProductosPorPedido(String idPedido)`.
-- [ ] **T004:** Crear `ConsultarProductosPedidoUseCase.java` en `application/service/pedido/`. Este inyectará el `InventarioServicePort`.
-- [ ] **T005:** Implementar pruebas unitarias para `ConsultarProductosPedidoUseCase` usando Mockito y `StepVerifier`.
+- [x] **T003:** Crear interfaz `InventarioServicePort.java` en `application/port/` que defina el método `Mono<List<Producto>> consultarProductosPorPedido(String idPedido)`.
+- [x] **T004:** Crear `ConsultarProductosPedidoUseCase.java` en `application/service/pedido/`. Este inyectará el `InventarioServicePort`.
+- [x] **T005:** Implementar pruebas unitarias para `ConsultarProductosPedidoUseCase` usando Mockito y `StepVerifier`.
 
 ### Phase 3: Capa de Infraestructura (Infrastructure)
 **Propósito:** Implementar la comunicación real por HTTP con el Módulo de Inventario.
-- [ ] **T006:** Crear DTOs de lectura en `infrastructure/adapter/outbound/external/dto/` (`ProductoExternalDTO` y el envoltorio `ProductosPedidoResponseExternalDTO` acordes al JSON de la spec).
-- [ ] **T007:** Crear mapeador `ProductoExternalMapper.java` usando MapStruct para transformar la lista de DTOs en una lista del modelo de Dominio puro (`Producto`).
-- [ ] **T008:** Crear adaptador `InventarioWebClient.java` implementando `InventarioServicePort`. Debe configurarse un `WebClient` apuntando a `GET /api/v1/pedidos/{id_pedido}/productos`.
-- [ ] **T009:** Crear adaptador simulado `InventarioMockAdapter.java` implementando `InventarioServicePort` anotado con `@Profile("!prod")` para devolver una lista de productos hardcodeados en entornos locales sin depender del Módulo de Inventario.
-- [ ] **T010:** Manejar correctamente el `404 Not Found` en el `WebClient` (mediante `.onStatus(HttpStatusCode::is4xxClientError, ...)`), lanzando `PedidoNotFoundException`.
-- [ ] **T011:** Implementar pruebas unitarias para `InventarioWebClient` usando `MockWebServer` de OkHttp para simular las respuestas REST.
+- [x] **T006:** Crear DTOs de lectura en `application/dto/product/` (`ProductoExternalDTO` y el envoltorio `ProductosPedidoResponseExternalDTO` acordes al JSON de la spec).
+- [x] **T007:** Crear mapeador `ProductoExternalMapper.java` usando MapStruct para transformar la lista de DTOs en una lista del modelo de Dominio puro (`Producto`).
+- [x] **T008:** Crear adaptador `InventarioWebClient.java` implementando `InventarioServicePort`. Debe configurarse un `WebClient` apuntando a `GET /api/v1/pedidos/{id_pedido}/productos`.
+- [x] **T009:** Crear adaptador simulado `InventarioMockAdapter.java` implementando `InventarioServicePort` anotado con `@Profile("!prod")` para devolver una lista de productos hardcodeados en entornos locales sin depender del Módulo de Inventario.
+- [x] **T010:** Manejar correctamente el `404 Not Found` en el `WebClient` (mediante `.onStatus(HttpStatusCode::is4xxClientError, ...)`), lanzando `PedidoNotFoundException`.
+- [x] **T011:** Implementar pruebas unitarias para `InventarioWebClient` usando `MockWebServer` de OkHttp para simular las respuestas REST.
 
 ### Phase 4: Validaciones y Tareas Cruzadas
 **Propósito:** Asegurar la solidez del sistema.
-- [ ] **T012:** Validar en el use case o en la inyección de entrada que el ID del pedido no venga nulo o en blanco antes de hacer la petición HTTP.
-- [ ] **T013:** Asegurar que `GlobalExceptionHandler` maneje `PedidoNotFoundException` en caso de que este caso de uso alguna vez sea consumido por un Endpoint REST de salida (aunque su uso inicial sea por orquestación interna).
+- [x] **T012:** Validar en el use case o en la inyección de entrada que el ID del pedido no venga nulo o en blanco antes de hacer la petición HTTP.
+- [x] **T013:** Asegurar que `GlobalExceptionHandler` maneje `PedidoNotFoundException` y `ServiceConnectionException`.
 
 ---
 

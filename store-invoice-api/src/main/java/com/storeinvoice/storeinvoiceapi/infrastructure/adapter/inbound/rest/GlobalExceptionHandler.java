@@ -3,6 +3,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleTypeMismatch(final org.springframework.beans.TypeMismatchException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Parametros invalidos"));
+    }
+
+    @ExceptionHandler(ServiceConnectionException.class)
+    public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
+        LOG.error("Error de conexión con servicio externo: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
