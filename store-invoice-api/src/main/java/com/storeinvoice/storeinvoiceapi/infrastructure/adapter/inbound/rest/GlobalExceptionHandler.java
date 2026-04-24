@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ClienteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleClienteNotFound(final ClienteNotFoundException ex) {
-        LOG.warn("Cliente no encontrado: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
     }
@@ -44,18 +43,20 @@ public class GlobalExceptionHandler {
         LOG.error("Error de conexión con el Módulo de Clientes: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
-    @ExceptionHandler(PedidoNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlePedidoNotFound(final PedidoNotFoundException ex) {
-        LOG.warn("Pedido no encontrado: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
     }
+        @ExceptionHandler(PedidoNotFoundException.class)
+        public ResponseEntity<Map<String, String>> handlePedidoNotFound ( final PedidoNotFoundException ex){
+            LOG.warn("Pedido no encontrado: {}", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", ex.getMessage()));
+        }
 
 
-    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(final jakarta.validation.ConstraintViolationException ex) {
-        LOG.warn("Validación fallida: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
+        @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+        public ResponseEntity<Map<String, String>> handleValidation (
+        final jakarta.validation.ConstraintViolationException ex){
+            LOG.warn("Validación fallida: {}", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
+        }
     }
-}
