@@ -5,6 +5,7 @@ import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdExceptio
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(ServiceConnectionException.class)
-    public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
-        LOG.error("Error de conexión con el Módulo de Clientes: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
     @ExceptionHandler(PedidoNotFoundException.class)
     public ResponseEntity<Map<String, String>> handlePedidoNotFound(final PedidoNotFoundException ex) {
         LOG.warn("Pedido no encontrado: {}", ex.getMessage());
@@ -51,9 +47,16 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(ServiceConnectionException.class)
+    public ResponseEntity<Map<String, String>> handleServiceConnection(final ServiceConnectionException ex) {
+        LOG.error("Error de conexión con servicio externo: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "Servicio temporalmente no disponible. Por favor intente más tarde."));
+    }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(final jakarta.validation.ConstraintViolationException ex) {
+    public ResponseEntity<Map<String, String>> handleValidation(
+            final jakarta.validation.ConstraintViolationException ex) {
         LOG.warn("Validación fallida: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
