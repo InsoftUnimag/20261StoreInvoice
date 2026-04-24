@@ -2,7 +2,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.externa
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.storeinvoice.storeinvoiceapi.application.dto.product.ProductoExternalDTO;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product.ProductoExternalDTO;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.ProductoExternalMapper;

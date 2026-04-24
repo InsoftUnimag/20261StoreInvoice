@@ -1,6 +1,6 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
-import com.storeinvoice.storeinvoiceapi.application.dto.product.ProductoExternalDTO;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product.ProductoExternalDTO;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

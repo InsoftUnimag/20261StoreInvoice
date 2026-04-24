@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.product;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

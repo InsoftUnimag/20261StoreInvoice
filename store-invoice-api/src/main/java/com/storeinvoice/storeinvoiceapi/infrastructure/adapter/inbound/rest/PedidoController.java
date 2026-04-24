@@ -28,8 +28,7 @@ public class PedidoController {
 
     @GetMapping("/{id_pedido}/total")
     public ResponseEntity<TotalPedidoResponse> consultarTotal(
-            @Parameter(description = "ID unico del pedido", required = true, example = "1")
-            @PathVariable @NotNull @Min(1) final Long id_pedido) {
+            @Parameter(description = "ID unico del pedido", required = true, example = "1") @PathVariable @NotNull @Min(1) final Long id_pedido) {
 
         final BigDecimal total = consultarTotalPedidoUseCase.execute(id_pedido);
         final var response = new TotalPedidoResponse(id_pedido, total);

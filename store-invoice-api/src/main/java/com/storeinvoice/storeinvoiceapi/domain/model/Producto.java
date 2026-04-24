@@ -5,9 +5,9 @@ package com.storeinvoice.storeinvoiceapi.domain.model;
  * No contiene anotaciones de infraestructura (JPA, JSON, etc.).
  */
 public record Producto(
-        String idProducto,
-        String nombre,
-        Integer cantidad,
-        Integer precioUnitario,
-        Integer subtotal
-) {}
+                String idProducto,
+                String nombre,
+                Integer cantidad,
+                double precioUnitario,
+                double subtotal) {
+}

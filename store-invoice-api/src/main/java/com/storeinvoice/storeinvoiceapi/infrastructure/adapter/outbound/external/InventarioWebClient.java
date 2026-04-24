@@ -4,7 +4,7 @@ import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
-import com.storeinvoice.storeinvoiceapi.application.dto.product.ProductosPedidoResponseExternalDTO;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product.ProductosPedidoResponseExternalDTO;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.ProductoExternalMapper;
 import java.util.Collections;
 import java.util.List;
