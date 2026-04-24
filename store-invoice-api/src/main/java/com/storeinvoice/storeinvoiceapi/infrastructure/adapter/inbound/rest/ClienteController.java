@@ -23,8 +23,8 @@ public class ClienteController {
     private final ClienteMapper clienteMapper;
 
     public ClienteController(ConsultarClientePorIdNacionalUseCase consultarClientePorIdNacionalUseCase,
-                           ConsultarClientePorIdUseCase consultarClientePorIdUseCase,
-                           ClienteMapper clienteMapper) {
+            ConsultarClientePorIdUseCase consultarClientePorIdUseCase,
+            ClienteMapper clienteMapper) {
         this.consultarClientePorIdNacionalUseCase = consultarClientePorIdNacionalUseCase;
         this.consultarClientePorIdUseCase = consultarClientePorIdUseCase;
         this.clienteMapper = clienteMapper;
@@ -35,8 +35,7 @@ public class ClienteController {
             @PathVariable @NotBlank String idNacional) {
         return consultarClientePorIdNacionalUseCase.ejecutar(idNacional)
                 .map(clienteMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping("/{idCliente}")
@@ -44,7 +43,6 @@ public class ClienteController {
             @PathVariable @NotBlank String idCliente) {
         return consultarClientePorIdUseCase.ejecutar(idCliente)
                 .map(clienteMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok);
     }
 }
