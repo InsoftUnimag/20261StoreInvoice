@@ -35,13 +35,11 @@ public class ClienteWebClient implements ClienteServicePort {
 
     @Override
     public Mono<Cliente> findByIdNacional(String idNacional) {
-        LOG.info("Consultando cliente por ID nacional: {}", idNacional);
         return webClient.get()
                 .uri("/api/v1/clientes/nacional/{id_nacional}", idNacional)
                 .retrieve()
                 .bodyToMono(ClienteExternalResponse.class)
                 .map(clienteMapper::toDomain)
-                .doOnSuccess(r -> LOG.info("Cliente encontrado: {}", r.idCliente()))
                 .onErrorResume(WebClientRequestException.class, e -> {
                     LOG.error("Error de conexión al consultar cliente por ID nacional {}: {}", idNacional, e.getMessage());
                     return Mono.error(new ServiceConnectionException("Error al conectar con el Módulo de Clientes", e));
@@ -50,13 +48,11 @@ public class ClienteWebClient implements ClienteServicePort {
 
     @Override
     public Mono<Cliente> findById(String idCliente) {
-        LOG.info("Consultando cliente por ID: {}", idCliente);
         return webClient.get()
                 .uri("/api/v1/clientes/{id_cliente}", idCliente)
                 .retrieve()
                 .bodyToMono(ClienteExternalResponse.class)
                 .map(clienteMapper::toDomain)
-                .doOnSuccess(r -> LOG.info("Cliente encontrado: {}", r.idCliente()))
                 .onErrorResume(WebClientRequestException.class, e -> {
                     LOG.error("Error de conexión al consultar cliente por ID {}: {}", idCliente, e.getMessage());
                     return Mono.error(new ServiceConnectionException("Error al conectar con el Módulo de Clientes", e));

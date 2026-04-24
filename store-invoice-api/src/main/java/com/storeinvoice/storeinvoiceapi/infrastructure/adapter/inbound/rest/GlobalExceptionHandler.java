@@ -21,7 +21,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ClienteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleClienteNotFound(final ClienteNotFoundException ex) {
-        LOG.warn("Cliente no encontrado: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
     }
@@ -61,4 +60,3 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Parámetros inválidos: " + ex.getMessage()));
     }
-}
