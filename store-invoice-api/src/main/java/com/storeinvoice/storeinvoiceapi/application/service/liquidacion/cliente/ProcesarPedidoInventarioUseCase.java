@@ -100,12 +100,10 @@ public class ProcesarPedidoInventarioUseCase {
     private Mono<ContextoProcesamiento> consultarProductosYCliente(final ContextoProcesamiento ctx) {
         return inventarioServicePort.consultarProductosPorPedido(String.valueOf(ctx.mensaje().idPedido()))
                 .onErrorMap(e -> new ErrorConsultaProductosException(ctx.mensaje().idPedido(), e))
-                .flatMap(productos -> {
-                    if (productos == null || productos.isEmpty()) {
-                        return Mono.error(new ProductosNoEncontradosException(ctx.mensaje().idPedido()));
-                    }
-                    return Mono.just(productos);
-                })
+                .flatMap(productos -> Optional.ofNullable(productos)
+                        .filter(p -> !p.isEmpty())
+                        .map(Mono::just)
+                        .orElseGet(() -> Mono.error(new ProductosNoEncontradosException(ctx.mensaje().idPedido()))))
                 .flatMap(productos -> clienteServicePort.findById(String.valueOf(ctx.mensaje().idCliente()))
                         .onErrorMap(e -> new ErrorConsultaClienteException(ctx.mensaje().idCliente(), e))
                         .switchIfEmpty(Mono.error(new ClienteNotFoundException(ctx.mensaje().idCliente())))
