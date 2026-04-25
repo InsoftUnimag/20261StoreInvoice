@@ -10,3 +10,4 @@ public final class ErrorSubidaPdfException extends DomainException {
         super(message, cause);
     }
 }
+

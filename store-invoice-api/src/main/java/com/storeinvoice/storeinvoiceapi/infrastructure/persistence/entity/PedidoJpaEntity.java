@@ -11,11 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Entidad JPA que mapea la tabla 'pedidos'. Almacena los datos del pedido
- * recibidos desde el Módulo de Inventario, incluyendo el precio total
- * necesario para calcular liquidaciones.
- */
 @Entity
 @Table(name = "pedidos")
 @Getter
@@ -37,3 +32,4 @@ public class PedidoJpaEntity {
     @Column(name = "fecha_recibido", nullable = false)
     private LocalDateTime fechaRecibido;
 }
+

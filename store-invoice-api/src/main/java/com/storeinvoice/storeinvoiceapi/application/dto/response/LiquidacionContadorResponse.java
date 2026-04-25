@@ -12,3 +12,4 @@ public record LiquidacionContadorResponse(
         LocalDateTime fechaLiquidacion,
         String uriDocumento
 ) {}
+

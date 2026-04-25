@@ -5,8 +5,8 @@ import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.Evento
 import org.springframework.stereotype.Component;
 
 /**
- * Mapper de persistencia: EventoRecibido (domain/model) ↔ EventoRecibidoJpaEntity.
- * Usa el constructor de reconstrucción de EventoRecibido para rehidratar desde BD.
+ * Mapper de persistencia: EventoRecibido (domain/model) â†” EventoRecibidoJpaEntity.
+ * Usa el constructor de reconstrucciÃ³n de EventoRecibido para rehidratar desde BD.
  */
 @Component
 public class EventoRecibidoMapper {
@@ -39,3 +39,4 @@ public class EventoRecibidoMapper {
         );
     }
 }
+

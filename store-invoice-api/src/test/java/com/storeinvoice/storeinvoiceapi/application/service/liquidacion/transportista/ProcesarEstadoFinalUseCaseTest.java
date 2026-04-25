@@ -89,7 +89,7 @@ class ProcesarEstadoFinalUseCaseTest {
         
         when(pedidoRepository.findPrecioPedidoByIdPedido(100L)).thenReturn(Optional.empty());
 
-        assertThrows(PedidoNotFoundException.class, () -> useCase.execute(command));
+        assertThrows(LiquidacionException.class, () -> useCase.execute(command));
 
         assertEquals(EstadoEvento.ERROR, eventoPendiente.getEstado());
         verify(liquidacionRepository, never()).saveTransportista(any());
@@ -111,3 +111,4 @@ class ProcesarEstadoFinalUseCaseTest {
         verify(liquidacionRepository, never()).saveTransportista(any());
     }
 }
+

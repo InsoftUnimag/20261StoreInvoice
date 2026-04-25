@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * DTO envoltorio que representa la respuesta completa del endpoint
- * GET /api/v1/pedidos/{id_pedido}/productos del Módulo de Inventario.
+ * GET /api/v1/pedidos/{id_pedido}/productos del MÃ³dulo de Inventario.
  * Encapsula la lista de productos bajo la clave "productos" del JSON.
  *
  * Ejemplo de respuesta:
@@ -18,3 +18,4 @@ import java.util.List;
 public record ProductosPedidoResponseExternalDTO(
         @JsonProperty("productos") List<ProductoExternalDTO> productos
 ) {}
+

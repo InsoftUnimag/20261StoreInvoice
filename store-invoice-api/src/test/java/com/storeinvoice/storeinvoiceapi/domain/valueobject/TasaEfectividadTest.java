@@ -28,7 +28,7 @@ class TasaEfectividadTest {
                 InvalidTasaEfectividadException.class,
                 () -> new TasaEfectividad(-101)
         );
-        assertEquals("La tasa de efectividad debe estar entre -100 y 100, pero se recibió: -101", ex.getMessage());
+        assertEquals("La tasa de efectividad debe estar entre -100 y 100, pero se recibio: -101", ex.getMessage());
     }
 
     @Test
@@ -37,6 +37,7 @@ class TasaEfectividadTest {
                 InvalidTasaEfectividadException.class,
                 () -> new TasaEfectividad(101)
         );
-        assertEquals("La tasa de efectividad debe estar entre -100 y 100, pero se recibió: 101", ex.getMessage());
+        assertEquals("La tasa de efectividad debe estar entre -100 y 100, pero se recibio: 101", ex.getMessage());
     }
 }
+

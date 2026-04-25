@@ -5,3 +5,4 @@ public record TieneFormaPagoResponse(
         boolean tieneFormaPago
 ) {
 }
+

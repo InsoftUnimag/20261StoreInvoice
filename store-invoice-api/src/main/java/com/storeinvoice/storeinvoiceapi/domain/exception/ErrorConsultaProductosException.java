@@ -14,3 +14,4 @@ public final class ErrorConsultaProductosException extends DomainException {
         super(mensaje);
     }
 }
+

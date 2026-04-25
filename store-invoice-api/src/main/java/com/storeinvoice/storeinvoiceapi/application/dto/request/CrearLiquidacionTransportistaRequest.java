@@ -9,3 +9,4 @@ public record CrearLiquidacionTransportistaRequest(
 
                 BigDecimal montoCalculado) {
 }
+

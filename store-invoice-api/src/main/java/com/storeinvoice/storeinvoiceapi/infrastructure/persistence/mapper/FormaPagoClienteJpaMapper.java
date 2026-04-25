@@ -17,3 +17,4 @@ public interface FormaPagoClienteJpaMapper {
 
     FormaPagoClienteJpaEntity toEntity(FormaPagoCliente domain);
 }
+

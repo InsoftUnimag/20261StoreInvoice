@@ -46,3 +46,4 @@ class VerificarTieneFormaPagoPorClienteUseCaseTest {
         assertFalse(result.tieneFormaPago());
     }
 }
+

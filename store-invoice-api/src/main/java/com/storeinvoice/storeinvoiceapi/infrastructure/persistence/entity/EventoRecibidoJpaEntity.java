@@ -13,10 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Entidad JPA para la tabla 'evento_recibido'. Registra el ciclo de vida
- * de cada evento de estado final recibido del Módulo de Transporte.
- */
+
 @Entity
 @Table(name = "evento_recibido")
 @Getter
@@ -45,3 +42,4 @@ public class EventoRecibidoJpaEntity {
     @Column(name = "fecha_procesado")
     private LocalDateTime fechaProcesado;
 }
+

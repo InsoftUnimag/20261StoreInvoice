@@ -10,3 +10,4 @@ public record LiquidacionTransportistaResponse(
         BigDecimal montoCalculado,
         LocalDateTime fechaLiquidacion
 ) {}
+

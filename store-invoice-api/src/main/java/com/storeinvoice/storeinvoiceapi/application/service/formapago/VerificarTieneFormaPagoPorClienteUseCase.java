@@ -18,3 +18,4 @@ public class VerificarTieneFormaPagoPorClienteUseCase {
         return new TieneFormaPagoResponse(idCliente, existe);
     }
 }
+

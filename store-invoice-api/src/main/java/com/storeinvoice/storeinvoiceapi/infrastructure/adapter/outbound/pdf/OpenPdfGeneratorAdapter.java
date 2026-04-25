@@ -138,3 +138,4 @@ public class OpenPdfGeneratorAdapter implements PdfGeneratorPort {
         document.add(pago);
     }
 }
+

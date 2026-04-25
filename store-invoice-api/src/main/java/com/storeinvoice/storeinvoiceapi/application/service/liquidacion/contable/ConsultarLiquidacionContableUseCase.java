@@ -33,3 +33,4 @@ public class ConsultarLiquidacionContableUseCase {
         return liquidacionContableRepository.findAll(query);
     }
 }
+

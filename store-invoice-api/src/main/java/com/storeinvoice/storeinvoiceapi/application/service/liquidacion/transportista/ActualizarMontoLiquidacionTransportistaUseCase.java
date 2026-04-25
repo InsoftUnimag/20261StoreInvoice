@@ -23,3 +23,4 @@ public class ActualizarMontoLiquidacionTransportistaUseCase {
         return liquidacionRepository.saveTransportista(liquidacion);
     }
 }
+

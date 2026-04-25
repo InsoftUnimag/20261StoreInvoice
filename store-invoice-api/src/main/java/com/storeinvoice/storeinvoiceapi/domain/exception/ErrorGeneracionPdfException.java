@@ -10,3 +10,4 @@ public final class ErrorGeneracionPdfException extends DomainException {
         super(message, cause);
     }
 }
+

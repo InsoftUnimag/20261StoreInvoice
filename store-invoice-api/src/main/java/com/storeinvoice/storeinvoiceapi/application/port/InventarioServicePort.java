@@ -5,10 +5,10 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 /**
- * Puerto de salida (Outbound Port) para el Módulo de Gestión de Inventario.
+ * Puerto de salida (Outbound Port) para el MÃ³dulo de GestiÃ³n de Inventario.
  * Define el contrato que debe cumplir cualquier adaptador que quiera proveer
- * información de productos. La capa de aplicación depende de esta interfaz,
- * no de ninguna implementación concreta.
+ * informaciÃ³n de productos. La capa de aplicaciÃ³n depende de esta interfaz,
+ * no de ninguna implementaciÃ³n concreta.
  */
 public interface InventarioServicePort {
 
@@ -20,3 +20,4 @@ public interface InventarioServicePort {
      */
     Mono<List<Producto>> consultarProductosPorPedido(String idPedido);
 }
+

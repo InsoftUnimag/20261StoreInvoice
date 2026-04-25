@@ -33,3 +33,4 @@ public class LiquidacionTransportistaJpaEntity {
     @Column(name = "fecha_liquidacion", nullable = false)
     private LocalDateTime fechaLiquidacion;
 }
+

@@ -6,8 +6,8 @@ import java.util.Optional;
 
 /**
  * Puerto de salida (Outbound Port) para persistencia de Pedido.
- * Define el contrato puro de repositorio sin dependencias de tecnología.
- * La capa de aplicación depende de esta interfaz, nunca de la implementación concreta.
+ * Define el contrato puro de repositorio sin dependencias de tecnologÃ­a.
+ * La capa de aplicaciÃ³n depende de esta interfaz, nunca de la implementaciÃ³n concreta.
  */
 public interface PedidoRepository {
 
@@ -21,11 +21,11 @@ public interface PedidoRepository {
 
     /**
      * Obtiene el precio total de un pedido por su ID.
-     * Este es el precio real del pedido recibido del Módulo de Inventario,
-     * utilizado como base para calcular la liquidación del transportista.
+     * Este es el precio real del pedido recibido del MÃ³dulo de Inventario,
+     * utilizado como base para calcular la liquidaciÃ³n del transportista.
      *
      * @param idPedido ID del pedido
-     * @return Optional con el precio total, vacío si el pedido no existe
+     * @return Optional con el precio total, vacÃ­o si el pedido no existe
      */
     Optional<BigDecimal> findPrecioPedidoByIdPedido(Long idPedido);
 
@@ -33,7 +33,8 @@ public interface PedidoRepository {
      * Busca un pedido completo por su ID.
      *
      * @param idPedido ID del pedido
-     * @return Optional con el pedido, vacío si no existe
+     * @return Optional con el pedido, vacÃ­o si no existe
      */
     Optional<Pedido> findById(Long idPedido);
 }
+

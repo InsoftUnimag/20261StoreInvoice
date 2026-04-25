@@ -10,3 +10,4 @@ public final class ErrorConsultaClienteException extends DomainException {
         super(String.format("Error al consultar los datos del cliente %d", idCliente), cause);
     }
 }
+

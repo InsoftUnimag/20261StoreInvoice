@@ -30,3 +30,4 @@ class EstadoFinalEventConsumerTest {
         verify(procesarEstadoFinalUseCase).execute(command);
     }
 }
+

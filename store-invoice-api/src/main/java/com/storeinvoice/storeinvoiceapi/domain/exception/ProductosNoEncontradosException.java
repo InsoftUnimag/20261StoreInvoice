@@ -9,3 +9,4 @@ public final class ProductosNoEncontradosException extends DomainException {
         super(String.format("No se encontraron productos para el pedido %d", idPedido));
     }
 }
+

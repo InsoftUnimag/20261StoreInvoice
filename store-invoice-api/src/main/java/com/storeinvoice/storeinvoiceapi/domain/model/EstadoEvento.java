@@ -10,3 +10,4 @@ public enum EstadoEvento {
     PROCESADO,
     ERROR
 }
+

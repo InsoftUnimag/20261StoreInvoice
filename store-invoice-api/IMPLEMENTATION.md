@@ -1,4 +1,4 @@
-# Implementation: Consultar Liquidaciones del Cliente
+﻿# Implementation: Consultar Liquidaciones del Cliente
 
 Date: 21-02-2026 Spec: especificaciones/consultar_liquidaciones_cliente.md
 Status: Completed
@@ -7,17 +7,17 @@ Status: Completed
 
 ## Summary
 
-Implementación del endpoint REST para consultar las liquidaciones de un cliente específico con paginación y acceso a PDFs.
+ImplementaciÃ³n del endpoint REST para consultar las liquidaciones de un cliente especÃ­fico con paginaciÃ³n y acceso a PDFs.
 
 ## Endpoint
 
 **GET** `/api/v1/liquidaciones/cliente/{idCliente}`
 
-### Parámetros
+### ParÃ¡metros
 
 - `idCliente` (path, requerido): ID del cliente
-- `pagina` (query, opcional, default: 0): Número de página
-- `tamañoPagina` (query, opcional, default: 20): Registros por página
+- `pagina` (query, opcional, default: 0): NÃºmero de pÃ¡gina
+- `tamaÃ±oPagina` (query, opcional, default: 20): Registros por pÃ¡gina
 
 ### Respuesta Exitosa
 
@@ -42,11 +42,11 @@ Implementación del endpoint REST para consultar las liquidaciones de un cliente
 
 - `model/LiquidacionCliente.java` - Entidad de dominio inmutable
 - `exception/DomainException.java` - Clase base para excepciones de dominio
-- `exception/LiquidacionNotFoundException.java` - Excepción cuando no se encuentra la liquidación
+- `exception/LiquidacionNotFoundException.java` - ExcepciÃ³n cuando no se encuentra la liquidaciÃ³n
 
 ### Application Layer (`src/main/java/com/storeinvoice/application/`)
 
-- `dto/query/ConsultarLiquidacionesQuery.java` - DTO para consultas con paginación
+- `dto/query/ConsultarLiquidacionesQuery.java` - DTO para consultas con paginaciÃ³n
 - `dto/response/LiquidacionClienteResponse.java` - DTO de respuesta
 - `service/liquidacion/ConsultarLiquidacionesClienteUseCase.java` - Caso de uso
 
@@ -61,32 +61,32 @@ Implementación del endpoint REST para consultar las liquidaciones de un cliente
 ## Arquitectura Hexagonal
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    INFRAESTRUCTURE                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │ Controller  │  │ Repository  │  │    JPA    │  │
-│  │   (REST)    │  │  Adapter    │  │  Entity   │  │
-│  └──────┬──────┘  └──────┬──────┘  └────────────┘  │
-│         │                │                               │
-├────────┼────────────────┼───────────────────────────────┤
-│        │      APPLICATION LAYER                        │
-│        │  ┌────────────────┐  ┌────────────────┐   │
-│        └──►│   Use Case     │  │     DTOs       │   │
-│           └───────┬────────┘  └────────────────┘   │
-│                   │                                   │
-├───────────────────┼───────────────────────────��───────────┤
-│                   │         DOMAIN LAYER                 │
-│           ┌──────┴──────┐   ┌──────────────┐       │
-│           │  Entity     │   │ Exceptions │       │
-│           └────────────┘   └──────────────┘       │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    INFRAESTRUCTURE                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Controller  â”‚  â”‚ Repository  â”‚  â”‚    JPA    â”‚  â”‚
+â”‚  â”‚   (REST)    â”‚  â”‚  Adapter    â”‚  â”‚  Entity   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚         â”‚                â”‚                               â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚        â”‚      APPLICATION LAYER                        â”‚
+â”‚        â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚        â””â”€â”€â–ºâ”‚   Use Case     â”‚  â”‚     DTOs       â”‚   â”‚
+â”‚           â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                   â”‚                                   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½ï¿½â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                   â”‚         DOMAIN LAYER                 â”‚
+â”‚           â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚           â”‚  Entity     â”‚   â”‚ Exceptions â”‚       â”‚
+â”‚           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-## Flujo de Ejecución
+## Flujo de EjecuciÃ³n
 
-1. El cliente envía solicitud GET `/api/v1/liquidaciones/cliente/{idCliente}`
+1. El cliente envÃ­a solicitud GET `/api/v1/liquidaciones/cliente/{idCliente}`
 2. `LiquidacionController` recibe la solicitud
-3. Crea `ConsultarLiquidacionesQuery` con parámetros de paginación
+3. Crea `ConsultarLiquidacionesQuery` con parÃ¡metros de paginaciÃ³n
 4. `ConsultarLiquidacionesClienteUseCase` ejecuta la consulta
 5. `LiquidacionRepositoryAdapter` consulta a la BD
 6. Mapea entidades JPA a modelos de dominio
@@ -97,7 +97,7 @@ Implementación del endpoint REST para consultar las liquidaciones de un cliente
 
 - [x] SC-001: Listar el 100% de las liquidaciones del cliente
 - [x] SC-002: Tiempo de respuesta <3000ms
-- [x] SC-003: Acceso a PDF en <3 clics (vía uri_pdf)
+- [x] SC-003: Acceso a PDF en <3 clics (vÃ­a uri_pdf)
 
 ## Dependencies
 
@@ -109,6 +109,6 @@ Implementación del endpoint REST para consultar las liquidaciones de un cliente
 
 ## Notas
 
-- Paginación: 20 registros por página por defecto
-- Ordenamiento: Cronológico descendente (fechaLiquidacion DESC)
-- El endpoint retorna lista vacía si el cliente no tiene liquidaciones
+- PaginaciÃ³n: 20 registros por pÃ¡gina por defecto
+- Ordenamiento: CronolÃ³gico descendente (fechaLiquidacion DESC)
+- El endpoint retorna lista vacÃ­a si el cliente no tiene liquidaciones

@@ -18,3 +18,4 @@ public interface LiquidacionContableMapper {
 
     List<LiquidacionContadorResponse> toResponseList(List<LiquidacionContable> domains);
 }
+

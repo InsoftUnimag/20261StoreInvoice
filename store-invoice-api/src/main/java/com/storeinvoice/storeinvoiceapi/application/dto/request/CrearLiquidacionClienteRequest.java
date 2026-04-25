@@ -11,3 +11,4 @@ public record CrearLiquidacionClienteRequest(
 
                 BigDecimal montoLiquidado) {
 }
+

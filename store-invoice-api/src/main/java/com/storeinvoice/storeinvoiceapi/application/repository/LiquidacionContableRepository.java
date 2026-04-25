@@ -9,3 +9,4 @@ public interface LiquidacionContableRepository {
 
     List<LiquidacionContable> findAll(ConsultarLiquidacionesContadorQuery query);
 }
+

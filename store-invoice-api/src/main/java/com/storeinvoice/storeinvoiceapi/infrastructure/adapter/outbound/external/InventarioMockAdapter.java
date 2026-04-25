@@ -9,12 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-/**
- * Adaptador simulado (Mock) del Módulo de Gestión de Inventario.
- * Activo únicamente en entornos que NO sean producción (@Profile("!prod")),
- * permite desarrollar y probar el sistema sin necesidad de que el Módulo
- * de Inventario esté disponible.
- */
+
 @Component
 @Profile("!prod")
 public class InventarioMockAdapter implements InventarioServicePort {
@@ -34,3 +29,4 @@ public class InventarioMockAdapter implements InventarioServicePort {
         return Mono.just(productosMock);
     }
 }
+

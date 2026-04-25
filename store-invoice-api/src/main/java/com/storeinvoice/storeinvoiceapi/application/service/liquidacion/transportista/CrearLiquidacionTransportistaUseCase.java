@@ -26,3 +26,4 @@ public class CrearLiquidacionTransportistaUseCase {
         return liquidacionRepository.saveTransportista(liquidacion);
     }
 }
+

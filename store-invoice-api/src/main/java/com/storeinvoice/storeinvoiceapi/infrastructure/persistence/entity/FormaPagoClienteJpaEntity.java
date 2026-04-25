@@ -27,3 +27,4 @@ public class FormaPagoClienteJpaEntity {
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 }
+

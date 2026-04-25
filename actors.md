@@ -1,6 +1,6 @@
-# Actores identificados
+﻿# Actores identificados
 
-1. Modulo de logística: ingresa tasa de efectividad DE LA DISTRIBUCION DEL PEDIDO del usuario que se usa para la accion financiera 
+1. Modulo de logÃ­stica: ingresa tasa de efectividad DE LA DISTRIBUCION DEL PEDIDO del usuario que se usa para la accion financiera 
 y la generacion de facturas(Comprador & Transportista).
 2. Comprador: Persona que realiza el pedido y puede consultar sus facturas
 3. Asesor comercial: Registra el cliente e ingresa la forma de pago al sistema para anexarla a la factura
@@ -10,3 +10,4 @@ y la generacion de facturas(Comprador & Transportista).
 
 ```  
  
+

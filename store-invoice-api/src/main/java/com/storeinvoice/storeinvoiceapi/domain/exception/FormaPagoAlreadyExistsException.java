@@ -10,3 +10,4 @@ public final class FormaPagoAlreadyExistsException extends DomainException {
         super("El cliente ya tiene forma de pago registrada: " + idCliente);
     }
 }
+

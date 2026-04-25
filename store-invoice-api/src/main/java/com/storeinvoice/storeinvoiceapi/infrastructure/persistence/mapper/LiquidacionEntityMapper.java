@@ -8,9 +8,9 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * Mapper de persistencia: LiquidacionCliente (dominio) ↔ LiquidacionClienteJpaEntity.
- * Responsabilidad única: conversión entre modelo de dominio y entidad JPA.
- * La conversión a Response DTO es responsabilidad de LiquidacionClienteResponseMapper.
+ * Mapper de persistencia: LiquidacionCliente (dominio) â†” LiquidacionClienteJpaEntity.
+ * Responsabilidad Ãºnica: conversiÃ³n entre modelo de dominio y entidad JPA.
+ * La conversiÃ³n a Response DTO es responsabilidad de LiquidacionClienteResponseMapper.
  */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,

@@ -7,6 +7,7 @@ public final class InvalidFormaPagoException extends DomainException {
     }
 
     public InvalidFormaPagoException(final String formaPago, final String valoresValidos) {
-        super("Forma de pago inválida: " + formaPago + ". Valores válidos: " + valoresValidos);
+        super("Forma de pago invalida: " + formaPago + ". Valores validos: " + valoresValidos);
     }
 }
+

@@ -96,3 +96,4 @@ class ProcesarPedidoInventarioIntegrationTest {
         assertTrue(guardada.isEmpty(), "No debe guardar liquidacion con idPedido invalido");
     }
 }
+

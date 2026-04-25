@@ -10,3 +10,4 @@ public final class FormaPagoNotFoundException extends DomainException {
         super("El cliente no tiene forma de pago registrada: " + idCliente);
     }
 }
+

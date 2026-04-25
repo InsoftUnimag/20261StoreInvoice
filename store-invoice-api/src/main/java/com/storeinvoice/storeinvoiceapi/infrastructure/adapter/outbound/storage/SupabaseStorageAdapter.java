@@ -55,3 +55,4 @@ public class SupabaseStorageAdapter implements PdfStoragePort {
         return String.format("%s/storage/v1/object/public/%s/%s", supabaseUrl, bucket, nombreArchivo);
     }
 }
+

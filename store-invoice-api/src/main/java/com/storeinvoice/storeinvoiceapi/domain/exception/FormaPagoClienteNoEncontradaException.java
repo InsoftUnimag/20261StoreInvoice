@@ -6,3 +6,4 @@ public final class FormaPagoClienteNoEncontradaException extends DomainException
         super("Forma de pago no encontrada para el cliente con ID: " + idCliente);
     }
 }
+

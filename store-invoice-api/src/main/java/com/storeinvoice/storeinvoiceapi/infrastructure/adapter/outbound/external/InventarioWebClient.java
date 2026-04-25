@@ -19,11 +19,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
-/**
- * Adaptador de salida que consume el Módulo de Gestión de Inventario mediante
- * WebClient reactivo para obtener los productos de un pedido.
- * Solo activo en el perfil de producción (@Profile("prod")).
- */
 @Component
 @Profile("prod")
 public class InventarioWebClient implements InventarioServicePort {
@@ -58,7 +53,7 @@ public class InventarioWebClient implements InventarioServicePort {
                         status -> status.is4xxClientError() || status.is5xxServerError(),
                         response -> response.bodyToMono(String.class).flatMap(body ->
                                 Mono.error(new ServiceConnectionException(
-                                        "Error al consultar el Módulo de Inventario: " + body, null))))
+                                        "Error al consultar el MÃ³dulo de Inventario: " + body, null))))
                 .bodyToMono(ProductosPedidoResponseExternalDTO.class)
                 .map(response -> {
                     final List<Producto> productos = response.productos() == null
@@ -70,9 +65,10 @@ public class InventarioWebClient implements InventarioServicePort {
                     return productos;
                 })
                 .onErrorResume(WebClientRequestException.class, e -> {
-                    LOG.error("Error de conexión al consultar productos del pedido {}: {}", idPedido, e.getMessage());
+                    LOG.error("Error de conexiÃ³n al consultar productos del pedido {}: {}", idPedido, e.getMessage());
                     return Mono.error(new ServiceConnectionException(
-                            "Error al conectar con el Módulo de Inventario", e));
+                            "Error al conectar con el MÃ³dulo de Inventario", e));
                 });
     }
 }
+

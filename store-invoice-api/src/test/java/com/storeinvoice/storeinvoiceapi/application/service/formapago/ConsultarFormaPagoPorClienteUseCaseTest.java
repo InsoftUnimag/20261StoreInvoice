@@ -76,3 +76,4 @@ class ConsultarFormaPagoPorClienteUseCaseTest {
                 .verify();
     }
 }
+

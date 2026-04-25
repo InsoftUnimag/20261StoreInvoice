@@ -14,3 +14,4 @@ public record ConsultarLiquidacionesContadorQuery(
         return pagina * tamanoPagina;
     }
 }
+

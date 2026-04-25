@@ -56,3 +56,4 @@ class PedidoEventConsumerTest {
         verify(procesarPedidoInventarioUseCase).ejecutar(mensaje);
     }
 }
+

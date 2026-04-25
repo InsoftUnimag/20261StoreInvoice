@@ -134,3 +134,4 @@ class RegistrarLiquidacionDesdeInventarioUseCaseTest {
         verify(liquidacionRepository, never()).saveCliente(any());
     }
 }
+

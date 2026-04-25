@@ -108,3 +108,4 @@ class PedidoRecepcionIntegrationTest {
         assertThrows(DatosPedidoInvalidosException.class, () -> useCase.ejecutar(mensaje));
     }
 }
+

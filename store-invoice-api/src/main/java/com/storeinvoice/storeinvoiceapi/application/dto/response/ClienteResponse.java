@@ -7,3 +7,4 @@ public record ClienteResponse(
         String telefono,
         String direccion
 ){}
+

@@ -11,3 +11,4 @@ public interface PdfGeneratorPort {
     Mono<byte[]> generarPdf(List<ProductoPedidoDTO> productos, BigDecimal totalPedido, String formaPago,
             ClienteLiquidacionDTO cliente, Long idPedido);
 }
+

@@ -56,3 +56,4 @@ public class EventoRecibidoRepositoryAdapter implements EventoRecibidoRepository
                 .map(mapper::toDomain);
     }
 }
+

@@ -47,3 +47,4 @@ public class PedidoRepositoryAdapter implements PedidoRepository {
                 .map(pedidoMapper::toDomain);
     }
 }
+

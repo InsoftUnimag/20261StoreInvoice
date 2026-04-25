@@ -6,3 +6,4 @@ public interface PdfStoragePort {
 
     Mono<String> subirPdf(byte[] contenido, String nombreArchivo);
 }
+

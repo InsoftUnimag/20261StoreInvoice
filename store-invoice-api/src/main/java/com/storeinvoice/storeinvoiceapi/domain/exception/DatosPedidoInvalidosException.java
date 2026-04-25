@@ -10,3 +10,4 @@ public final class DatosPedidoInvalidosException extends DomainException {
         super(String.format("Dato invalido en campo '%s': %s", campo, motivo));
     }
 }
+

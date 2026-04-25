@@ -7,3 +7,4 @@ public record ClienteLiquidacionDTO(
         String telefono,
         String direccion) {
 }
+

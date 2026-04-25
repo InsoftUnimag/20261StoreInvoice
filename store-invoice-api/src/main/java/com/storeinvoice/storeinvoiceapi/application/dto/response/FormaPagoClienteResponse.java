@@ -8,3 +8,4 @@ public record FormaPagoClienteResponse(
         LocalDateTime fechaRegistro
 ) {
 }
+
