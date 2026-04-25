@@ -3,6 +3,21 @@ spring:
     name: store-invoice-api
   main:
     web-application-type: reactive
+  cloud:
+    stream:
+      bindings:
+        processFinalState-in-0:
+          destination: estado.final.transporte
+          group: store-invoice-group
+          consumer:
+            max-attempts: 3
+      rabbit:
+        bindings:
+          processFinalState-in-0:
+            consumer:
+              auto-bind-dlq: true
+              republish-to-dlq: true
+              dlq-name: estado.final.transporte.dlq
   datasource:
     url: jdbc:postgresql://localhost:5432/store_invoice
     username: postgres

@@ -1,6 +1,5 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
-import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionTransportistaResponse;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionTransportista;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.LiquidacionTransportistaJpaEntity;
 import java.util.List;
@@ -8,6 +7,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
+/**
+ * Mapper de persistencia: LiquidacionTransportista (dominio) ↔ LiquidacionTransportistaJpaEntity.
+ * Responsabilidad única: conversión entre modelo de dominio y entidad JPA.
+ * La conversión a Response DTO es responsabilidad de LiquidacionTransportistaResponseMapper.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR,
@@ -20,8 +24,4 @@ public interface LiquidacionTransportistaMapper {
     LiquidacionTransportista toDomain(LiquidacionTransportistaJpaEntity entity);
 
     List<LiquidacionTransportista> toDomainList(List<LiquidacionTransportistaJpaEntity> entities);
-
-    LiquidacionTransportistaResponse toResponse(LiquidacionTransportista domain);
-
-    List<LiquidacionTransportistaResponse> toResponseList(List<LiquidacionTransportista> domains);
 }

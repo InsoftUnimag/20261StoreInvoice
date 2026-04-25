@@ -97,6 +97,15 @@ public class LiquidacionRepositoryAdapter implements LiquidacionRepository {
         return Optional.ofNullable(entityManager.find(LiquidacionTransportistaJpaEntity.class, idLiquidacion))
                 .map(transportistaMapper::toDomain);
     }
+
+    @Override
+    public Optional<LiquidacionCliente> findByIdPedido(final Long idPedido) {
+        final String jpql = "SELECT l FROM LiquidacionClienteJpaEntity l WHERE l.idPedido = :idPedido";
+        final TypedQuery<LiquidacionClienteJpaEntity> typedQuery = entityManager.createQuery(jpql, LiquidacionClienteJpaEntity.class);
+        typedQuery.setParameter("idPedido", idPedido);
+        final var result = typedQuery.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(liquidacionMapper.toDomain(result.get(0)));
+    }
 }
 
 

@@ -1,6 +1,6 @@
 package com.storeinvoice.storeinvoiceapi.application.service.pedido;
 
-import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
+import com.storeinvoice.storeinvoiceapi.application.repository.PedidoRepository;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class ConsultarTotalPedidoUseCaseTest {
 
     @Mock
-    private LiquidacionRepository liquidacionRepository;
+    private PedidoRepository pedidoRepository;
 
     @InjectMocks
     private ConsultarTotalPedidoUseCase useCase;
@@ -27,7 +27,7 @@ class ConsultarTotalPedidoUseCaseTest {
     void execute_cuando_existe_liquidacion_retorna_monto() {
         final Long idPedido = 100L;
         final BigDecimal montoEsperado = new BigDecimal("1500.00");
-        when(liquidacionRepository.findMontoLiquidadoByIdPedido(idPedido))
+        when(pedidoRepository.findPrecioPedidoByIdPedido(idPedido))
                 .thenReturn(Optional.of(montoEsperado));
 
         final BigDecimal resultado = useCase.execute(idPedido);
@@ -38,7 +38,7 @@ class ConsultarTotalPedidoUseCaseTest {
     @Test
     void execute_cuando_no_existe_liquidacion_lanza_excepcion() {
         final Long idPedido = 999L;
-        when(liquidacionRepository.findMontoLiquidadoByIdPedido(idPedido))
+        when(pedidoRepository.findPrecioPedidoByIdPedido(idPedido))
                 .thenReturn(Optional.empty());
 
         assertThrows(PedidoNotFoundException.class, () -> useCase.execute(idPedido));
