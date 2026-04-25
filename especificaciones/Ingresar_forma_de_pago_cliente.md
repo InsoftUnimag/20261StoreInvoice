@@ -1,4 +1,4 @@
-# Feature Specification - Registrar forma de pago del cliente
+﻿# Feature Specification - Registrar forma de pago del cliente
 
 **Status:** Terminada  
 **Created:** 24-02-2026
@@ -12,23 +12,23 @@
 **Este es un endpoint que para fronted**
 **Flujo:**
 
-1. El Asesor Comercial consulta el cliente por ID Nacional usando el endpoint `GET /api/v1/clientes/{id_nacional}` del Módulo de Gestión de Clientes (ver spec `consultar_cliente.md`).
+1. El Asesor Comercial consulta el cliente por ID Nacional usando el endpoint `GET /api/v1/clientes/{id_nacional}` del MÃ³dulo de GestiÃ³n de Clientes (ver spec `consultar_cliente.md`).
 2. Obtiene el `id_cliente` (ID de base de datos) de la respuesta.
 3. El Sistema Financiero guarda la forma de pago asociada al `id_cliente`.
 
-**Parámetros de entrada:**
-- `id_nacional` (String): Número de documento del cliente
+**ParÃ¡metros de entrada:**
+- `id_nacional` (String): NÃºmero de documento del cliente
 - `forma_pago` (String): Forma de pago a registrar (`CONTRA_ENTREGA` o `CARTERA_COMERCIAL`)
 
-**Formas de pago válidas:**
+**Formas de pago vÃ¡lidas:**
 - `CONTRA_ENTREGA` - Pago contra entrega
-- `CARTERA_COMERCIAL` - Cartera comercial (crédito)
+- `CARTERA_COMERCIAL` - Cartera comercial (crÃ©dito)
 
 ---
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Asignación de forma de pago a cliente (Priority: P1)
+### User Story 1 - AsignaciÃ³n de forma de pago a cliente (Priority: P1)
 
 Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o Cartera Comercial) de un cliente. Para establecer las reglas de recaudo antes de generar pedidos.
 
@@ -44,10 +44,10 @@ Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o C
    - **When:** Se intenta registrar la forma de pago
    - **Then:** Se muestra error "Cliente no encontrado"
 
-3. **Scenario:** Forma de pago inválida
-   - **Given:** Se intenta guardar una forma de pago que no es válida
-   - **When:** Se envía el registro
-   - **Then:** Se muestra error "Forma de pago inválida"
+3. **Scenario:** Forma de pago invÃ¡lida
+   - **Given:** Se intenta guardar una forma de pago que no es vÃ¡lida
+   - **When:** Se envÃ­a el registro
+   - **Then:** Se muestra error "Forma de pago invÃ¡lida"
 
 ---
 
@@ -64,11 +64,11 @@ Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o C
 
 ### Forma_Pago_Cliente
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | DescripciÃ³n |
 |-------|------|-----------|-------------|
-| `id_cliente` | Integer | Sí | ID del cliente en la base de datos |
-| `forma_pago` | String | Sí | Forma de pago: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
-| `fecha_registro` | DateTime | Sí | Fecha y hora del registro |
+| `id_cliente` | Integer | SÃ­ | ID del cliente en la base de datos |
+| `forma_pago` | String | SÃ­ | Forma de pago: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
+| `fecha_registro` | DateTime | SÃ­ | Fecha y hora del registro |
 
 ---
 
@@ -78,3 +78,4 @@ Yo como Asesor Comercial necesito registrar la forma de pago (Contra Entrega o C
 
 - **SC-001:** El sistema debe guardar la forma de pago en menos de 500ms.
 - **SC-002:** El cambio de forma de pago debe estar disponible inmediatamente para nuevos pedidos.
+

@@ -1,8 +1,5 @@
 package com.storeinvoice.storeinvoiceapi.domain.model;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -17,22 +14,35 @@ import lombok.Setter;
 public class LiquidacionContable {
 
     private Long idLiquidacion;
-
-    @NotNull(message = "ID de pedido es requerido")
     private Long idPedido;
-
-    @NotBlank(message = "Tipo de liquidacion es requerido")
     private String tipoLiquidacion;
-
-    @NotNull(message = "ID de sujeto es requerido")
     private Long idSujeto;
-
-    @NotNull(message = "Monto es requerido")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Monto debe ser mayor a cero")
     private BigDecimal monto;
-
-    @NotNull(message = "Fecha de liquidacion es requerida")
     private LocalDateTime fechaLiquidacion;
-
     private String uriDocumento;
+
+    /**
+     * Valida que los campos obligatorios sean válidos.
+     * @throws IllegalArgumentException si algún campo requerido es inválido
+     */
+    public void validar() {
+        if (idPedido == null) {
+            throw new IllegalArgumentException("ID de pedido es requerido");
+        }
+        if (tipoLiquidacion == null || tipoLiquidacion.isBlank()) {
+            throw new IllegalArgumentException("Tipo de liquidacion es requerido");
+        }
+        if (idSujeto == null) {
+            throw new IllegalArgumentException("ID de sujeto es requerido");
+        }
+        if (monto == null) {
+            throw new IllegalArgumentException("Monto es requerido");
+        }
+        if (monto.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Monto debe ser mayor a cero");
+        }
+        if (fechaLiquidacion == null) {
+            throw new IllegalArgumentException("Fecha de liquidacion es requerida");
+        }
+    }
 }

@@ -1,9 +1,9 @@
-# Feature Specification: Consultar Forma de Pago del Cliente
+﻿# Feature Specification: Consultar Forma de Pago del Cliente
 
 **Created:** 11-03-2026  
 **Status:** In Development
 
-## Descripción del Flujo
+## DescripciÃ³n del Flujo
 
 El Sistema Financiero guarda la forma de pago de cada cliente en su propia base de datos.
 
@@ -11,11 +11,11 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ## Endpoints del Sistema Financiero
 
-### Consultar Forma de Pago por ID de Pedido (síncrono)
+### Consultar Forma de Pago por ID de Pedido (sÃ­ncrono)
 
 **Endpoint:** `GET /api/v1/pedidos/{id_pedido}/forma-pago`
 
-**Parámetros:**
+**ParÃ¡metros:**
 - `id_pedido` (path): ID del pedido
 
 **Respuesta:**
@@ -45,11 +45,11 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ---
 
-### Verificar si Cliente tiene Forma de Pago (síncrono)
+### Verificar si Cliente tiene Forma de Pago (sÃ­ncrono)
 
 **Endpoint:** `GET /api/v1/pedidos/{id_pedido}/tiene-forma-pago`
 
-**Parámetros:**
+**ParÃ¡metros:**
 - `id_cliente` (path): ID del cliente
 
 **Respuesta:**
@@ -66,9 +66,9 @@ El Sistema Financiero guarda la forma de pago de cada cliente en su propia base 
 
 ### User Story 1 - Buscar forma de pago por ID de Cliente (necesidad interna)
 
-Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por su ID. Para usar en funciones internas como la generación de liquidaciones, es una funcion que se necesita.
+Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por su ID. Para usar en funciones internas como la generaciÃ³n de liquidaciones, es una funcion que se necesita.
 
-**Why this priority:** Necesario para el proceso de liquidación del cliente.
+**Why this priority:** Necesario para el proceso de liquidaciÃ³n del cliente.
 
 **Acceptance Scenarios:**
 
@@ -96,10 +96,10 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por
 
 ### Edge Cases
 
-- ¿Qué pasa si el ID del cliente es inválido?
+- Â¿QuÃ© pasa si el ID del cliente es invÃ¡lido?
   - Retorna error: Cliente no encontrado
 
-- ¿Qué pasa si la consulta a la base de datos falla?
+- Â¿QuÃ© pasa si la consulta a la base de datos falla?
   - Retorna error: Error al consultar la forma de pago
 
 ---
@@ -109,7 +109,7 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por
 ### Functional Requirements
 
 - **FR-001:** El sistema DEBE exponer un endpoint GET `/api/v1/pedidos/{id_pedido}/forma-pago`.
-- **FR-002:** El sistema DEBE exponer una función interna que busque forma de pago por `id_cliente`.
+- **FR-002:** El sistema DEBE exponer una funciÃ³n interna que busque forma de pago por `id_cliente`.
 - **FR-003:** El sistema DEBE retornar la forma de pago como string (`CONTRA_ENTREGA` o `CARTERA_COMERCIAL`).
 - **FR-004:** El sistema DEBE retornar error cuando el pedido o cliente no exista.
 - **FR-005:** El sistema DEBE retornar error cuando el cliente no tenga forma de pago asignada.
@@ -124,4 +124,5 @@ Yo como Sistema Financiero necesito consultar la forma de pago de un cliente por
 ## Success Criteria
 
 - **SC-001:** El sistema debe retornar la forma de pago en menos de 500ms.
-- **SC-002:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultáneas.
+- **SC-002:** La consulta debe funcionar correctamente bajo carga de al menos 100 solicitudes simultÃ¡neas.
+
