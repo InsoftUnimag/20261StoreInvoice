@@ -1,55 +1,55 @@
-﻿# Feature Specification - Generar LiquidaciÃ³n de Cliente
+# Feature Specification - Generar Liquidación de Cliente
 
 **Created:** 03-03-2026  
 **Status:** In Development
 
-## DescripciÃ³n del Flujo
+## Descripción del Flujo
 
-> **Nota:** El trigger de esta funciÃ³n es el evento publicado por el **MÃ³dulo de Inventario** (ver spec `recibir_datos_pedido_modulo_inventario.md`). Al recibir los datos del pedido, el sistema consulta los productos del MÃ³dulo de Inventario, consulta los datos del cliente del MÃ³dulo de GestiÃ³n de Clientes, genera el PDF de liquidaciÃ³n y lo guarda en el registro de `liquidaciones_cliente`.
+> **Nota:** El trigger de esta función es el evento publicado por el **Módulo de Inventario** (ver spec `recibir_datos_pedido_modulo_inventario.md`). Al recibir los datos del pedido, el sistema consulta los productos del Módulo de Inventario, consulta los datos del cliente del Módulo de Gestión de Clientes, genera el PDF de liquidación y lo guarda en el registro de `liquidaciones_cliente`.
 
-**Datos recibidos del MÃ³dulo de Inventario:**
+**Datos recibidos del Módulo de Inventario:**
 - `id_pedido`
 - `id_cliente`
 - `total_pedido`
 
-**Pasos para generar la liquidaciÃ³n:**
+**Pasos para generar la liquidación:**
 
-1. **Recibir datos**: Se reciben los datos del pedido desde el MÃ³dulo de Inventario (vÃ­a cola asÃ­ncrona)
+1. **Recibir datos**: Se reciben los datos del pedido desde el Módulo de Inventario (vía cola asíncrona)
 2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago usando `FormaPagoClienteRepository`
-3. **Consultar productos**: Se llama al endpoint del MÃ³dulo de Inventario via `InventarioServicePort` para obtener los productos del pedido
-4. **Consultar datos del cliente**: Se llama al MÃ³dulo de GestiÃ³n de Clientes via `ClienteServicePort` para obtener los datos del cliente
-5. **Generar PDF**: Se invoca la funciÃ³n interna de generaciÃ³n de PDF (spec `generar_pdf_liquidacion_cliente.md`) que retorna la URI del PDF
-6. **Guardar liquidaciÃ³n**: Se guarda el registro de liquidaciÃ³n con estado `PENDIENTE` y la URI del PDF
+3. **Consultar productos**: Se llama al endpoint del Módulo de Inventario via `InventarioServicePort` para obtener los productos del pedido
+4. **Consultar datos del cliente**: Se llama al Módulo de Gestión de Clientes via `ClienteServicePort` para obtener los datos del cliente
+5. **Generar PDF**: Se invoca la función interna de generación de PDF (spec `generar_pdf_liquidacion_cliente.md`) que retorna la URI del PDF
+6. **Guardar liquidación**: Se guarda el registro de liquidación con estado `PENDIENTE` y la URI del PDF
 
-> **Nota:** El `monto_liquidado` es igual al `total_pedido` recibido del MÃ³dulo de Inventario. No se aplica fÃ³rmula de cÃ¡lculo adicional.
+> **Nota:** El `monto_liquidado` es igual al `total_pedido` recibido del Módulo de Inventario. No se aplica fórmula de cálculo adicional.
 
 ---
 
 ## User Scenarios & Testing (mandatory)
 
-### User Story 1 - GeneraciÃ³n de liquidaciÃ³n al recibir pedido (Priority: P1)
+### User Story 1 - Generación de liquidación al recibir pedido (Priority: P1)
 
-Yo como Sistema Financiero necesito generar una liquidaciÃ³n para un cliente cuando el MÃ³dulo de Inventario envÃ­e los datos del pedido. Para registrar el monto a cobrar y generar el PDF de la liquidaciÃ³n.
+Yo como Sistema Financiero necesito generar una liquidación para un cliente cuando el Módulo de Inventario envíe los datos del pedido. Para registrar el monto a cobrar y generar el PDF de la liquidación.
 
-**Why this priority:** Es una funciÃ³n crÃ­tica para la conciliaciÃ³n financiera.
+**Why this priority:** Es una función crítica para la conciliación financiera.
 
 **Acceptance Scenarios:**
 
-1. **Scenario:** GeneraciÃ³n exitosa de liquidaciÃ³n
-   - **Given:** El MÃ³dulo de Inventario envÃ­a los datos del pedido con id_pedido
-   - **When:** Se desea generar la liquidaciÃ³n del cliente
+1. **Scenario:** Generación exitosa de liquidación
+   - **Given:** El Módulo de Inventario envía los datos del pedido con id_pedido
+   - **When:** Se desea generar la liquidación del cliente
    - **Then:** El sistema consulta los productos, consulta el cliente, genera el PDF y guarda la URI.
 
 2. **Scenario:** Error al generar PDF
    - **Given:** El sistema no puede generar el PDF
-   - **When:** Se desea generar la liquidaciÃ³n del cliente
-   - **Then:** El sistema retorna error y no guarda la liquidaciÃ³n incompleta.
+   - **When:** Se desea generar la liquidación del cliente
+   - **Then:** El sistema retorna error y no guarda la liquidación incompleta.
 
 ---
 
-### User Story 2 - ValidaciÃ³n de datos requeridos (Priority: P1)
+### User Story 2 - Validación de datos requeridos (Priority: P1)
 
-Yo como Sistema Financiero necesito validar que existan todos los datos requeridos antes de generar la liquidaciÃ³n. Para evitar registros contables errÃ³neos.
+Yo como Sistema Financiero necesito validar que existan todos los datos requeridos antes de generar la liquidación. Para evitar registros contables erróneos.
 
 **Why this priority:** Protege la integridad de la base de datos y previene facturas incompletas.
 
@@ -57,36 +57,36 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 
 **Acceptance Scenarios:**
 
-1. **Scenario:** Intento de liquidaciÃ³n sin precio del pedido
-   - **Given:** Se intenta generar liquidaciÃ³n pero el total_pedido es nulo o negativo
-   - **When:** Cuando se desea generar la liquidaciÃ³n del cliente
-   - **Then:** El sistema bloquea la operaciÃ³n y muestra error: "Total del pedido no puede ser negativo".
+1. **Scenario:** Intento de liquidación sin precio del pedido
+   - **Given:** Se intenta generar liquidación pero el total_pedido es nulo o negativo
+   - **When:** Cuando se desea generar la liquidación del cliente
+   - **Then:** El sistema bloquea la operación y muestra error: "Total del pedido no puede ser negativo".
 
-2. **Scenario:** Intento de liquidaciÃ³n sin forma de pago registrada
-   - **Given:** Se intenta generar liquidaciÃ³n para un cliente sin forma de pago asignada
-   - **When:** Cuando se desea generar la liquidaciÃ³n
-   - **Then:** El sistema bloquea la operaciÃ³n y muestra error: "Cliente sin forma de pago registrada".
+2. **Scenario:** Intento de liquidación sin forma de pago registrada
+   - **Given:** Se intenta generar liquidación para un cliente sin forma de pago asignada
+   - **When:** Cuando se desea generar la liquidación
+   - **Then:** El sistema bloquea la operación y muestra error: "Cliente sin forma de pago registrada".
 
-3. **Scenario:** Intento de liquidaciÃ³n sin productos
-   - **Given:** El MÃ³dulo de Inventario retorna lista vacÃ­a de productos para el pedido
-   - **When:** Cuando se desea generar la liquidaciÃ³n
-   - **Then:** El sistema bloquea la operaciÃ³n y muestra error: "No se encontraron productos para el pedido".
+3. **Scenario:** Intento de liquidación sin productos
+   - **Given:** El Módulo de Inventario retorna lista vacía de productos para el pedido
+   - **When:** Cuando se desea generar la liquidación
+   - **Then:** El sistema bloquea la operación y muestra error: "No se encontraron productos para el pedido".
 
 ---
 
 ### Edge Cases
 
-- **Â¿QuÃ© pasa si el pedido no existe en la base de datos?**
+- **¿Qué pasa si el pedido no existe en la base de datos?**
   - El sistema debe retornar error: "Pedido no encontrado"
 
-- **Â¿QuÃ© pasa si no se pueden obtener los productos del MÃ³dulo de Inventario?**
+- **¿Qué pasa si no se pueden obtener los productos del Módulo de Inventario?**
   - El sistema debe retornar error: "Error al consultar los productos del pedido"
 
-- **Â¿QuÃ© pasa si no se pueden obtener los datos del cliente?**
+- **¿Qué pasa si no se pueden obtener los datos del cliente?**
   - El sistema debe retornar error: "Error al consultar los datos del cliente"
 
-- **Â¿QuÃ© pasa si falla la subida del PDF a la nube?**
-  - El sistema debe retornar error: "Error al subir el PDF a la nube. Intente mÃ¡s tarde"
+- **¿Qué pasa si falla la subida del PDF a la nube?**
+  - El sistema debe retornar error: "Error al subir el PDF a la nube. Intente más tarde"
 
 ---
 
@@ -94,13 +94,13 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 
 ### Functional Requirements
 
-- **FR-001:** El sistema DEBE recibir del evento del MÃ³dulo de Inventario el `id_pedido`, `id_cliente` y `total_pedido`.
+- **FR-001:** El sistema DEBE recibir del evento del Módulo de Inventario el `id_pedido`, `id_cliente` y `total_pedido`.
 - **FR-002:** El sistema DEBE consultar la forma de pago del cliente usando `FormaPagoClienteRepository`.
-- **FR-003:** El sistema DEBE consultar los productos del pedido del MÃ³dulo de Inventario via `InventarioServicePort`.
-- **FR-004:** El sistema DEBE consultar los datos del cliente del MÃ³dulo de GestiÃ³n de Clientes via `ClienteServicePort`.
-- **FR-005:** El sistema DEBE invocar la funciÃ³n interna de generaciÃ³n de PDF (spec `generar_pdf_liquidacion_cliente.md`) y guardar la URI retornada.
-- **FR-006:** El sistema DEBE guardar el registro de liquidaciÃ³n con estado `PENDIENTE`, fecha actual y URI del PDF.
-- **FR-007:** El sistema DEBE validar que todos los parÃ¡metros requeridos estÃ©n presentes antes de generar la liquidaciÃ³n.
+- **FR-003:** El sistema DEBE consultar los productos del pedido del Módulo de Inventario via `InventarioServicePort`.
+- **FR-004:** El sistema DEBE consultar los datos del cliente del Módulo de Gestión de Clientes via `ClienteServicePort`.
+- **FR-005:** El sistema DEBE invocar la función interna de generación de PDF (spec `generar_pdf_liquidacion_cliente.md`) y guardar la URI retornada.
+- **FR-006:** El sistema DEBE guardar el registro de liquidación con estado `PENDIENTE`, fecha actual y URI del PDF.
+- **FR-007:** El sistema DEBE validar que todos los parámetros requeridos estén presentes antes de generar la liquidación.
 - **FR-008:** El sistema DEBE mantener un registro inmutable de todas las liquidaciones generadas.
 
 ### Key Entities *(include if feature involves data)*
@@ -110,10 +110,10 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
   - Entidad que registra el monto a cobrar al cliente.
 
 **Notas de columnas:**
-- `monto_liquidado`: Se obtiene del `total_pedido` recibido del MÃ³dulo de Inventario
+- `monto_liquidado`: Se obtiene del `total_pedido` recibido del Módulo de Inventario
 - `forma_pago`: Se consulta por `id_cliente` via `FormaPagoClienteRepository`
 - `estado_liquidacion`: Siempre `PENDIENTE` al crear
-- `uri_pdf`: Se genera mediante la funciÃ³n `generar_pdf_liquidacion_cliente.md`
+- `uri_pdf`: Se genera mediante la función `generar_pdf_liquidacion_cliente.md`
 - `fecha_liquidacion`: Fecha actual del sistema
 
 ---
@@ -122,30 +122,29 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 
 ### Measurable Outcomes
 
-- **SC-001:** El sistema debe generar una liquidaciÃ³n completa (recepciÃ³n + consultas + PDF + almacenamiento) en menos de 2 segundos.
+- **SC-001:** El sistema debe generar una liquidación completa (recepción + consultas + PDF + almacenamiento) en menos de 2 segundos.
 
-- **SC-002:** Todas las liquidaciones deben ser rastreables e inmutables para auditorÃ­a.
+- **SC-002:** Todas las liquidaciones deben ser rastreables e inmutables para auditoría.
 
-- **SC-003:** El sistema debe procesar al menos 1,000 liquidaciones diarias sin fallos crÃ­ticos.
+- **SC-003:** El sistema debe procesar al menos 1,000 liquidaciones diarias sin fallos críticos.
 
 - **SC-004:** El sistema debe manejar errores de manera apropiada sin detener el procesamiento de mensajes siguientes (pipeline reactivo).
 
 ---
 
-## Notas de ImplementaciÃ³n
+## Notas de Implementación
 
-### SimplificaciÃ³n respecto al diseÃ±o original
+### Simplificación respecto al diseño original
 
-Esta spec fue simplificada durante la implementaciÃ³n. Originalmente el trigger era el evento del MÃ³dulo de Transporte con campos adicionales (`estado_final`, `tasa_efectividad`, `tarifa_envio`). La implementaciÃ³n actual:
+Esta spec fue simplificada durante la implementación. Originalmente el trigger era el evento del Módulo de Transporte con campos adicionales (`estado_final`, `tasa_efectividad`, `tarifa_envio`). La implementación actual:
 
-- Usa el **evento del MÃ³dulo de Inventario** como trigger Ãºnico
-- No procesa eventos del MÃ³dulo de Transporte
+- Usa el **evento del Módulo de Inventario** como trigger único
+- No procesa eventos del Módulo de Transporte
 - No utiliza `estado_final`, `tasa_efectividad`, `tarifa_envio`
-- No aplica fÃ³rmula de cÃ¡lculo: `monto_liquidado = total_pedido`
+- No aplica fórmula de cálculo: `monto_liquidado = total_pedido`
 - Genera el PDF inmediatamente al recibir el mensaje del Inventario
 - Guarda la URI del PDF en el registro inicial (no `null`)
 
-El flujo estÃ¡ implementado en:
+El flujo está implementado en:
 - `ProcesarPedidoInventarioUseCase` (orquestador reactivo)
 - `PedidoEventConsumer` (consumer reactivo Function<T, Mono<Void>>)
-

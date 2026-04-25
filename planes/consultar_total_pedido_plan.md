@@ -1,4 +1,4 @@
-﻿# Implementation Plan: Consultar Total del Pedido
+# Implementation Plan: Consultar Total del Pedido
 
 **Date:** 23-04-2026 **Spec:** especificaciones/consultar_total_pedido.md
 
@@ -22,33 +22,33 @@ Exponer endpoint para que el Modulo de Transporte consulte el total de un pedido
 
 ```
 src/
-â”œâ”€â”€ main/
-â”‚   â””â”€â”€ java/com/storeinvoice/storeinvoiceapi/
-â”‚       â”œâ”€â”€ domain/
-â”‚       â”‚   â””â”€â”€ exception/
-â”‚       â”‚       â””â”€â”€ PedidoNotFoundException.java
-â”‚       â”œâ”€â”€ application/
-â”‚       â”‚   â”œâ”€â”€ repository/
-â”‚       â”‚   â”‚   â””â”€â”€ LiquidacionRepository.java
-â”‚       â”‚   â”œâ”€â”€ dto/
-â”‚       â”‚   â”‚   â””â”€â”€ response/
-â”‚       â”‚   â”‚       â””â”€â”€ TotalPedidoResponse.java
-â”‚       â”‚   â””â”€â”€ service/
-â”‚       â”‚       â””â”€â”€ pedido/
-â”‚       â”‚           â””â”€â”€ ConsultarTotalPedidoUseCase.java
-â”‚       â””â”€â”€ infrastructure/
-â”‚           â”œâ”€â”€ adapter/
-â”‚           â”‚   â”œâ”€â”€ inbound/
-â”‚           â”‚   â”‚   â””â”€â”€ rest/
-â”‚           â”‚   â”‚       â””â”€â”€ PedidoController.java
-â”‚           â”‚   â””â”€â”€ outbound/
-â”‚           â”‚       â””â”€â”€ persistence/
-â”‚           â”‚           â””â”€â”€ LiquidacionRepositoryAdapter.java
-â”‚           â””â”€â”€ persistence/
-â”‚               â”œâ”€â”€ entity/
-â”‚               â”‚   â””â”€â”€ LiquidacionClienteJpaEntity.java
-â”‚               â””â”€â”€ mapper/
-â”‚                   â””â”€â”€ LiquidacionJpaMapper.java
+├── main/
+│   └── java/com/storeinvoice/storeinvoiceapi/
+│       ├── domain/
+│       │   └── exception/
+│       │       └── PedidoNotFoundException.java
+│       ├── application/
+│       │   ├── repository/
+│       │   │   └── LiquidacionRepository.java
+│       │   ├── dto/
+│       │   │   └── response/
+│       │   │       └── TotalPedidoResponse.java
+│       │   └── service/
+│       │       └── pedido/
+│       │           └── ConsultarTotalPedidoUseCase.java
+│       └── infrastructure/
+│           ├── adapter/
+│           │   ├── inbound/
+│           │   │   └── rest/
+│           │   │       └── PedidoController.java
+│           │   └── outbound/
+│           │       └── persistence/
+│           │           └── LiquidacionRepositoryAdapter.java
+│           └── persistence/
+│               ├── entity/
+│               │   └── LiquidacionClienteJpaEntity.java
+│               └── mapper/
+│                   └── LiquidacionJpaMapper.java
 ```
 
 ---
@@ -177,5 +177,4 @@ GET /api/v1/pedidos/{id_pedido}/total
 - Controller convierte Domain Model -> Response DTO
 - UseCase retorna Domain Models (no DTOs)
 - Si no existe liquidacion para el pedido, retornar 404
-- No usar caracteres especiales del espanol (Ã±, acentos) en codigo
-
+- No usar caracteres especiales del espanol (ñ, acentos) en codigo

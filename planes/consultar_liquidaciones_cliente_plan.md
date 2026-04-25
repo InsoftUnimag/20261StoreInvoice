@@ -1,4 +1,4 @@
-﻿# Implementation Plan: Consultar Liquidaciones del Cliente (WebApp)
+# Implementation Plan: Consultar Liquidaciones del Cliente (WebApp)
 
 **Date:** 22-04-2026
 **Spec:** especificaciones/consultar_liquidaciones_cliente.md
@@ -23,50 +23,50 @@ Permitir al cliente consultar sus liquidaciones desde una interfaz web mediante 
 
 ```
 src/
-â”œâ”€â”€ main/
-â”‚   â”œâ”€â”€ java/com/storeinvoice/storeinvoiceapi/
-â”‚   â”‚   â”œâ”€â”€ domain/
-â”‚   â”‚   â”‚   â”œâ”€â”€ model/
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ LiquidacionCliente.java
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ FormaPago.java
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ EstadoLiquidacion.java
-â”‚   â”‚   â”‚   â””â”€â”€ exception/
-â”‚   â”‚   â”‚       â””â”€â”€ LiquidacionNotFoundException.java
-â”‚   â”‚   â”œâ”€â”€ application/
-â”‚   â”‚   â”‚   â”œâ”€â”€ service/
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ liquidacion/
-â”‚   â”‚   â”‚   â”‚       â””â”€â”€ ConsultarLiquidacionesClienteUseCase.java
-â”‚   â”‚   â”‚   â”œâ”€â”€ repository/
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ LiquidacionRepository.java
-â”‚   â”‚   â”‚   â””â”€â”€ dto/
-â”‚   â”‚   â”‚       â”œâ”€â”€ query/
-â”‚   â”‚   â”‚       â”‚   â””â”€â”€ ConsultarLiquidacionesQuery.java
-â”‚   â”‚   â”‚       â””â”€â”€ response/
-â”‚   â”‚   â”‚           â””â”€â”€ LiquidacionClienteResponse.java
-â”‚   â”‚   â””â”€â”€ infrastructure/
-â”‚   â”‚       â”œâ”€â”€ adapter/
-â”‚   â”‚       â”‚   â”œâ”€â”€ inbound/
-â”‚   â”‚       â”‚   â”‚   â””â”€â”€ rest/
-â”‚   â”‚       â”‚   â”‚       â””â”€â”€ LiquidacionController.java
-â”‚   â”‚       â”‚   â””â”€â”€ outbound/
-â”‚   â”‚       â”‚       â””â”€â”€ persistence/
-â”‚   â”‚       â”‚           â””â”€â”€ LiquidacionRepositoryAdapter.java
-â”‚   â”‚       â”œâ”€â”€ persistence/
-â”‚   â”‚       â”‚   â”œâ”€â”€ entity/
-â”‚   â”‚       â”‚   â”‚   â””â”€â”€ LiquidacionClienteJpaEntity.java
-â”‚   â”‚       â”‚   â””â”€â”€ mapper/
-â”‚   â”‚       â”‚       â””â”€â”€ LiquidacionEntityMapper.java
-â”‚   â”‚       â””â”€â”€ exception/
-â”‚   â”‚           â””â”€â”€ GlobalExceptionHandler.java
-â”‚   â””â”€â”€ resources/
-â”‚       â””â”€â”€ db/migration/
-â”‚           â””â”€â”€ V1__create_liquidacion_cliente_table.sql
-â””â”€â”€ test/
-    â””â”€â”€ java/com/storeinvoice/storeinvoiceapi/
-        â”œâ”€â”€ application/service/liquidacion/
-        â”‚   â””â”€â”€ ConsultarLiquidacionesClienteUseCaseTest.java
-        â””â”€â”€ infrastructure/adapter/inbound/rest/
-            â””â”€â”€ LiquidacionControllerTest.java
+├── main/
+│   ├── java/com/storeinvoice/storeinvoiceapi/
+│   │   ├── domain/
+│   │   │   ├── model/
+│   │   │   │   ├── LiquidacionCliente.java
+│   │   │   │   ├── FormaPago.java
+│   │   │   │   └── EstadoLiquidacion.java
+│   │   │   └── exception/
+│   │   │       └── LiquidacionNotFoundException.java
+│   │   ├── application/
+│   │   │   ├── service/
+│   │   │   │   └── liquidacion/
+│   │   │   │       └── ConsultarLiquidacionesClienteUseCase.java
+│   │   │   ├── repository/
+│   │   │   │   └── LiquidacionRepository.java
+│   │   │   └── dto/
+│   │   │       ├── query/
+│   │   │       │   └── ConsultarLiquidacionesQuery.java
+│   │   │       └── response/
+│   │   │           └── LiquidacionClienteResponse.java
+│   │   └── infrastructure/
+│   │       ├── adapter/
+│   │       │   ├── inbound/
+│   │       │   │   └── rest/
+│   │       │   │       └── LiquidacionController.java
+│   │       │   └── outbound/
+│   │       │       └── persistence/
+│   │       │           └── LiquidacionRepositoryAdapter.java
+│   │       ├── persistence/
+│   │       │   ├── entity/
+│   │       │   │   └── LiquidacionClienteJpaEntity.java
+│   │       │   └── mapper/
+│   │       │       └── LiquidacionEntityMapper.java
+│   │       └── exception/
+│   │           └── GlobalExceptionHandler.java
+│   └── resources/
+│       └── db/migration/
+│           └── V1__create_liquidacion_cliente_table.sql
+└── test/
+    └── java/com/storeinvoice/storeinvoiceapi/
+        ├── application/service/liquidacion/
+        │   └── ConsultarLiquidacionesClienteUseCaseTest.java
+        └── infrastructure/adapter/inbound/rest/
+            └── LiquidacionControllerTest.java
 ```
 
 ---
@@ -112,7 +112,7 @@ Tasks:
 - [x] T010 Crear LiquidacionEntityMapper en infrastructure/persistence/mapper/
 - [x] T011 Implementar LiquidacionRepositoryAdapter en infrastructure/adapter/outbound/persistence/
 - [x] T012 Crear endpoint GET /api/v1/clientes/{idCliente}/liquidaciones en LiquidacionController
-- [x] T013 Implementar conversion Domain Model â†’ LiquidacionClienteResponse usando MapStruct
+- [x] T013 Implementar conversion Domain Model → LiquidacionClienteResponse usando MapStruct
 - [x] T014 Crear script Flyway V1__create_liquidacion_cliente_table.sql
 - [x] T015 Configurar paginacion (20 registros por defecto) y ordenamiento descendente por fecha
 
@@ -236,4 +236,4 @@ public class LiquidacionCliente {
 - Repository usa paginacion con offset/limit
 - JPA Entity usa enums (con @Enumerated(EnumType.STRING)) - trade-off aceptado por simplicidad
 - Mapper generado por MapStruct en build/generated/
-- No usar caracteres especiales del espaÃ±ol (Ã±, acentos) en codigo
+- No usar caracteres especiales del español (ñ, acentos) en codigo

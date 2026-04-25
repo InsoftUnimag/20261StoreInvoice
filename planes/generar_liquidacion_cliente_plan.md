@@ -1,4 +1,4 @@
-﻿Implementation Plan: Generar Liquidacion de Cliente
+Implementation Plan: Generar Liquidacion de Cliente
 
 Date: 2026-04-24
 Spec: especificaciones/generar_liquidacion_cliente.md
@@ -26,88 +26,88 @@ Project Structure
 Source Code (repository root)
 
 src/
-â”œâ”€â”€ main/
-â”‚   â”œâ”€â”€ java/
-â”‚   â”‚   â””â”€â”€ com/
-â”‚   â”‚       â””â”€â”€ storeinvoice/
-â”‚   â”‚           â””â”€â”€ storeinvoiceapi/
-â”‚   â”‚               â”œâ”€â”€ domain/
-â”‚   â”‚               â”‚   â”œâ”€â”€ model/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ Cliente.java                    # Ya existe
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ Producto.java                   # Ya existe
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ LiquidacionCliente.java         # Ya existe
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ FormaPagoCliente.java           # Ya existe
-â”‚   â”‚               â”‚   â””â”€â”€ exception/
-â”‚   â”‚               â”‚       â”œâ”€â”€ DomainException.java            # Ya existe (sealed)
-â”‚   â”‚               â”‚       â”œâ”€â”€ ProductosNoEncontradosException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ ClienteNoEncontradoException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ ErrorConsultaProductosException.java
-â”‚   â”‚               â”‚       â””â”€â”€ ErrorConsultaClienteException.java
-â”‚   â”‚               â”œâ”€â”€ application/
-â”‚   â”‚               â”‚   â”œâ”€â”€ dto/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ messaging/
-â”‚   â”‚               â”‚   â”‚   â”‚   â””â”€â”€ DatosPedidoInventarioMessage.java   # Ya existe
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ ProductoPedidoDTO.java          # Ya existe
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ ClienteLiquidacionDTO.java      # Ya existe
-â”‚   â”‚               â”‚   â”œâ”€â”€ port/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ InventarioServicePort.java      # Ya existe
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ ClienteServicePort.java         # Ya existe
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ PdfGeneratorPort.java           # Ya existe
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ PdfStoragePort.java             # Ya existe
-â”‚   â”‚               â”‚   â”œâ”€â”€ repository/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ LiquidacionRepository.java      # Ya existe
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ FormaPagoClienteRepository.java # Ya existe
-â”‚   â”‚               â”‚   â”œâ”€â”€ service/
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ liquidacion/
-â”‚   â”‚               â”‚   â”‚       â”œâ”€â”€ cliente/
-â”‚   â”‚               â”‚   â”‚       â”‚   â”œâ”€â”€ RegistrarLiquidacionDesdeInventarioUseCase.java   # Ya existe (NO modificar)
-â”‚   â”‚               â”‚   â”‚       â”‚   â””â”€â”€ ProcesarPedidoInventarioUseCase.java              # NUEVO
-â”‚   â”‚               â”‚   â”‚       â””â”€â”€ mapper/
-â”‚   â”‚               â”‚   â”‚           â”œâ”€â”€ ProductoMapper.java     # NUEVO
-â”‚   â”‚               â”‚   â”‚           â””â”€â”€ ClienteMapper.java      # NUEVO
-â”‚   â”‚               â””â”€â”€ infrastructure/
-â”‚   â”‚                   â”œâ”€â”€ adapter/
-â”‚   â”‚                   â”‚   â”œâ”€â”€ inbound/
-â”‚   â”‚                   â”‚   â”‚   â””â”€â”€ messaging/
-â”‚   â”‚                   â”‚   â”‚       â””â”€â”€ PedidoEventConsumer.java            # MODIFICAR (refactor a reactivo)
-â”‚   â”‚                   â”‚   â””â”€â”€ outbound/
-â”‚   â”‚                   â”‚       â”œâ”€â”€ persistence/
-â”‚   â”‚                   â”‚       â”‚   â””â”€â”€ LiquidacionRepositoryAdapter.java   # Ya existe
-â”‚   â”‚                   â”‚       â”œâ”€â”€ external/
-â”‚   â”‚                   â”‚       â”‚   â”œâ”€â”€ InventarioWebClient.java            # Ya existe
-â”‚   â”‚                   â”‚       â”‚   â””â”€â”€ ClienteWebClient.java               # Ya existe
-â”‚   â”‚                   â”‚       â”œâ”€â”€ pdf/
-â”‚   â”‚                   â”‚       â”‚   â””â”€â”€ OpenPdfGeneratorAdapter.java        # Ya existe
-â”‚   â”‚                   â”‚       â””â”€â”€ storage/
-â”‚   â”‚                   â”‚           â”œâ”€â”€ LocalFileStorageAdapter.java        # Ya existe
-â”‚   â”‚                   â”‚           â””â”€â”€ SupabaseStorageAdapter.java         # Ya existe
-â”‚   â”‚                   â””â”€â”€ persistence/
-â”‚   â”‚                       â”œâ”€â”€ entity/
-â”‚   â”‚                       â”‚   â””â”€â”€ LiquidacionClienteJpaEntity.java        # Ya existe
-â”‚   â”‚                       â””â”€â”€ mapper/
-â”‚   â”‚                           â””â”€â”€ LiquidacionEntityMapper.java            # Ya existe
-â”‚   â””â”€â”€ resources/
-â”‚       â”œâ”€â”€ application.yml                                     # Ya existe
-â”‚       â””â”€â”€ db/migration/
-â”‚           â”œâ”€â”€ V1__create_liquidacion_cliente_table.sql        # Ya existe
-â”‚           â””â”€â”€ (sin migraciones nuevas - no cambia schema)
-â”‚
-â””â”€â”€ test/
-    â””â”€â”€ java/
-        â””â”€â”€ com/
-            â””â”€â”€ storeinvoice/
-                â””â”€â”€ storeinvoiceapi/
-                    â”œâ”€â”€ application/
-                    â”‚   â””â”€â”€ service/
-                    â”‚       â””â”€â”€ liquidacion/
-                    â”‚           â””â”€â”€ cliente/
-                    â”‚               â”œâ”€â”€ RegistrarLiquidacionDesdeInventarioUseCaseTest.java   # Ya existe
-                    â”‚               â””â”€â”€ ProcesarPedidoInventarioUseCaseTest.java              # NUEVO
-                    â””â”€â”€ infrastructure/
-                        â””â”€â”€ adapter/
-                            â””â”€â”€ inbound/
-                                â””â”€â”€ messaging/
-                                    â””â”€â”€ PedidoEventConsumerTest.java                          # NUEVO
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── storeinvoice/
+│   │           └── storeinvoiceapi/
+│   │               ├── domain/
+│   │               │   ├── model/
+│   │               │   │   ├── Cliente.java                    # Ya existe
+│   │               │   │   ├── Producto.java                   # Ya existe
+│   │               │   │   ├── LiquidacionCliente.java         # Ya existe
+│   │               │   │   └── FormaPagoCliente.java           # Ya existe
+│   │               │   └── exception/
+│   │               │       ├── DomainException.java            # Ya existe (sealed)
+│   │               │       ├── ProductosNoEncontradosException.java
+│   │               │       ├── ClienteNoEncontradoException.java
+│   │               │       ├── ErrorConsultaProductosException.java
+│   │               │       └── ErrorConsultaClienteException.java
+│   │               ├── application/
+│   │               │   ├── dto/
+│   │               │   │   ├── messaging/
+│   │               │   │   │   └── DatosPedidoInventarioMessage.java   # Ya existe
+│   │               │   │   ├── ProductoPedidoDTO.java          # Ya existe
+│   │               │   │   └── ClienteLiquidacionDTO.java      # Ya existe
+│   │               │   ├── port/
+│   │               │   │   ├── InventarioServicePort.java      # Ya existe
+│   │               │   │   ├── ClienteServicePort.java         # Ya existe
+│   │               │   │   ├── PdfGeneratorPort.java           # Ya existe
+│   │               │   │   └── PdfStoragePort.java             # Ya existe
+│   │               │   ├── repository/
+│   │               │   │   ├── LiquidacionRepository.java      # Ya existe
+│   │               │   │   └── FormaPagoClienteRepository.java # Ya existe
+│   │               │   ├── service/
+│   │               │   │   └── liquidacion/
+│   │               │   │       ├── cliente/
+│   │               │   │       │   ├── RegistrarLiquidacionDesdeInventarioUseCase.java   # Ya existe (NO modificar)
+│   │               │   │       │   └── ProcesarPedidoInventarioUseCase.java              # NUEVO
+│   │               │   │       └── mapper/
+│   │               │   │           ├── ProductoMapper.java     # NUEVO
+│   │               │   │           └── ClienteMapper.java      # NUEVO
+│   │               └── infrastructure/
+│   │                   ├── adapter/
+│   │                   │   ├── inbound/
+│   │                   │   │   └── messaging/
+│   │                   │   │       └── PedidoEventConsumer.java            # MODIFICAR (refactor a reactivo)
+│   │                   │   └── outbound/
+│   │                   │       ├── persistence/
+│   │                   │       │   └── LiquidacionRepositoryAdapter.java   # Ya existe
+│   │                   │       ├── external/
+│   │                   │       │   ├── InventarioWebClient.java            # Ya existe
+│   │                   │       │   └── ClienteWebClient.java               # Ya existe
+│   │                   │       ├── pdf/
+│   │                   │       │   └── OpenPdfGeneratorAdapter.java        # Ya existe
+│   │                   │       └── storage/
+│   │                   │           ├── LocalFileStorageAdapter.java        # Ya existe
+│   │                   │           └── SupabaseStorageAdapter.java         # Ya existe
+│   │                   └── persistence/
+│   │                       ├── entity/
+│   │                       │   └── LiquidacionClienteJpaEntity.java        # Ya existe
+│   │                       └── mapper/
+│   │                           └── LiquidacionEntityMapper.java            # Ya existe
+│   └── resources/
+│       ├── application.yml                                     # Ya existe
+│       └── db/migration/
+│           ├── V1__create_liquidacion_cliente_table.sql        # Ya existe
+│           └── (sin migraciones nuevas - no cambia schema)
+│
+└── test/
+    └── java/
+        └── com/
+            └── storeinvoice/
+                └── storeinvoiceapi/
+                    ├── application/
+                    │   └── service/
+                    │       └── liquidacion/
+                    │           └── cliente/
+                    │               ├── RegistrarLiquidacionDesdeInventarioUseCaseTest.java   # Ya existe
+                    │               └── ProcesarPedidoInventarioUseCaseTest.java              # NUEVO
+                    └── infrastructure/
+                        └── adapter/
+                            └── inbound/
+                                └── messaging/
+                                    └── PedidoEventConsumerTest.java                          # NUEVO
 
 Phase 1: Domain Layer
 
@@ -281,4 +281,3 @@ Notas de Implementacion
 - Usar nombres en espanol pero sin tildes ni caracteres especiales
 - Validar con ./gradlew build despues de cada fase
 - Priorizar codificacion en prosa y sintaxis clara
-

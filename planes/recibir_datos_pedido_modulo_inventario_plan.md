@@ -1,4 +1,4 @@
-﻿Implementation Plan: Recibir Datos del Pedido desde Modulo de Inventario
+Implementation Plan: Recibir Datos del Pedido desde Modulo de Inventario
 
 Date: 2026-04-24
 Spec: [especificaciones/recibir_datos_pedido_modulo_inventario.md](especificaciones/recibir_datos_pedido_modulo_inventario.md)
@@ -30,86 +30,86 @@ No se crea tabla `pedido`; los datos del pedido se almacenan en la liquidacion. 
 
 ```
 src/
-â”œâ”€â”€ main/
-â”‚   â”œâ”€â”€ java/
-â”‚   â”‚   â””â”€â”€ com/
-â”‚   â”‚       â””â”€â”€ storeinvoice/
-â”‚   â”‚           â””â”€â”€ storeinvoiceapi/
-â”‚   â”‚               â”œâ”€â”€ domain/
-â”‚   â”‚               â”‚   â”œâ”€â”€ model/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ Cliente.java
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ Producto.java
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ LiquidacionCliente.java
-â”‚   â”‚               â”‚   â””â”€â”€ exception/
-â”‚   â”‚               â”‚       â”œâ”€â”€ DomainException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ DatosPedidoInvalidosException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ FormaPagoClienteNoEncontradaException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ ProductosNoEncontradosException.java
-â”‚   â”‚               â”‚       â”œâ”€â”€ ErrorConsultaProductosException.java
-â”‚   â”‚               â”‚       â””â”€â”€ ErrorConsultaClienteException.java
-â”‚   â”‚               â”‚
-â”‚   â”‚               â”œâ”€â”€ application/
-â”‚   â”‚               â”‚   â”œâ”€â”€ dto/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ messaging/
-â”‚   â”‚               â”‚   â”‚   â”‚   â””â”€â”€ DatosPedidoInventarioMessage.java
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ ProductoPedidoDTO.java
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ ClienteLiquidacionDTO.java
-â”‚   â”‚               â”‚   â”œâ”€â”€ port/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ InventarioServicePort.java
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ ClienteServicePort.java
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ PdfGeneratorPort.java
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ PdfStoragePort.java
-â”‚   â”‚               â”‚   â”œâ”€â”€ repository/
-â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ LiquidacionRepository.java
-â”‚   â”‚               â”‚   â”‚   â””â”€â”€ FormaPagoClienteRepository.java
-â”‚   â”‚               â”‚   â””â”€â”€ service/
-â”‚   â”‚               â”‚       â””â”€â”€ liquidacion/
-â”‚   â”‚               â”‚           â”œâ”€â”€ cliente/
-â”‚   â”‚               â”‚           â”‚   â”œâ”€â”€ RegistrarLiquidacionDesdeInventarioUseCase.java
-â”‚   â”‚               â”‚           â”‚   â””â”€â”€ ProcesarPedidoInventarioUseCase.java
-â”‚   â”‚               â”‚           â””â”€â”€ mapper/
-â”‚   â”‚               â”‚               â”œâ”€â”€ ProductoMapper.java
-â”‚   â”‚               â”‚               â””â”€â”€ ClienteMapper.java
-â”‚   â”‚               â”‚
-â”‚   â”‚               â””â”€â”€ infrastructure/
-â”‚   â”‚                   â””â”€â”€ adapter/
-â”‚   â”‚                       â”œâ”€â”€ inbound/
-â”‚   â”‚                       â”‚   â””â”€â”€ messaging/
-â”‚   â”‚                       â”‚       â””â”€â”€ PedidoEventConsumer.java
-â”‚   â”‚                       â””â”€â”€ outbound/
-â”‚   â”‚                           â”œâ”€â”€ external/
-â”‚   â”‚                           â”‚   â”œâ”€â”€ InventarioWebClient.java
-â”‚   â”‚                           â”‚   â”œâ”€â”€ InventarioMockAdapter.java
-â”‚   â”‚                           â”‚   â”œâ”€â”€ ClienteWebClient.java
-â”‚   â”‚                           â”‚   â””â”€â”€ ClienteMockAdapter.java
-â”‚   â”‚                           â”œâ”€â”€ pdf/
-â”‚   â”‚                           â”‚   â””â”€â”€ OpenPdfGeneratorAdapter.java
-â”‚   â”‚                           â””â”€â”€ storage/
-â”‚   â”‚                               â”œâ”€â”€ LocalFileStorageAdapter.java
-â”‚   â”‚                               â””â”€â”€ SupabaseStorageAdapter.java
-â”‚   â”‚
-â”‚   â””â”€â”€ resources/
-â”‚       â””â”€â”€ application.yml
-â”‚
-â””â”€â”€ test/
-    â”œâ”€â”€ java/
-    â”‚   â””â”€â”€ com/
-    â”‚       â””â”€â”€ storeinvoice/
-    â”‚           â””â”€â”€ storeinvoiceapi/
-    â”‚               â”œâ”€â”€ application/
-    â”‚               â”‚   â””â”€â”€ service/
-    â”‚               â”‚       â””â”€â”€ liquidacion/
-    â”‚               â”‚           â””â”€â”€ cliente/
-    â”‚               â”‚               â”œâ”€â”€ RegistrarLiquidacionDesdeInventarioUseCaseTest.java
-    â”‚               â”‚               â””â”€â”€ ProcesarPedidoInventarioUseCaseTest.java
-    â”‚               â”œâ”€â”€ infrastructure/
-    â”‚               â”‚   â””â”€â”€ adapter/
-    â”‚               â”‚       â””â”€â”€ inbound/
-    â”‚               â”‚           â””â”€â”€ messaging/
-    â”‚               â”‚               â””â”€â”€ PedidoEventConsumerTest.java
-    â”‚               â””â”€â”€ integration/
-    â”‚                   â”œâ”€â”€ PedidoRecepcionIntegrationTest.java
-    â”‚                   â””â”€â”€ ProcesarPedidoInventarioIntegrationTest.java
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── storeinvoice/
+│   │           └── storeinvoiceapi/
+│   │               ├── domain/
+│   │               │   ├── model/
+│   │               │   │   ├── Cliente.java
+│   │               │   │   ├── Producto.java
+│   │               │   │   └── LiquidacionCliente.java
+│   │               │   └── exception/
+│   │               │       ├── DomainException.java
+│   │               │       ├── DatosPedidoInvalidosException.java
+│   │               │       ├── FormaPagoClienteNoEncontradaException.java
+│   │               │       ├── ProductosNoEncontradosException.java
+│   │               │       ├── ErrorConsultaProductosException.java
+│   │               │       └── ErrorConsultaClienteException.java
+│   │               │
+│   │               ├── application/
+│   │               │   ├── dto/
+│   │               │   │   ├── messaging/
+│   │               │   │   │   └── DatosPedidoInventarioMessage.java
+│   │               │   │   ├── ProductoPedidoDTO.java
+│   │               │   │   └── ClienteLiquidacionDTO.java
+│   │               │   ├── port/
+│   │               │   │   ├── InventarioServicePort.java
+│   │               │   │   ├── ClienteServicePort.java
+│   │               │   │   ├── PdfGeneratorPort.java
+│   │               │   │   └── PdfStoragePort.java
+│   │               │   ├── repository/
+│   │               │   │   ├── LiquidacionRepository.java
+│   │               │   │   └── FormaPagoClienteRepository.java
+│   │               │   └── service/
+│   │               │       └── liquidacion/
+│   │               │           ├── cliente/
+│   │               │           │   ├── RegistrarLiquidacionDesdeInventarioUseCase.java
+│   │               │           │   └── ProcesarPedidoInventarioUseCase.java
+│   │               │           └── mapper/
+│   │               │               ├── ProductoMapper.java
+│   │               │               └── ClienteMapper.java
+│   │               │
+│   │               └── infrastructure/
+│   │                   └── adapter/
+│   │                       ├── inbound/
+│   │                       │   └── messaging/
+│   │                       │       └── PedidoEventConsumer.java
+│   │                       └── outbound/
+│   │                           ├── external/
+│   │                           │   ├── InventarioWebClient.java
+│   │                           │   ├── InventarioMockAdapter.java
+│   │                           │   ├── ClienteWebClient.java
+│   │                           │   └── ClienteMockAdapter.java
+│   │                           ├── pdf/
+│   │                           │   └── OpenPdfGeneratorAdapter.java
+│   │                           └── storage/
+│   │                               ├── LocalFileStorageAdapter.java
+│   │                               └── SupabaseStorageAdapter.java
+│   │
+│   └── resources/
+│       └── application.yml
+│
+└── test/
+    ├── java/
+    │   └── com/
+    │       └── storeinvoice/
+    │           └── storeinvoiceapi/
+    │               ├── application/
+    │               │   └── service/
+    │               │       └── liquidacion/
+    │               │           └── cliente/
+    │               │               ├── RegistrarLiquidacionDesdeInventarioUseCaseTest.java
+    │               │               └── ProcesarPedidoInventarioUseCaseTest.java
+    │               ├── infrastructure/
+    │               │   └── adapter/
+    │               │       └── inbound/
+    │               │           └── messaging/
+    │               │               └── PedidoEventConsumerTest.java
+    │               └── integration/
+    │                   ├── PedidoRecepcionIntegrationTest.java
+    │                   └── ProcesarPedidoInventarioIntegrationTest.java
 ```
 
 ## Phase 1: Infrastructure Setup
@@ -299,4 +299,3 @@ src/
 - `application/service/liquidacion/cliente/RegistrarLiquidacionDesdeInventarioUseCase.java`
 - `test/.../RegistrarLiquidacionDesdeInventarioUseCaseTest.java`
 - `test/.../PedidoRecepcionIntegrationTest.java`
-

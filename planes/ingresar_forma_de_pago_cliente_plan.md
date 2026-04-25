@@ -1,12 +1,12 @@
-﻿# Implementation Plan: Ingresar Forma de Pago Cliente
+# Implementation Plan: Ingresar Forma de Pago Cliente
 
 **Date:** 24-04-2026
 **Spec:** `Ingresar_forma_de_pago_cliente.md`
-**Status:** Completed âœ“
+**Status:** Completed ✓
 
 ## Summary
 
-Permitir al Asesor Comercial registrar la forma de pago (Contra Entrega o Cartera Comercial) de un cliente. Proceso interno que primero consulta el cliente por ID Nacional para obtener su ID de base de datos y luego guarda la forma de pago asociada. TambiÃ©n permite actualizar la forma de pago de un cliente existente.
+Permitir al Asesor Comercial registrar la forma de pago (Contra Entrega o Cartera Comercial) de un cliente. Proceso interno que primero consulta el cliente por ID Nacional para obtener su ID de base de datos y luego guarda la forma de pago asociada. También permite actualizar la forma de pago de un cliente existente.
 
 ---
 
@@ -14,7 +14,7 @@ Permitir al Asesor Comercial registrar la forma de pago (Contra Entrega o Carter
 
 **Language/Version:** Java 21 (LTS)
 **Framework:** Spring Boot 3.4.0, Spring Data JPA, Spring WebFlux
-**Architecture:** Hexagonal (Ports & Adapters) - domain â†’ application â†’ infrastructure
+**Architecture:** Hexagonal (Ports & Adapters) - domain → application → infrastructure
 **Testing:** JUnit 5 + Mockito + TestContainers
 **Database:** PostgreSQL con Flyway
 
@@ -24,38 +24,38 @@ Permitir al Asesor Comercial registrar la forma de pago (Contra Entrega o Carter
 
 ```
 src/main/java/com/storeinvoice/storeinvoiceapi/
-â”œâ”€â”€ application/
-â”‚   â”œâ”€â”€ service/
-â”‚   â”‚   â””â”€â”€ formapago/
-â”‚   â”‚       â”œâ”€â”€ RegistrarFormaPagoClienteUseCase.java   # POST
-â”‚   â”‚       â””â”€â”€ ActualizarFormaPagoClienteUseCase.java   # PUT
-â”‚   â””â”€â”€ dto/
-â”‚       â”œâ”€â”€ command/
-â”‚       â”‚   â””â”€â”€ FormaPagoCommand.java                    # Body para POST/PUT
-â”‚       â””â”€â”€ response/
-â”‚           â””â”€â”€ FormaPagoClienteResponse.java
-â””â”€â”€ infrastructure/
-    â””â”€â”€ adapter/
-        â””â”€â”€ inbound/
-            â””â”€â”€ rest/
-                â””â”€â”€ FormaPagoClienteController.java
+├── application/
+│   ├── service/
+│   │   └── formapago/
+│   │       ├── RegistrarFormaPagoClienteUseCase.java   # POST
+│   │       └── ActualizarFormaPagoClienteUseCase.java   # PUT
+│   └── dto/
+│       ├── command/
+│       │   └── FormaPagoCommand.java                    # Body para POST/PUT
+│       └── response/
+│           └── FormaPagoClienteResponse.java
+└── infrastructure/
+    └── adapter/
+        └── inbound/
+            └── rest/
+                └── FormaPagoClienteController.java
 ```
 
 ---
 
-## Phase 1: Domain Layer (Exceptions) âœ“
+## Phase 1: Domain Layer (Exceptions) ✓
 
 **Goal:** Crear excepciones necesarias para el registro de forma de pago
 
 Tasks:
 
-- [x] T001 Crear excepciÃ³n `FormaPagoAlreadyExistsException` en `domain/exception/FormaPagoAlreadyExistsException.java`
+- [x] T001 Crear excepción `FormaPagoAlreadyExistsException` en `domain/exception/FormaPagoAlreadyExistsException.java`
 
-- [x] T002 Crear excepciÃ³n `InvalidFormaPagoException` en `domain/exception/InvalidFormaPagoException.java`
+- [x] T002 Crear excepción `InvalidFormaPagoException` en `domain/exception/InvalidFormaPagoException.java`
 
 ---
 
-## Phase 2: Application Layer (DTOs, Use Cases) âœ“
+## Phase 2: Application Layer (DTOs, Use Cases) ✓
 
 **Goal:** Crear DTOs de comando y casos de uso para registrar y actualizar forma de pago
 
@@ -70,7 +70,7 @@ Tasks:
   - Campos: `idCliente` (Long), `formaPago` (String), `fechaRegistro` (LocalDateTime)
 
 - [x] T005 Crear `RegistrarFormaPagoClienteUseCase` en `application/service/formapago/RegistrarFormaPagoClienteUseCase.java`
-  - MÃ©todo: `ejecutar(Long idCliente, FormaPago formaPago)` â†’ `Mono<FormaPagoClienteResponse>`
+  - Método: `ejecutar(Long idCliente, FormaPago formaPago)` → `Mono<FormaPagoClienteResponse>`
   - Flujo:
     1. Verificar que el cliente no tenga ya forma de pago (existsByIdCliente)
     2. Crear y guardar FormaPagoCliente
@@ -78,7 +78,7 @@ Tasks:
   - Error: `FormaPagoAlreadyExistsException` (409) si ya existe
 
 - [x] T006 Crear `ActualizarFormaPagoClienteUseCase` en `application/service/formapago/ActualizarFormaPagoClienteUseCase.java`
-  - MÃ©todo: `ejecutar(Long idCliente, FormaPago formaPago)` â†’ `Mono<FormaPagoClienteResponse>`
+  - Método: `ejecutar(Long idCliente, FormaPago formaPago)` → `Mono<FormaPagoClienteResponse>`
   - Flujo:
     1. Buscar forma de pago existente por idCliente
     2. Actualizar formaPago y fechaRegistro
@@ -87,7 +87,7 @@ Tasks:
 
 ---
 
-## Phase 3: Infrastructure Layer (Controller) âœ“
+## Phase 3: Infrastructure Layer (Controller) ✓
 
 **Goal:** Implementar endpoints REST para registrar y actualizar forma de pago
 
@@ -105,18 +105,18 @@ Tasks:
 
 ---
 
-## Phase 4: Testing âœ“
+## Phase 4: Testing ✓
 
-**Goal:** Crear tests unitarios y de integraciÃ³n
+**Goal:** Crear tests unitarios y de integración
 
 Tasks:
 
 - [x] T009 Crear `RegistrarFormaPagoClienteUseCaseTest` en `test/application/service/formapago/RegistrarFormaPagoClienteUseCaseTest.java`
-  - Test registro exitoso con forma de pago vÃ¡lida
+  - Test registro exitoso con forma de pago válida
   - Test error cuando cliente ya tiene forma de pago
 
 - [x] T010 Crear `ActualizarFormaPagoClienteUseCaseTest` en `test/application/service/formapago/ActualizarFormaPagoClienteUseCaseTest.java`
-  - Test actualizaciÃ³n exitosa
+  - Test actualización exitosa
   - Test error cuando cliente no existe
   - Test cambio de CONTRA_ENTREGA a CARTERA_COMERCIAL
   - Test cambio de CARTERA_COMERCIAL a CONTRA_ENTREGA
@@ -125,7 +125,7 @@ Tasks:
 
 ## Endpoints Implementados
 
-| MÃ©todo | Endpoint | Use Case | DescripciÃ³n |
+| Método | Endpoint | Use Case | Descripción |
 |--------|----------|----------|-------------|
 | POST | `/api/v1/clientes/{id_cliente}/forma-pago` | RegistrarFormaPagoClienteUseCase | Registrar (solo si no existe) |
 | PUT | `/api/v1/clientes/{id_cliente}/actualizar-forma-pago` | ActualizarFormaPagoClienteUseCase | Actualizar (solo si existe) |
@@ -140,7 +140,7 @@ Tasks:
   "formaPago": "CONTRA_ENTREGA"
 }
 ```
-- Valores vÃ¡lidos: `CONTRA_ENTREGA`, `CARTERA_COMERCIAL`
+- Valores válidos: `CONTRA_ENTREGA`, `CARTERA_COMERCIAL`
 - El `idCliente` se toma del path URL
 
 **Respuesta exitosa:**
@@ -165,11 +165,11 @@ Tasks:
 
 ## Flujo de Negocio
 
-1. Asesor consulta cliente por ID Nacional â†’ obtiene `idCliente`
+1. Asesor consulta cliente por ID Nacional → obtiene `idCliente`
 2. Selecciona forma de pago (`CONTRA_ENTREGA` o `CARTERA_COMERCIAL`)
-3. **Primera vez:** POST a `/api/v1/clientes/{id_cliente}/forma-pago` â†’ guarda en `forma_pago_cliente`
+3. **Primera vez:** POST a `/api/v1/clientes/{id_cliente}/forma-pago` → guarda en `forma_pago_cliente`
 4. **Cambiar forma de pago:** PUT a `/api/v1/clientes/{id_cliente}/actualizar-forma-pago`
-5. Al generar liquidaciÃ³n â†’ se copia esta forma de pago a `liquidaciones_cliente.formaPago`
+5. Al generar liquidación → se copia esta forma de pago a `liquidaciones_cliente.formaPago`
 
 ---
 
@@ -194,11 +194,11 @@ Tasks:
 
 ## Edge Cases
 
-1. Cliente no encontrado â†’ `ClienteNotFoundException` + respuesta HTTP 404
-2. Forma de pago invÃ¡lida â†’ Error de deserializaciÃ³n Jackson + respuesta HTTP 400
-3. Cliente ya tiene forma de pago (POST) â†’ `FormaPagoAlreadyExistsException` + respuesta HTTP 409
-4. Cliente no tiene forma de pago (PUT) â†’ `FormaPagoNotFoundException` + respuesta HTTP 404
-5. Body vacÃ­o/null â†’ Error de validaciÃ³n Spring + respuesta HTTP 400
+1. Cliente no encontrado → `ClienteNotFoundException` + respuesta HTTP 404
+2. Forma de pago inválida → Error de deserialización Jackson + respuesta HTTP 400
+3. Cliente ya tiene forma de pago (POST) → `FormaPagoAlreadyExistsException` + respuesta HTTP 409
+4. Cliente no tiene forma de pago (PUT) → `FormaPagoNotFoundException` + respuesta HTTP 404
+5. Body vacío/null → Error de validación Spring + respuesta HTTP 400
 
 ---
 
@@ -206,11 +206,11 @@ Tasks:
 
 ### Forma_Pago_Cliente
 
-| Campo | Tipo | Requerido | DescripciÃ³n |
+| Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
-| `id_cliente` | Integer | SÃ­ | ID del cliente en la base de datos (PK) |
-| `forma_pago` | String | SÃ­ | Forma de pago: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
-| `fecha_registro` | DateTime | SÃ­ | Fecha y hora del Ãºltimo registro/actualizaciÃ³n |
+| `id_cliente` | Integer | Sí | ID del cliente en la base de datos (PK) |
+| `forma_pago` | String | Sí | Forma de pago: `CONTRA_ENTREGA` o `CARTERA_COMERCIAL` |
+| `fecha_registro` | DateTime | Sí | Fecha y hora del último registro/actualización |
 
 ---
 
@@ -218,9 +218,9 @@ Tasks:
 
 - Entidad `FormaPago` (enum) ya existe con valores `CONTRA_ENTREGA`, `CARTERA_COMERCIAL`
 - El flujo de negocio requiere consultar primero el cliente por ID Nacional (spec `consultar_cliente.md`) para obtener el `idCliente` de BD antes de registrar la forma de pago
-- Seguir convenciones de logging: solo `log.error()` para errores tÃ©cnicos
-- ProgramaciÃ³n funcional usada: `Mono`, `Optional`, streams, lambda expressions
+- Seguir convenciones de logging: solo `log.error()` para errores técnicos
+- Programación funcional usada: `Mono`, `Optional`, streams, lambda expressions
 - SRP aplicado: `RegistrarFormaPagoClienteUseCase` y `ActualizarFormaPagoClienteUseCase` tienen responsabilidades separadas
-- POST = "registrar por primera vez" (fallarÃ¡ si ya existe)
-- PUT = "actualizar existente" (fallarÃ¡ si no existe)
+- POST = "registrar por primera vez" (fallará si ya existe)
+- PUT = "actualizar existente" (fallará si no existe)
 - Ambos usan el mismo DTO de body (`FormaPagoCommand`) con el enum `FormaPago`
