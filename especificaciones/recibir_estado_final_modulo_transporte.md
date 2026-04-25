@@ -1,13 +1,12 @@
-# Feature Specification: Recibir Estado Final de Entrega del Módulo de Transporte
+# Feature Specification: Recibir Tasa de Efectividad del Módulo de Transporte
 
 **Created:** 12-03-2026  
 **Status:** In Development
 
 ## Descripción del Flujo
 
-El Módulo de Transporte envía el estado final de entrega de un pedido al Sistema Financiero (de forma asíncrona). El Sistema Financiero recibe esta información y procesa:
-1. Generación de liquidación del cliente (spec `generar_liquidacion_cliente.md`)
-2. Generación de liquidación del transportista (spec `generar_liquidacion_de_transportista.md`)
+El Módulo de Transporte envía la tasa de efectividad de entrega de un pedido al Sistema Financiero (de forma asíncrona). El Sistema Financiero recibe esta información y procesa:
+1. Generación de liquidación del transportista (spec `generar_liquidacion_de_transportista.md`)
 
 ---
 
@@ -18,7 +17,6 @@ El Módulo de Transporte envía el estado final de entrega de un pedido al Siste
 ```json
 {
   "id_pedido": 123,
-  "estado_final": "Entregado Completo",
   "tasa_efectividad": 100,
   "id_transportista": 50
 }
@@ -29,16 +27,9 @@ El Módulo de Transporte envía el estado final de entrega de un pedido al Siste
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
 | `id_pedido` | Integer | Sí | ID del pedido |
-| `estado_final` | String | Sí | Estado final de entrega |
 | `tasa_efectividad` | Integer | Sí | Porcentaje de efectividad -100 a 100 |
 | `id_transportista` | Integer | Sí | ID del transportista |
 
-### Estados finales válidos
-- Entregado Completo
-- Rechazo Parcial
-- Devolución (Error Empresa)
-- Faltante de Inventario
-- No Entregado
 
 > **Nota:** El `id_cliente` y datos del pedido ya fueron recibidos previamente del Módulo de Inventario.
 
@@ -47,7 +38,7 @@ El Módulo de Transporte envía el estado final de entrega de un pedido al Siste
 ## Proceso
 
 1. **Recibir datos**: El Sistema Financiero recibe los datos del Módulo de Transporte
-2. **Validar**: Se valida que contenga todos los datos requeridos y que el estado sea válido
+2. **Validar**: Se valida que contenga todos los datos requeridos
 3. **Registrar**: Se registra para seguimiento
 4. **Procesar**: Se invocan las funciones de liquidación
 5. **Actualizar**: Se actualiza el estado del procesamiento
@@ -55,9 +46,6 @@ El Módulo de Transporte envía el estado final de entrega de un pedido al Siste
 ---
 
 ## Edge Cases
-
-- **¿Qué pasa si el estado_final no es válido?**
-  - Se marca como error y se registra el motivo
 
 - **¿Qué pasa si falla el procesamiento de una liquidación?**
   - El registro permanece como "pendiente" o "error" para reintento
@@ -71,18 +59,16 @@ El Módulo de Transporte envía el estado final de entrega de un pedido al Siste
 
 ### Functional Requirements
 
-- **FR-001:** El sistema DEBE recibir los datos del estado final del Módulo de Transporte.
-- **FR-002:** El sistema DEBE validar que los datos contengan: id_pedido, estado_final, tasa_efectividad, id_transportista.
-- **FR-003:** El sistema DEBE validar que el estado_final sea uno de los estados válidos.
-- **FR-004:** El sistema DEBE registrar cada estado final recibido para seguimiento.
-- **FR-005:** El sistema DEBE invocar la función de generación de liquidación del cliente.
+- **FR-001:** El sistema DEBE recibir la tasa de efectividad del Módulo de Transporte.
+- **FR-002:** El sistema DEBE validar que los datos contengan: id_pedido, tasa_efectividad, id_transportista.
+- **FR-004:** El sistema DEBE registrar cada tasa de efectividad recibida para seguimiento.
 - **FR-006:** El sistema DEBE invocar la función de generación de liquidación del transportista.
 - **FR-007:** El sistema DEBE actualizar el estado después del procesamiento.
 
 ### Key Entities
 
 **EventoRecibido:**
-- [id_pedido, estado_final, tasa_efectividad, id_transportista, status, fecha_recibido, fecha_procesado]
+- [id_pedido, tasa_efectividad, id_transportista, status, fecha_recibido, fecha_procesado]
 
 ---
 

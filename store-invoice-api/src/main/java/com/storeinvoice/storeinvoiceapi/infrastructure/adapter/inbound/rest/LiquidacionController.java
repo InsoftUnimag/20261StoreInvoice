@@ -14,8 +14,8 @@ import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transpor
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.CrearLiquidacionTransportistaUseCase;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionTransportista;
-import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.LiquidacionEntityMapper;
-import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.LiquidacionTransportistaMapper;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper.LiquidacionClienteResponseMapper;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper.LiquidacionTransportistaResponseMapper;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -31,6 +31,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlador REST para operaciones de liquidaciones de clientes y transportistas.
+ * Usa los Response Mappers de la capa REST para convertir Domain Models a DTOs de respuesta.
+ */
 @RestController
 @RequestMapping("/api/v1")
 @Validated
@@ -43,8 +47,8 @@ public class LiquidacionController {
     private final ActualizarEstadoLiquidacionClienteUseCase actualizarEstadoLiquidacionClienteUseCase;
     private final CrearLiquidacionTransportistaUseCase crearLiquidacionTransportistaUseCase;
     private final ActualizarMontoLiquidacionTransportistaUseCase actualizarMontoLiquidacionTransportistaUseCase;
-    private final LiquidacionEntityMapper liquidacionMapper;
-    private final LiquidacionTransportistaMapper transportistaMapper;
+    private final LiquidacionClienteResponseMapper liquidacionClienteMapper;
+    private final LiquidacionTransportistaResponseMapper liquidacionTransportistaMapper;
 
     @GetMapping("/clientes/{idCliente}/liquidaciones")
     public ResponseEntity<List<LiquidacionClienteResponse>> consultarLiquidaciones(
@@ -55,10 +59,7 @@ public class LiquidacionController {
         final List<LiquidacionCliente> liquidaciones =
                 consultarLiquidacionesUseCase.execute(idCliente, pagina, tamanoPagina);
 
-        final List<LiquidacionClienteResponse> response =
-                liquidacionMapper.toResponseList(liquidaciones);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(liquidacionClienteMapper.toResponseList(liquidaciones));
     }
 
     @GetMapping("/transportistas/{idTransportista}/liquidaciones")
@@ -70,10 +71,7 @@ public class LiquidacionController {
         final List<LiquidacionTransportista> liquidaciones =
                 consultarLiquidacionesTransportistaUseCase.execute(idTransportista, pagina, tamanoPagina);
 
-        final List<LiquidacionTransportistaResponse> response =
-                transportistaMapper.toResponseList(liquidaciones);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(liquidacionTransportistaMapper.toResponseList(liquidaciones));
     }
 
     @PostMapping("/clientes/liquidaciones")
@@ -81,9 +79,7 @@ public class LiquidacionController {
             @RequestBody @Validated final CrearLiquidacionClienteRequest request) {
 
         final LiquidacionCliente liquidacion = crearLiquidacionClienteUseCase.execute(request);
-        final LiquidacionClienteResponse response = liquidacionMapper.toResponse(liquidacion);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(liquidacionClienteMapper.toResponse(liquidacion));
     }
 
     @PutMapping("/clientes/liquidaciones/{idLiquidacion}/estado")
@@ -91,10 +87,9 @@ public class LiquidacionController {
             @PathVariable final Long idLiquidacion,
             @RequestBody @Validated final ActualizarEstadoLiquidacionClienteRequest request) {
 
-        final LiquidacionCliente liquidacion = actualizarEstadoLiquidacionClienteUseCase.execute(idLiquidacion, request);
-        final LiquidacionClienteResponse response = liquidacionMapper.toResponse(liquidacion);
-
-        return ResponseEntity.ok(response);
+        final LiquidacionCliente liquidacion =
+                actualizarEstadoLiquidacionClienteUseCase.execute(idLiquidacion, request);
+        return ResponseEntity.ok(liquidacionClienteMapper.toResponse(liquidacion));
     }
 
     @PostMapping("/transportistas/liquidaciones")
@@ -102,9 +97,7 @@ public class LiquidacionController {
             @RequestBody @Validated final CrearLiquidacionTransportistaRequest request) {
 
         final LiquidacionTransportista liquidacion = crearLiquidacionTransportistaUseCase.execute(request);
-        final LiquidacionTransportistaResponse response = transportistaMapper.toResponse(liquidacion);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(liquidacionTransportistaMapper.toResponse(liquidacion));
     }
 
     @PutMapping("/transportistas/liquidaciones/{idLiquidacion}/monto")
@@ -112,11 +105,8 @@ public class LiquidacionController {
             @PathVariable final Long idLiquidacion,
             @RequestBody @Validated final ActualizarMontoLiquidacionTransportistaRequest request) {
 
-        final LiquidacionTransportista liquidacion = actualizarMontoLiquidacionTransportistaUseCase.execute(idLiquidacion, request);
-        final LiquidacionTransportistaResponse response = transportistaMapper.toResponse(liquidacion);
-
-        return ResponseEntity.ok(response);
+        final LiquidacionTransportista liquidacion =
+                actualizarMontoLiquidacionTransportistaUseCase.execute(idLiquidacion, request);
+        return ResponseEntity.ok(liquidacionTransportistaMapper.toResponse(liquidacion));
     }
 }
-
-
