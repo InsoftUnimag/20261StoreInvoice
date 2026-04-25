@@ -1,11 +1,18 @@
 package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionClienteResponse;
+import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionTransportistaResponse;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ActualizarEstadoLiquidacionClienteUseCase;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ConsultarLiquidacionesClienteUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.CrearLiquidacionClienteUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.ActualizarMontoLiquidacionTransportistaUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.ConsultarLiquidacionesTransportistaUseCase;
+import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.CrearLiquidacionTransportistaUseCase;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
-import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.LiquidacionEntityMapper;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper.LiquidacionClienteResponseMapper;
+import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper.LiquidacionTransportistaResponseMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +35,25 @@ class LiquidacionControllerTest {
     private ConsultarLiquidacionesClienteUseCase consultarLiquidacionesUseCase;
 
     @Mock
-    private LiquidacionEntityMapper liquidacionMapper;
+    private ConsultarLiquidacionesTransportistaUseCase consultarLiquidacionesTransportistaUseCase;
+
+    @Mock
+    private CrearLiquidacionClienteUseCase crearLiquidacionClienteUseCase;
+
+    @Mock
+    private ActualizarEstadoLiquidacionClienteUseCase actualizarEstadoLiquidacionClienteUseCase;
+
+    @Mock
+    private CrearLiquidacionTransportistaUseCase crearLiquidacionTransportistaUseCase;
+
+    @Mock
+    private ActualizarMontoLiquidacionTransportistaUseCase actualizarMontoLiquidacionTransportistaUseCase;
+
+    @Mock
+    private LiquidacionClienteResponseMapper liquidacionClienteMapper;
+
+    @Mock
+    private LiquidacionTransportistaResponseMapper liquidacionTransportistaMapper;
 
     @InjectMocks
     private LiquidacionController controller;
@@ -78,7 +103,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_exitoso_retorna_lista() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(liquidaciones);
-        when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
+        when(liquidacionClienteMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 0, 20);
@@ -91,7 +116,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_paginacion_custom_pasa_parametros() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 2, 50)).thenReturn(List.of());
-        when(liquidacionMapper.toResponseList(any())).thenReturn(List.of());
+        when(liquidacionClienteMapper.toResponseList(any())).thenReturn(List.of());
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 2, 50);
@@ -102,7 +127,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_tamano_cero_usa_default() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, 0)).thenReturn(liquidaciones);
-        when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
+        when(liquidacionClienteMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 0, 0);
@@ -113,7 +138,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_sin_liquidaciones_retorna_lista_vacia() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(List.of());
-        when(liquidacionMapper.toResponseList(List.of())).thenReturn(List.of());
+        when(liquidacionClienteMapper.toResponseList(List.of())).thenReturn(List.of());
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 0, 20);
@@ -125,7 +150,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_tamano_negativo_usa_default() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, -5)).thenReturn(liquidaciones);
-        when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
+        when(liquidacionClienteMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 0, -5);
@@ -136,7 +161,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_pagina_negativa_pasa_valor() {
         when(consultarLiquidacionesUseCase.execute(idCliente, -1, 20)).thenReturn(liquidaciones);
-        when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
+        when(liquidacionClienteMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, -1, 20);
@@ -147,7 +172,7 @@ class LiquidacionControllerTest {
     @Test
     void consultarLiquidaciones_cliente_id_muy_grande() {
         when(consultarLiquidacionesUseCase.execute(Long.MAX_VALUE, 0, 20)).thenReturn(List.of());
-        when(liquidacionMapper.toResponseList(any())).thenReturn(List.of());
+        when(liquidacionClienteMapper.toResponseList(any())).thenReturn(List.of());
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(Long.MAX_VALUE, 0, 20);
@@ -159,8 +184,8 @@ class LiquidacionControllerTest {
     void consultarLiquidaciones_primer_pagina_vacia() {
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, 20)).thenReturn(liquidaciones);
         when(consultarLiquidacionesUseCase.execute(idCliente, 1, 20)).thenReturn(List.of());
-        when(liquidacionMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
-        when(liquidacionMapper.toResponseList(List.of())).thenReturn(List.of());
+        when(liquidacionClienteMapper.toResponseList(liquidaciones)).thenReturn(respuestas);
+        when(liquidacionClienteMapper.toResponseList(List.of())).thenReturn(List.of());
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado0 = 
                 controller.consultarLiquidaciones(idCliente, 0, 20);
@@ -206,7 +231,7 @@ class LiquidacionControllerTest {
         }
         
         when(consultarLiquidacionesUseCase.execute(idCliente, 0, 100)).thenReturn(listaGrande);
-        when(liquidacionMapper.toResponseList(listaGrande)).thenReturn(respuestasGrande);
+        when(liquidacionClienteMapper.toResponseList(listaGrande)).thenReturn(respuestasGrande);
 
         final ResponseEntity<List<LiquidacionClienteResponse>> resultado = 
                 controller.consultarLiquidaciones(idCliente, 0, 100);

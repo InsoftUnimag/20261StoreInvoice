@@ -2,14 +2,15 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ErrorResponse;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoAlreadyExistsException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidFormaPagoException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidTasaEfectividadException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
-import java.util.Map;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoNotFoundException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoAlreadyExistsException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidFormaPagoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ServerWebExchange;
 
+/**
+ * Manejador global de excepciones para todos los controladores REST.
+ * Convierte excepciones de dominio en respuestas HTTP estructuradas y consistentes.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -59,6 +64,18 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(LiquidacionException.class)
+    public ResponseEntity<ErrorResponse> handleLiquidacionException(final LiquidacionException ex,
+            final ServerWebExchange exchange) {
+        LOG.error("Error al generar liquidación: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.of(
+                        HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        "No se puede generar la liquidación: " + ex.getMessage(),
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
     @ExceptionHandler(PedidoNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePedidoNotFound(final PedidoNotFoundException ex,
             final ServerWebExchange exchange) {
@@ -67,6 +84,18 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(
                         HttpStatus.NOT_FOUND.value(),
                         "Pedido no encontrado",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(InvalidTasaEfectividadException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTasaEfectividad(final InvalidTasaEfectividadException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Tasa de efectividad inválida: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Dato de efectividad inválido. La tasa debe estar entre -100 y 100",
                         exchange.getRequest().getPath().value()
                 ));
     }
