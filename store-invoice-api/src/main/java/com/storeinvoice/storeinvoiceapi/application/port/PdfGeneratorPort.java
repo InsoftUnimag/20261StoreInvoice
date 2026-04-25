@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.port;
+package com.storeinvoice.storeinvoiceapi.application.port;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;

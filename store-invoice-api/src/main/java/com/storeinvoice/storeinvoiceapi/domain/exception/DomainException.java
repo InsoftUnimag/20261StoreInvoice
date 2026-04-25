@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
+package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public sealed class DomainException extends RuntimeException permits 
         LiquidacionNotFoundException, 

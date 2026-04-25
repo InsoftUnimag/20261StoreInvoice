@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.valueobject;
+package com.storeinvoice.storeinvoiceapi.domain.valueobject;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidTasaEfectividadException;
 

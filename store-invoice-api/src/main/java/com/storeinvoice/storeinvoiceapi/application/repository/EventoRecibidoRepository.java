@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.repository;
+package com.storeinvoice.storeinvoiceapi.application.repository;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoEvento;
 import com.storeinvoice.storeinvoiceapi.domain.model.EventoRecibido;

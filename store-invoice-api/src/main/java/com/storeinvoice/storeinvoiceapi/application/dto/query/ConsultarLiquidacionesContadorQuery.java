@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto.query;
+package com.storeinvoice.storeinvoiceapi.application.dto.query;
 
 import java.time.LocalDate;
 

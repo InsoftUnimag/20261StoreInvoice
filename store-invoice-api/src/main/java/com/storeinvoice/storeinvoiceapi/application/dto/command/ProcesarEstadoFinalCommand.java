@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto.command;
+package com.storeinvoice.storeinvoiceapi.application.dto.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

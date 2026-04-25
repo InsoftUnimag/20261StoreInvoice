@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.service.pedido;
+package com.storeinvoice.storeinvoiceapi.application.service.pedido;
 
 import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;

@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
+package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

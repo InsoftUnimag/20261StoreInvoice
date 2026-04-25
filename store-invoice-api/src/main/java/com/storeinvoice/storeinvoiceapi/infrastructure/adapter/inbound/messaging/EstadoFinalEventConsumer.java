@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messaging;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messaging;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.ProcesarEstadoFinalUseCase;

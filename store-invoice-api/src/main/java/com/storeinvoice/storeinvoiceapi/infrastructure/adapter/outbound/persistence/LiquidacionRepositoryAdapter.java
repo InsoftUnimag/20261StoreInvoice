@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;

@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
+package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoEvento;
 import jakarta.persistence.Column;

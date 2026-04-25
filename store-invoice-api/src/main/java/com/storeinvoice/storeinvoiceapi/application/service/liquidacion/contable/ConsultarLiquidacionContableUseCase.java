@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.contable;
+package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.contable;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesContadorQuery;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionContableRepository;

@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

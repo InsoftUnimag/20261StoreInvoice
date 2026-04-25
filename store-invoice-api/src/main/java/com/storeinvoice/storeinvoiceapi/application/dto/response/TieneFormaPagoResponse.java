@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto.response;
+package com.storeinvoice.storeinvoiceapi.application.dto.response;
 
 public record TieneFormaPagoResponse(
         Long idCliente,

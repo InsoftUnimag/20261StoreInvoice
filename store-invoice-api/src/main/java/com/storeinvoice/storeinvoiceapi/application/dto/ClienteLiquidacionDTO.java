@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto;
+package com.storeinvoice.storeinvoiceapi.application.dto;
 
 public record ClienteLiquidacionDTO(
         Long idCliente,

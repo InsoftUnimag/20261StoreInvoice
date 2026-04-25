@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.repository.EventoRecibidoRepository;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoEvento;

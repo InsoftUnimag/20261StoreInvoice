@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.model;
+package com.storeinvoice.storeinvoiceapi.domain.model;
 
 /**
  * Entidad de dominio pura que representa un producto dentro de un pedido.

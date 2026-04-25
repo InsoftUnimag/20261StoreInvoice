@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto.command;
+package com.storeinvoice.storeinvoiceapi.application.dto.command;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 

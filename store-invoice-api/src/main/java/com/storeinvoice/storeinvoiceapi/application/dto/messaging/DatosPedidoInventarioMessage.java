@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.dto.messaging;
+package com.storeinvoice.storeinvoiceapi.application.dto.messaging;
 
 /**
  * Mensaje recibido desde el Modulo de Inventario via RabbitMQ

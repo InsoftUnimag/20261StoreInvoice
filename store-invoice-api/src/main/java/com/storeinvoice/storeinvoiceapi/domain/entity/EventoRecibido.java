@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.entity;
+package com.storeinvoice.storeinvoiceapi.domain.entity;
 
 /**
  * @deprecated Este archivo ha sido REEMPLAZADO por

@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
+package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 /**
  * ExcepciÃ³n de dominio para errores en la generaciÃ³n o procesamiento de liquidaciones.

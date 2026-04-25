@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
+package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 /**
  * ExcepciÃ³n de dominio para valores de tasa de efectividad fuera del rango permitido (-100 a 100).

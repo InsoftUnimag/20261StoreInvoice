@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.messaging;
+package com.storeinvoice.storeinvoiceapi.infrastructure.messaging;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messaging.EstadoFinalEventConsumer;

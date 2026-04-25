@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
+package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 /**
  * Excepcion lanzada cuando el Modulo de Inventario retorna una lista vacia de productos.

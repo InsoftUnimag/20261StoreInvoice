@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionClienteResponse;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;

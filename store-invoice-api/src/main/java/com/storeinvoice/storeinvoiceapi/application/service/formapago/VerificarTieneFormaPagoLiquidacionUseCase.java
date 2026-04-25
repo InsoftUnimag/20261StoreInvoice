@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.service.formapago;
+package com.storeinvoice.storeinvoiceapi.application.service.formapago;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.TieneFormaPagoResponse;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;

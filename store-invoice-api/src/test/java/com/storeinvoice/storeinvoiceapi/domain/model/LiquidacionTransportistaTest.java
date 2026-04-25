@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.model;
+package com.storeinvoice.storeinvoiceapi.domain.model;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionException;
 import com.storeinvoice.storeinvoiceapi.domain.valueobject.TasaEfectividad;

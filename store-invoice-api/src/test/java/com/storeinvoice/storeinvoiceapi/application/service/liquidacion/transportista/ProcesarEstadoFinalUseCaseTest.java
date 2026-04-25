@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
+package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.application.repository.EventoRecibidoRepository;
@@ -89,7 +89,7 @@ class ProcesarEstadoFinalUseCaseTest {
         
         when(pedidoRepository.findPrecioPedidoByIdPedido(100L)).thenReturn(Optional.empty());
 
-        assertThrows(PedidoNotFoundException.class, () -> useCase.execute(command));
+        assertThrows(LiquidacionException.class, () -> useCase.execute(command));
 
         assertEquals(EstadoEvento.ERROR, eventoPendiente.getEstado());
         verify(liquidacionRepository, never()).saveTransportista(any());

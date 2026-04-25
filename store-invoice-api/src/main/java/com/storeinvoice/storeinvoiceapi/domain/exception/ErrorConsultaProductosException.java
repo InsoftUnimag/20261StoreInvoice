@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
+package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 /**
  * Excepcion lanzada cuando ocurre un error tecnico al consultar productos

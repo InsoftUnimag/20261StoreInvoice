@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
+package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.request.ActualizarEstadoLiquidacionClienteRequest;
 import com.storeinvoice.storeinvoiceapi.application.dto.request.ActualizarMontoLiquidacionTransportistaRequest;

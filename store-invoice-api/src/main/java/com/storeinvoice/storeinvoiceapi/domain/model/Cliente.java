@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.domain.model;
+package com.storeinvoice.storeinvoiceapi.domain.model;
 
 public record Cliente(
     String idCliente,

@@ -1,4 +1,4 @@
-﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
+package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ClienteResponse;
 import com.storeinvoice.storeinvoiceapi.domain.model.Cliente;
