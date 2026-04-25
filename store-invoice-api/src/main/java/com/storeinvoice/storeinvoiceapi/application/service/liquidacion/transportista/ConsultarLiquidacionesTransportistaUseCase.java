@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
 
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionTransportista;
@@ -16,4 +16,5 @@ public class ConsultarLiquidacionesTransportistaUseCase {
         return liquidacionRepository.findByIdTransportista(idTransportista, pagina, tamanoPagina);
     }
 }
+
 

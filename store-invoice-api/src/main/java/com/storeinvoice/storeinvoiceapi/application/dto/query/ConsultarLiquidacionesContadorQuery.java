@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.query;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto.query;
 
 import java.time.LocalDate;
 
@@ -14,3 +14,4 @@ public record ConsultarLiquidacionesContadorQuery(
         return pagina * tamanoPagina;
     }
 }
+

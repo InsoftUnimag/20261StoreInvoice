@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.request.CrearLiquidacionTransportistaRequest;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
@@ -26,3 +26,4 @@ public class CrearLiquidacionTransportistaUseCase {
         return liquidacionRepository.saveTransportista(liquidacion);
     }
 }
+

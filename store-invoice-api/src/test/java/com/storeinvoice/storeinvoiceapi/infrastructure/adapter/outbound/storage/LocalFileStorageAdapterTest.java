@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorSubidaPdfException;
 import java.io.IOException;
@@ -94,3 +94,4 @@ class LocalFileStorageAdapterTest {
         }
     }
 }
+

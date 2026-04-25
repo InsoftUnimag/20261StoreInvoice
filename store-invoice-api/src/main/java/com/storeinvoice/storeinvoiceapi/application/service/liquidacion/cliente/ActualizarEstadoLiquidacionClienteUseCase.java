@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.request.ActualizarEstadoLiquidacionClienteRequest;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
@@ -23,3 +23,4 @@ public class ActualizarEstadoLiquidacionClienteUseCase {
         return liquidacionRepository.saveCliente(liquidacion);
     }
 }
+

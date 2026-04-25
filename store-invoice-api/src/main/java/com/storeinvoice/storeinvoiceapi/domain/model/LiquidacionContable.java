@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.model;
+﻿package com.storeinvoice.storeinvoiceapi.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,10 +21,6 @@ public class LiquidacionContable {
     private LocalDateTime fechaLiquidacion;
     private String uriDocumento;
 
-    /**
-     * Valida que los campos obligatorios sean válidos.
-     * @throws IllegalArgumentException si algún campo requerido es inválido
-     */
     public void validar() {
         if (idPedido == null) {
             throw new IllegalArgumentException("ID de pedido es requerido");
@@ -46,3 +42,4 @@ public class LiquidacionContable {
         }
     }
 }
+

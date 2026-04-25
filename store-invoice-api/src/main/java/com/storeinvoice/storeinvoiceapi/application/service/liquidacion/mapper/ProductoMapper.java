@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaProductosException;
@@ -45,3 +45,4 @@ public final class ProductoMapper {
         );
     }
 }
+

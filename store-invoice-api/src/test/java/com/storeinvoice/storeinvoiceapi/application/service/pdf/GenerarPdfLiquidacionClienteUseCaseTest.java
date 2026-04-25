@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.pdf;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.pdf;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
@@ -132,3 +132,4 @@ class GenerarPdfLiquidacionClienteUseCaseTest {
                 .verify();
     }
 }
+

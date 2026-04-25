@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.model;
+﻿package com.storeinvoice.storeinvoiceapi.domain.model;
 
 public record Cliente(
     String idCliente,
@@ -18,10 +18,10 @@ public record Cliente(
             throw new IllegalArgumentException("Nombre es requerido");
         }
         if (telefono == null || telefono.isBlank()) {
-            throw new IllegalArgumentException("Teléfono es requerido");
+            throw new IllegalArgumentException("Telefono es requerido");
         }
         if (direccion == null || direccion.isBlank()) {
-            throw new IllegalArgumentException("Dirección es requerida");
+            throw new IllegalArgumentException("Direccion es requerida");
         }
     }
 }

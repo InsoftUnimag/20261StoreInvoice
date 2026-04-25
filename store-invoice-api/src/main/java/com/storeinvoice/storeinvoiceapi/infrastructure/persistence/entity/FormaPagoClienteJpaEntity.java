@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import jakarta.persistence.*;
@@ -27,3 +27,4 @@ public class FormaPagoClienteJpaEntity {
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 }
+

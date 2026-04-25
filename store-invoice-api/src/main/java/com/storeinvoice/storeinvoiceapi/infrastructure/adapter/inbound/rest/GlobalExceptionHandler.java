@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ErrorResponse;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
@@ -49,11 +49,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidClientIdException.class)
     public ResponseEntity<ErrorResponse> handleInvalidClientId(final InvalidClientIdException ex,
             final ServerWebExchange exchange) {
-        LOG.error("ID de cliente inválido: {}", ex.getMessage());
+        LOG.error("ID de cliente invalido: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(
                         HttpStatus.BAD_REQUEST.value(),
-                        "ID de cliente inválido",
+                        "ID de cliente invalido",
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -61,11 +61,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LiquidacionNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleLiquidacionNotFound(final LiquidacionNotFoundException ex,
             final ServerWebExchange exchange) {
-        LOG.warn("Liquidación no encontrada: {}", ex.getMessage());
+        LOG.warn("Liquidacion no encontrada: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of(
                         HttpStatus.NOT_FOUND.value(),
-                        "Liquidación no encontrada",
+                        "Liquidacion no encontrada",
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -73,11 +73,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LiquidacionException.class)
     public ResponseEntity<ErrorResponse> handleLiquidacionException(final LiquidacionException ex,
             final ServerWebExchange exchange) {
-        LOG.error("Error al generar liquidación: {}", ex.getMessage());
+        LOG.error("Error al generar liquidacion: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ErrorResponse.of(
                         HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                        "No se puede generar la liquidación: " + ex.getMessage(),
+                        "No se puede generar la liquidacion: " + ex.getMessage(),
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -97,11 +97,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidTasaEfectividadException.class)
     public ResponseEntity<ErrorResponse> handleInvalidTasaEfectividad(final InvalidTasaEfectividadException ex,
             final ServerWebExchange exchange) {
-        LOG.warn("Tasa de efectividad inválida: {}", ex.getMessage());
+        LOG.warn("Tasa de efectividad invalida: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(
                         HttpStatus.BAD_REQUEST.value(),
-                        "Dato de efectividad inválido. La tasa debe estar entre -100 y 100",
+                        "Dato de efectividad invalido. La tasa debe estar entre -100 y 100",
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -109,11 +109,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ServiceConnectionException.class)
     public ResponseEntity<ErrorResponse> handleServiceConnection(final ServiceConnectionException ex,
             final ServerWebExchange exchange) {
-        LOG.error("Error de conexión con servicio externo: {}", ex.getMessage());
+        LOG.error("Error de conexion con servicio externo: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(ErrorResponse.of(
                         HttpStatus.SERVICE_UNAVAILABLE.value(),
-                        "Servicio temporalmente no disponible. Por favor intente más tarde.",
+                        "Servicio temporalmente no disponible. Por favor intente mas tarde.",
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -145,11 +145,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidFormaPagoException.class)
     public ResponseEntity<ErrorResponse> handleInvalidFormaPago(final InvalidFormaPagoException ex,
             final ServerWebExchange exchange) {
-        LOG.warn("Forma de pago inválida: {}", ex.getMessage());
+        LOG.warn("Forma de pago invalida: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(
                         HttpStatus.BAD_REQUEST.value(),
-                        "Forma de pago inválida. Valores válidos: CONTRA_ENTREGA, CARTERA_COMERCIAL",
+                        "Forma de pago invalida. Valores validos: CONTRA_ENTREGA, CARTERA_COMERCIAL",
                         exchange.getRequest().getPath().value()
                 ));
     }
@@ -190,3 +190,4 @@ public class GlobalExceptionHandler {
                 ));
     }
 }
+

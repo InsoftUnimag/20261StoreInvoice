@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionContadorResponse;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.contable.ConsultarLiquidacionContableUseCase;
@@ -43,3 +43,4 @@ public class LiquidacionContableController {
         return ResponseEntity.ok(response);
     }
 }
+

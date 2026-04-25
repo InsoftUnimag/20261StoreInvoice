@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.messaging.DatosPedidoInventarioMessage;
 import com.storeinvoice.storeinvoiceapi.application.repository.FormaPagoClienteRepository;
@@ -83,3 +83,4 @@ public class RegistrarLiquidacionDesdeInventarioUseCase {
         return liquidacion;
     }
 }
+

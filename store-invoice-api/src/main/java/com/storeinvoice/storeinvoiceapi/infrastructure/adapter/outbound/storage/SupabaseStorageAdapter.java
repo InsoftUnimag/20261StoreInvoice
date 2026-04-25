@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
 
 import com.storeinvoice.storeinvoiceapi.application.port.PdfStoragePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorSubidaPdfException;
@@ -55,3 +55,4 @@ public class SupabaseStorageAdapter implements PdfStoragePort {
         return String.format("%s/storage/v1/object/public/%s/%s", supabaseUrl, bucket, nombreArchivo);
     }
 }
+

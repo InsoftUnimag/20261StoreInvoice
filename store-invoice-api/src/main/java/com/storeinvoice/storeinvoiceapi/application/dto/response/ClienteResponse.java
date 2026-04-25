@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.response;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto.response;
 
 public record ClienteResponse(
         String idCliente,
@@ -7,3 +7,4 @@ public record ClienteResponse(
         String telefono,
         String direccion
 ){}
+

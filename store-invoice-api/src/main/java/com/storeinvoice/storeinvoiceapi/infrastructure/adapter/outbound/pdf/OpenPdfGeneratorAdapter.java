@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.pdf;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.pdf;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
@@ -138,3 +138,4 @@ public class OpenPdfGeneratorAdapter implements PdfGeneratorPort {
         document.add(pago);
     }
 }
+

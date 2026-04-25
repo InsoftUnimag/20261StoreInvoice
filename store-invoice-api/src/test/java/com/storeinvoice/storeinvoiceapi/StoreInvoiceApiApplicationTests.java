@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi;
+﻿package com.storeinvoice.storeinvoiceapi;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,3 +13,4 @@ class StoreInvoiceApiApplicationTests {
 	}
 
 }
+

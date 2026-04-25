@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -33,3 +33,4 @@ public class LiquidacionTransportistaJpaEntity {
     @Column(name = "fecha_liquidacion", nullable = false)
     private LocalDateTime fechaLiquidacion;
 }
+

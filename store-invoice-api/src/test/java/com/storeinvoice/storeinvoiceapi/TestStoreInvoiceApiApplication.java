@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi;
+﻿package com.storeinvoice.storeinvoiceapi;
 
 import org.springframework.boot.SpringApplication;
 
@@ -9,3 +9,4 @@ public class TestStoreInvoiceApiApplication {
 	}
 
 }
+

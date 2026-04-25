@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto;
 
 import java.math.BigDecimal;
 
@@ -9,3 +9,4 @@ public record ProductoPedidoDTO(
         BigDecimal precioUnitario,
         BigDecimal subtotal) {
 }
+

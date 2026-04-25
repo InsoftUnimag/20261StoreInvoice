@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class DatosPedidoInvalidosException extends DomainException {
 
@@ -10,3 +10,4 @@ public final class DatosPedidoInvalidosException extends DomainException {
         super(String.format("Dato invalido en campo '%s': %s", campo, motivo));
     }
 }
+

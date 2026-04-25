@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.FormaPagoCommand;
 import com.storeinvoice.storeinvoiceapi.application.dto.command.RegistrarFormaPagoClienteCommand;
@@ -92,3 +92,4 @@ public class FormaPagoClienteController {
                 .map(ResponseEntity::ok);
     }
 }
+

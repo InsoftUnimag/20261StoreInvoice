@@ -1,11 +1,11 @@
-# Implementation Plan: Consultar Cliente - Consumo desde Sistema Financiero
+﻿# Implementation Plan: Consultar Cliente - Consumo desde Sistema Financiero
 
 **Date:** 23-04-2026  
 **Spec:** especificaciones/consultar_cliente.md
 
 ## Summary
 
-Permitir al Sistema Financiero consultar clientes del Módulo de Gestión de Clientes mediante endpoints REST síncronos. El sistema debe consumir `GET /api/v1/clientes/nacional/{id_nacional}` y `GET /api/v1/clientes/{id_cliente}` para obtener datos de clientes usando ID Nacional (documento) o ID de base de datos.
+Permitir al Sistema Financiero consultar clientes del MÃ³dulo de GestiÃ³n de Clientes mediante endpoints REST sÃ­ncronos. El sistema debe consumir `GET /api/v1/clientes/nacional/{id_nacional}` y `GET /api/v1/clientes/{id_cliente}` para obtener datos de clientes usando ID Nacional (documento) o ID de base de datos.
 
 ## Technical Context
 
@@ -16,7 +16,7 @@ Java 21 (LTS)
 Spring Boot 3.4.0, Spring WebFlux (WebClient reactivo), Lombok 1.18.36, MapStruct 1.6.3
 
 ### Programming Style
-Programación reactiva con WebClient para llamadas externas síncronas. Usar Optional para manejar valores nulos. Excepciones de dominio particulares. Validación de datos en entrada. Logging para errores de conexión.
+ProgramaciÃ³n reactiva con WebClient para llamadas externas sÃ­ncronas. Usar Optional para manejar valores nulos. Excepciones de dominio particulares. ValidaciÃ³n de datos en entrada. Logging para errores de conexiÃ³n.
 
 ### Arquitectura
 Arquitectura limpia (domain, application, infrastructure) con principios SOLID
@@ -25,33 +25,33 @@ Arquitectura limpia (domain, application, infrastructure) con principios SOLID
 
 ```
 src/main/
-├── java/com/storeinvoice/storeinvoiceapi/
-│   ├── domain/
-│   │   ├── model/                    # Entidades de dominio
-│   │   │   └── Cliente.java
-│   │   └── exception/               # Excepciones de dominio
-│   │       ├── ClienteNotFoundException.java
-│   │       └── InvalidClientIdException.java
-│   │
-│   ├── application/
-│   │   ├── service/                 # CASOS DE USO
-│   │   │   └── cliente/
-│   │   │       ├── ConsultarClientePorIdNacionalUseCase.java
-│   │   │       └── ConsultarClientePorIdUseCase.java
-│   │   ├── port/                    # PUERTOS (interfaces)
-│   │   │   └── ClienteServicePort.java
-│   │   └── dto/
-│   │       └── response/
-│   │           └── ClienteResponse.java
-│   │
-│   └── infrastructure/
-│       └── adapter/
-│           ├── inbound/
-│           │   └── rest/
-│           │       └── ClienteController.java
-│           └── outbound/
-│               └── external/
-│                   └── ClienteWebClient.java  # Adaptador para llamado a módulo externo
+â”œâ”€â”€ java/com/storeinvoice/storeinvoiceapi/
+â”‚   â”œâ”€â”€ domain/
+â”‚   â”‚   â”œâ”€â”€ model/                    # Entidades de dominio
+â”‚   â”‚   â”‚   â””â”€â”€ Cliente.java
+â”‚   â”‚   â””â”€â”€ exception/               # Excepciones de dominio
+â”‚   â”‚       â”œâ”€â”€ ClienteNotFoundException.java
+â”‚   â”‚       â””â”€â”€ InvalidClientIdException.java
+â”‚   â”‚
+â”‚   â”œâ”€â”€ application/
+â”‚   â”‚   â”œâ”€â”€ service/                 # CASOS DE USO
+â”‚   â”‚   â”‚   â””â”€â”€ cliente/
+â”‚   â”‚   â”‚       â”œâ”€â”€ ConsultarClientePorIdNacionalUseCase.java
+â”‚   â”‚   â”‚       â””â”€â”€ ConsultarClientePorIdUseCase.java
+â”‚   â”‚   â”œâ”€â”€ port/                    # PUERTOS (interfaces)
+â”‚   â”‚   â”‚   â””â”€â”€ ClienteServicePort.java
+â”‚   â”‚   â””â”€â”€ dto/
+â”‚   â”‚       â””â”€â”€ response/
+â”‚   â”‚           â””â”€â”€ ClienteResponse.java
+â”‚   â”‚
+â”‚   â””â”€â”€ infrastructure/
+â”‚       â””â”€â”€ adapter/
+â”‚           â”œâ”€â”€ inbound/
+â”‚           â”‚   â””â”€â”€ rest/
+â”‚           â”‚       â””â”€â”€ ClienteController.java
+â”‚           â””â”€â”€ outbound/
+â”‚               â””â”€â”€ external/
+â”‚                   â””â”€â”€ ClienteWebClient.java  # Adaptador para llamado a mÃ³dulo externo
 ```
 
 ## Implementation Phases
@@ -78,13 +78,13 @@ Purpose: Definir puertos outbound para consume de servicios externos
 
 ### Phase 3: Infrastructure Layer - External Adapter
 
-Purpose: Implementar llamado a endpoints del Módulo de Gestión de Clientes
+Purpose: Implementar llamado a endpoints del MÃ³dulo de GestiÃ³n de Clientes
 
     [x] T005 Crear/configurar ClienteWebClient en infrastructure/adapter/outbound/external/
           - Endpoint: GET /api/v1/clientes/nacional/{idNacional}
           - Endpoint: GET /api/v1/clientes/{idCliente}
           - Timeout: 500ms
-          - Manejo de errores de conexión
+          - Manejo de errores de conexiÃ³n
     
     [x] T006 Implementar ClienteServiceAdapter que usa ClienteWebClient
           - Implementa ClienteServicePort
@@ -146,7 +146,7 @@ Purpose: Verificar funcionamiento correcto
 - **ID Nacional vacio:** Retornar error "El ID Nacional es requerido"
 - **ID de cliente vacio:** Retornar error "ID de cliente invalido"
 - **Cliente no encontrado:** Retornar error apropiado segun endpoint
-- **Falla de conexion al Módulo de Clientes:** Retornar "Error al consultar el Módulo de Clientes. Intente más tarde"
+- **Falla de conexion al MÃ³dulo de Clientes:** Retornar "Error al consultar el MÃ³dulo de Clientes. Intente mÃ¡s tarde"
 
 ## Functional Requirements
 
@@ -192,7 +192,7 @@ Purpose: Verificar funcionamiento correcto
 
 ## Notes
 
-- Esta feature consume endpoints del Módulo de Gestión de Clientes (sistema externo)
+- Esta feature consume endpoints del MÃ³dulo de GestiÃ³n de Clientes (sistema externo)
 - El WebClient debe configurarse con timeout de 500ms para cumplir SC-001
 - Usar programacion reactiva (Mono/Flux) para las llamadas externas
 - El ClienteServicePort es el contrato, ClienteWebClient es la implementacion

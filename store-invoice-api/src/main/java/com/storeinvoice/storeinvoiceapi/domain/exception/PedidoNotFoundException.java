@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class PedidoNotFoundException extends DomainException {
 

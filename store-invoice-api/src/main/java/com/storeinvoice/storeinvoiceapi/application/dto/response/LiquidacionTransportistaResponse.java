@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.response;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,3 +10,4 @@ public record LiquidacionTransportistaResponse(
         BigDecimal montoCalculado,
         LocalDateTime fechaLiquidacion
 ) {}
+

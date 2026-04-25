@@ -1,10 +1,10 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO externo que representa un producto individual en la respuesta del
- * Módulo de Gestión de Inventario. Este DTO sólo vive en la capa de
+ * MÃ³dulo de GestiÃ³n de Inventario. Este DTO sÃ³lo vive en la capa de
  * infraestructura y nunca debe cruzar hacia la capa de dominio.
  */
 public record ProductoExternalDTO(
@@ -14,3 +14,4 @@ public record ProductoExternalDTO(
         @JsonProperty("precio_unitario") Integer precioUnitario,
         @JsonProperty("subtotal") Integer subtotal
 ) {}
+

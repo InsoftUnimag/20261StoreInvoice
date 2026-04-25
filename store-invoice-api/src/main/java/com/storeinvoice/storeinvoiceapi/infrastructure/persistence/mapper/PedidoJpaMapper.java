@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.Pedido;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.PedidoJpaEntity;
@@ -7,8 +7,8 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * Mapper de persistencia: Pedido (dominio) ↔ PedidoJpaEntity (JPA).
- * Responsabilidad única: conversión entre modelo de dominio y entidad JPA.
+ * Mapper de persistencia: Pedido (dominio) â†” PedidoJpaEntity (JPA).
+ * Responsabilidad Ãºnica: conversiÃ³n entre modelo de dominio y entidad JPA.
  */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -21,3 +21,4 @@ public interface PedidoJpaMapper {
 
     Pedido toDomain(PedidoJpaEntity entity);
 }
+

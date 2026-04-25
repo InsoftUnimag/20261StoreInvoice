@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.storage;
 
 import com.storeinvoice.storeinvoiceapi.application.port.PdfStoragePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorSubidaPdfException;
@@ -46,3 +46,4 @@ public class LocalFileStorageAdapter implements PdfStoragePort {
                 .toString();
     }
 }
+

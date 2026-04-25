@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
@@ -107,5 +107,6 @@ public class LiquidacionRepositoryAdapter implements LiquidacionRepository {
         return result.isEmpty() ? Optional.empty() : Optional.of(liquidacionMapper.toDomain(result.get(0)));
     }
 }
+
 
 

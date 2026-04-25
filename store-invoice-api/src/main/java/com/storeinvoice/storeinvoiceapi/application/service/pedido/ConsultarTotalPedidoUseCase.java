@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.pedido;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.pedido;
 
 import com.storeinvoice.storeinvoiceapi.application.repository.PedidoRepository;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 /**
  * Caso de uso para obtener el precio total de un pedido.
  * El precio proviene de la tabla 'pedidos', que almacena los datos
- * recibidos del Módulo de Inventario cuando se creó el pedido.
+ * recibidos del MÃ³dulo de Inventario cuando se creÃ³ el pedido.
  */
 @Service
 public class ConsultarTotalPedidoUseCase {

@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.application.repository.EventoRecibidoRepository;
@@ -111,3 +111,4 @@ class ProcesarEstadoFinalUseCaseTest {
         verify(liquidacionRepository, never()).saveTransportista(any());
     }
 }
+

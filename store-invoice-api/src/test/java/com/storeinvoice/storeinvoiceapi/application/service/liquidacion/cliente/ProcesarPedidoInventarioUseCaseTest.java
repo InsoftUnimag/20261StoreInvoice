@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
@@ -244,3 +244,4 @@ class ProcesarPedidoInventarioUseCaseTest {
         verify(liquidacionRepository, never()).saveCliente(any());
     }
 }
+

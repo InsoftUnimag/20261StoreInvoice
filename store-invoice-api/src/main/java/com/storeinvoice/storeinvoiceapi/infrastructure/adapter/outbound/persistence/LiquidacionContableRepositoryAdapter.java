@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesContadorQuery;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionContableRepository;
@@ -115,3 +115,4 @@ public class LiquidacionContableRepositoryAdapter implements LiquidacionContable
         );
     }
 }
+

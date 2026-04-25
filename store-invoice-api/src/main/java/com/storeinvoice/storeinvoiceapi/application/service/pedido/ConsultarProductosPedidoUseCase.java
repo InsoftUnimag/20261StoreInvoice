@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.pedido;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.pedido;
 
 import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
@@ -22,20 +22,21 @@ public class ConsultarProductosPedidoUseCase {
     }
 
     /**
-     * Ejecuta la consulta de productos para un pedido específico.
+     * Ejecuta la consulta de productos para un pedido especÃ­fico.
      *
-     * @param idPedido ID del pedido. No puede ser nulo ni vacío.
+     * @param idPedido ID del pedido. No puede ser nulo ni vacÃ­o.
      * @return Mono con la lista de productos del pedido.
-     * @throws IllegalArgumentException si el ID del pedido es nulo o vacío.
-     * @throws PedidoNotFoundException  si el pedido no existe en el módulo de
+     * @throws IllegalArgumentException si el ID del pedido es nulo o vacÃ­o.
+     * @throws PedidoNotFoundException  si el pedido no existe en el mÃ³dulo de
      *                                  inventario.
      */
     public Mono<List<Producto>> ejecutar(final String idPedido) {
         return Mono.justOrEmpty(idPedido)
                 .filter(id -> !id.isBlank())
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("El ID del pedido no puede ser nulo o vacío")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("El ID del pedido no puede ser nulo o vacÃ­o")))
                 .flatMap(inventarioServicePort::consultarProductosPorPedido)
                 .switchIfEmpty(Mono.error(
                         new PedidoNotFoundException("Pedido no encontrado con el ID proporcionado: " + idPedido)));
     }
 }
+

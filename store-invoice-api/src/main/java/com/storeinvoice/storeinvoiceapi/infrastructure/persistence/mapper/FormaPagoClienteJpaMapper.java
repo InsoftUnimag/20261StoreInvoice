@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPagoCliente;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.entity.FormaPagoClienteJpaEntity;
@@ -17,3 +17,4 @@ public interface FormaPagoClienteJpaMapper {
 
     FormaPagoClienteJpaEntity toEntity(FormaPagoCliente domain);
 }
+

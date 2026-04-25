@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests unitarios del InventarioWebClient usando MockWebServer para simular
- * respuestas HTTP reales del Módulo de Inventario, y Mockito para el mapper.
+ * respuestas HTTP reales del MÃ³dulo de Inventario, y Mockito para el mapper.
  *
  * Nota: ProductoExternalMapper tiene componentModel = "spring", por lo tanto
  * no se puede instanciar con `new`. Se mockea con Mockito.
@@ -105,3 +105,4 @@ class InventarioWebClientTest {
                                 .verify();
         }
 }
+

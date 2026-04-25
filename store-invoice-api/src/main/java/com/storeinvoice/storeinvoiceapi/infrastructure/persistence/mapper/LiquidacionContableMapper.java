@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.response.LiquidacionContadorResponse;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionContable;
@@ -18,3 +18,4 @@ public interface LiquidacionContableMapper {
 
     List<LiquidacionContadorResponse> toResponseList(List<LiquidacionContable> domains);
 }
+

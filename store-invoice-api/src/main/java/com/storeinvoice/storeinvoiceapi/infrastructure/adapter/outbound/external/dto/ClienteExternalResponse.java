@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

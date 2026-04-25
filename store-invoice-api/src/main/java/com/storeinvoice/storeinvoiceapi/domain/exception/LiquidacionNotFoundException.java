@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class LiquidacionNotFoundException extends DomainException {
 
@@ -7,6 +7,6 @@ public final class LiquidacionNotFoundException extends DomainException {
     }
 
     public LiquidacionNotFoundException(final Long idLiquidacion) {
-        super("Liquidación no encontrada con el ID proporcionado: " + idLiquidacion);
+        super("Liquidacion no encontrada con el ID proporcionado: " + idLiquidacion);
     }
 }

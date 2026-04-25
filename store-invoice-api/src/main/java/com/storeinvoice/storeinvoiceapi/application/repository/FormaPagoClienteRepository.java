@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.repository;
+﻿package com.storeinvoice.storeinvoiceapi.application.repository;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPagoCliente;
 import java.util.Optional;
@@ -13,3 +13,4 @@ public interface FormaPagoClienteRepository {
 
     FormaPagoCliente update(FormaPagoCliente formaPagoCliente);
 }
+

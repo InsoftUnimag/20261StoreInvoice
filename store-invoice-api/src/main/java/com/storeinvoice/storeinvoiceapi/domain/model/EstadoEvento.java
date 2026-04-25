@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.model;
+﻿package com.storeinvoice.storeinvoiceapi.domain.model;
 
 /**
  * Enum de dominio que representa los posibles estados de un EventoRecibido.
@@ -10,3 +10,4 @@ public enum EstadoEvento {
     PROCESADO,
     ERROR
 }
+

@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
@@ -37,3 +37,4 @@ public final class ClienteMapper {
         );
     }
 }
+

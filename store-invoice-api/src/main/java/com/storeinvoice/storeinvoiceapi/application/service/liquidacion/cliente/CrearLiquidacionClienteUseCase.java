@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
+﻿package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.request.CrearLiquidacionClienteRequest;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
@@ -29,3 +29,4 @@ public class CrearLiquidacionClienteUseCase {
         return liquidacionRepository.saveCliente(liquidacion);
     }
 }
+

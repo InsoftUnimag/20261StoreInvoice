@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.port;
+﻿package com.storeinvoice.storeinvoiceapi.application.port;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
@@ -11,3 +11,4 @@ public interface PdfGeneratorPort {
     Mono<byte[]> generarPdf(List<ProductoPedidoDTO> productos, BigDecimal totalPedido, String formaPago,
             ClienteLiquidacionDTO cliente, Long idPedido);
 }
+

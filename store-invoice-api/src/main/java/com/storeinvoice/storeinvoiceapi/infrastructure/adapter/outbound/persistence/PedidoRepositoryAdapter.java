@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.persistence;
 
 import com.storeinvoice.storeinvoiceapi.application.repository.PedidoRepository;
 import com.storeinvoice.storeinvoiceapi.domain.model.Pedido;
@@ -47,3 +47,4 @@ public class PedidoRepositoryAdapter implements PedidoRepository {
                 .map(pedidoMapper::toDomain);
     }
 }
+

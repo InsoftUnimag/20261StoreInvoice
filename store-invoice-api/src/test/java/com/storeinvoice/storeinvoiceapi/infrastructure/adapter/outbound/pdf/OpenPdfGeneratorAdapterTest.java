@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.pdf;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.pdf;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
@@ -56,3 +56,4 @@ class OpenPdfGeneratorAdapterTest {
                 .verifyComplete();
     }
 }
+

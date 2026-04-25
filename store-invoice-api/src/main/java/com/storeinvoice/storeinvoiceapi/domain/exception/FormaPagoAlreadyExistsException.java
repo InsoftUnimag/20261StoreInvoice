@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class FormaPagoAlreadyExistsException extends DomainException {
 
@@ -10,3 +10,4 @@ public final class FormaPagoAlreadyExistsException extends DomainException {
         super("El cliente ya tiene forma de pago registrada: " + idCliente);
     }
 }
+

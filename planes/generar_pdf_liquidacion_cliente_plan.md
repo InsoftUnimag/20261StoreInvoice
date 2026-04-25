@@ -1,4 +1,4 @@
-Implementation Plan: Generar PDF de Liquidacion del Cliente
+﻿Implementation Plan: Generar PDF de Liquidacion del Cliente
 
 Date: 2026-04-24
 Spec: especificaciones/generar_pdf_liquidacion_cliente.md
@@ -23,58 +23,58 @@ Project Structure
 Source Code (repository root)
 
 src/
-├── main/
-│   ├── java/
-│   │   └── com/
-│   │       └── storeinvoice/
-│   │           └── storeinvoiceapi/
-│   │               ├── domain/
-│   │               │   ├── model/
-│   │               │   │   └── Producto.java              # Ya existe
-│   │               │   └── exception/
-│   │               │       ├── DomainException.java       # Ya existe (sealed)
-│   │               │       ├── ErrorGeneracionPdfException.java
-│   │               │       ├── ErrorSubidaPdfException.java
-│   │               │       └── DatosPdfInvalidosException.java
-│   │               ├── application/
-│   │               │   ├── dto/
-│   │               │   │   ├── ProductoPedidoDTO.java
-│   │               │   │   └── ClienteLiquidacionDTO.java
-│   │               │   ├── port/
-│   │               │   │   ├── PdfGeneratorPort.java
-│   │               │   │   └── PdfStoragePort.java
-│   │               │   └── service/
-│   │               │       └── pdf/
-│   │               │           └── GenerarPdfLiquidacionClienteUseCase.java
-│   │               └── infrastructure/
-│   │                   ├── adapter/
-│   │                   │   └── outbound/
-│   │                   │       ├── pdf/
-│   │                   │       │   └── OpenPdfGeneratorAdapter.java
-│   │                   │       └── storage/
-│   │                   │           ├── LocalFileStorageAdapter.java
-│   │                   │           └── SupabaseStorageAdapter.java
-│   │                   └── config/
-│   │                       └── PdfStorageConfig.java
-│   └── resources/
-│       └── application.yml                              # Agregar config de storage
-│
-└── test/
-    └── java/
-        └── com/
-            └── storeinvoice/
-                └── storeinvoiceapi/
-                    ├── application/
-                    │   └── service/
-                    │       └── pdf/
-                    │           └── GenerarPdfLiquidacionClienteUseCaseTest.java
-                    └── infrastructure/
-                        └── adapter/
-                            └── outbound/
-                                ├── pdf/
-                                │   └── OpenPdfGeneratorAdapterTest.java
-                                └── storage/
-                                    └── LocalFileStorageAdapterTest.java
+â”œâ”€â”€ main/
+â”‚   â”œâ”€â”€ java/
+â”‚   â”‚   â””â”€â”€ com/
+â”‚   â”‚       â””â”€â”€ storeinvoice/
+â”‚   â”‚           â””â”€â”€ storeinvoiceapi/
+â”‚   â”‚               â”œâ”€â”€ domain/
+â”‚   â”‚               â”‚   â”œâ”€â”€ model/
+â”‚   â”‚               â”‚   â”‚   â””â”€â”€ Producto.java              # Ya existe
+â”‚   â”‚               â”‚   â””â”€â”€ exception/
+â”‚   â”‚               â”‚       â”œâ”€â”€ DomainException.java       # Ya existe (sealed)
+â”‚   â”‚               â”‚       â”œâ”€â”€ ErrorGeneracionPdfException.java
+â”‚   â”‚               â”‚       â”œâ”€â”€ ErrorSubidaPdfException.java
+â”‚   â”‚               â”‚       â””â”€â”€ DatosPdfInvalidosException.java
+â”‚   â”‚               â”œâ”€â”€ application/
+â”‚   â”‚               â”‚   â”œâ”€â”€ dto/
+â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ ProductoPedidoDTO.java
+â”‚   â”‚               â”‚   â”‚   â””â”€â”€ ClienteLiquidacionDTO.java
+â”‚   â”‚               â”‚   â”œâ”€â”€ port/
+â”‚   â”‚               â”‚   â”‚   â”œâ”€â”€ PdfGeneratorPort.java
+â”‚   â”‚               â”‚   â”‚   â””â”€â”€ PdfStoragePort.java
+â”‚   â”‚               â”‚   â””â”€â”€ service/
+â”‚   â”‚               â”‚       â””â”€â”€ pdf/
+â”‚   â”‚               â”‚           â””â”€â”€ GenerarPdfLiquidacionClienteUseCase.java
+â”‚   â”‚               â””â”€â”€ infrastructure/
+â”‚   â”‚                   â”œâ”€â”€ adapter/
+â”‚   â”‚                   â”‚   â””â”€â”€ outbound/
+â”‚   â”‚                   â”‚       â”œâ”€â”€ pdf/
+â”‚   â”‚                   â”‚       â”‚   â””â”€â”€ OpenPdfGeneratorAdapter.java
+â”‚   â”‚                   â”‚       â””â”€â”€ storage/
+â”‚   â”‚                   â”‚           â”œâ”€â”€ LocalFileStorageAdapter.java
+â”‚   â”‚                   â”‚           â””â”€â”€ SupabaseStorageAdapter.java
+â”‚   â”‚                   â””â”€â”€ config/
+â”‚   â”‚                       â””â”€â”€ PdfStorageConfig.java
+â”‚   â””â”€â”€ resources/
+â”‚       â””â”€â”€ application.yml                              # Agregar config de storage
+â”‚
+â””â”€â”€ test/
+    â””â”€â”€ java/
+        â””â”€â”€ com/
+            â””â”€â”€ storeinvoice/
+                â””â”€â”€ storeinvoiceapi/
+                    â”œâ”€â”€ application/
+                    â”‚   â””â”€â”€ service/
+                    â”‚       â””â”€â”€ pdf/
+                    â”‚           â””â”€â”€ GenerarPdfLiquidacionClienteUseCaseTest.java
+                    â””â”€â”€ infrastructure/
+                        â””â”€â”€ adapter/
+                            â””â”€â”€ outbound/
+                                â”œâ”€â”€ pdf/
+                                â”‚   â””â”€â”€ OpenPdfGeneratorAdapterTest.java
+                                â””â”€â”€ storage/
+                                    â””â”€â”€ LocalFileStorageAdapterTest.java
 
 Phase 1: Domain Layer
 
@@ -185,3 +185,4 @@ Decisiones Tecnicas
 - Almacenamiento: Port + Adapter pattern. Supabase Storage para dev/prod (URL publica directa), Local para tests sin conexion
 - Reactividad: Mono<String> para consistencia con WebFlux del proyecto
 - Formato PDF: Tabla de productos + seccion de totales + datos del cliente + id del pedido
+

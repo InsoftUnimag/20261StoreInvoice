@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
 
 import com.storeinvoice.storeinvoiceapi.application.port.ClienteServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;

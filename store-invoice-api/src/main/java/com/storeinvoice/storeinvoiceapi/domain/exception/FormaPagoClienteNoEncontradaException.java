@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class FormaPagoClienteNoEncontradaException extends DomainException {
 
@@ -6,3 +6,4 @@ public final class FormaPagoClienteNoEncontradaException extends DomainException
         super("Forma de pago no encontrada para el cliente con ID: " + idCliente);
     }
 }
+

@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messaging;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messaging;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.messaging.DatosPedidoInventarioMessage;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ProcesarPedidoInventarioUseCase;
@@ -37,3 +37,4 @@ public class PedidoEventConsumer {
         };
     }
 }
+

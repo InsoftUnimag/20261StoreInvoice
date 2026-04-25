@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.domain.exception;
+﻿package com.storeinvoice.storeinvoiceapi.domain.exception;
 
 public final class ErrorSubidaPdfException extends DomainException {
 
@@ -10,3 +10,4 @@ public final class ErrorSubidaPdfException extends DomainException {
         super(message, cause);
     }
 }
+

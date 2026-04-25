@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.integration;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.integration;
 
 import com.storeinvoice.storeinvoiceapi.StoreInvoiceApiApplication;
 import com.storeinvoice.storeinvoiceapi.TestcontainersConfiguration;
@@ -108,3 +108,4 @@ class PedidoRecepcionIntegrationTest {
         assertThrows(DatosPedidoInvalidosException.class, () -> useCase.ejecutar(mensaje));
     }
 }
+

@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external;
 
 import com.storeinvoice.storeinvoiceapi.application.port.ClienteServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
@@ -41,8 +41,8 @@ public class ClienteWebClient implements ClienteServicePort {
                 .bodyToMono(ClienteExternalResponse.class)
                 .map(clienteMapper::toDomain)
                 .onErrorResume(WebClientRequestException.class, e -> {
-                    LOG.error("Error de conexión al consultar cliente por ID nacional {}: {}", idNacional, e.getMessage());
-                    return Mono.error(new ServiceConnectionException("Error al conectar con el Módulo de Clientes", e));
+                    LOG.error("Error de conexiÃ³n al consultar cliente por ID nacional {}: {}", idNacional, e.getMessage());
+                    return Mono.error(new ServiceConnectionException("Error al conectar con el Modulo de Clientes", e));
                 });
     }
 
@@ -54,8 +54,8 @@ public class ClienteWebClient implements ClienteServicePort {
                 .bodyToMono(ClienteExternalResponse.class)
                 .map(clienteMapper::toDomain)
                 .onErrorResume(WebClientRequestException.class, e -> {
-                    LOG.error("Error de conexión al consultar cliente por ID {}: {}", idCliente, e.getMessage());
-                    return Mono.error(new ServiceConnectionException("Error al conectar con el Módulo de Clientes", e));
+                    LOG.error("Error de conexiÃ³n al consultar cliente por ID {}: {}", idCliente, e.getMessage());
+                    return Mono.error(new ServiceConnectionException("Error al conectar con el Modulo de Clientes", e));
                 });
     }
 }

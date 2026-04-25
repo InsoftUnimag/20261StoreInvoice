@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.request;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto.request;
 
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 
@@ -11,3 +11,4 @@ public record CrearLiquidacionClienteRequest(
 
                 BigDecimal montoLiquidado) {
 }
+

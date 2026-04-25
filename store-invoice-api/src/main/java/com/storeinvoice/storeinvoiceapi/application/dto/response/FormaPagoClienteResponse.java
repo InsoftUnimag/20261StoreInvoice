@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.dto.response;
+﻿package com.storeinvoice.storeinvoiceapi.application.dto.response;
 
 import java.time.LocalDateTime;
 
@@ -8,3 +8,4 @@ public record FormaPagoClienteResponse(
         LocalDateTime fechaRegistro
 ) {
 }
+

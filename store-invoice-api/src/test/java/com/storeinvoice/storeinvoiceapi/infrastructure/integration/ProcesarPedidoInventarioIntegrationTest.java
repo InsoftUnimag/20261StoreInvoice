@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.infrastructure.integration;
+﻿package com.storeinvoice.storeinvoiceapi.infrastructure.integration;
 
 import com.storeinvoice.storeinvoiceapi.StoreInvoiceApiApplication;
 import com.storeinvoice.storeinvoiceapi.TestcontainersConfiguration;
@@ -96,3 +96,4 @@ class ProcesarPedidoInventarioIntegrationTest {
         assertTrue(guardada.isEmpty(), "No debe guardar liquidacion con idPedido invalido");
     }
 }
+
