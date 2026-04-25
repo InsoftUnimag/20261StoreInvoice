@@ -1,4 +1,4 @@
-package com.storeinvoice.storeinvoiceapi.application.service.liquidacion;
+package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.query.ConsultarLiquidacionesQuery;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
