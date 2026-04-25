@@ -74,14 +74,14 @@ src/
 
 ### Phase 1: Capa de Dominio (Domain)
 **Propósito:** Establecer las reglas de negocio puras, seguimiento de eventos y la fórmula matemática.
-- [ ] **T001:** Crear el Value Object `TasaEfectividad` para validar que los valores estén dentro del rango permitido (-100 a 100).
-- [ ] **T002:** Actualizar la entidad existente `LiquidacionTransportista` en la capa de modelo de dominio para añadir el método de cálculo que obtenga el monto aplicando la fórmula `(Precio Pedido × 10%) × (tasa_efectividad / 100)`, aplicando redondeo al número entero más cercano.
-- [ ] **T003:** Crear la entidad `EventoRecibido` (con campos: `id_pedido`, `tasa_efectividad`, `id_transportista`, `status`, `fecha_recibido`, `fecha_procesado`) para rastrear el procesamiento de cada estado final y permitir manejo de duplicados.
+- [x] **T001:** Crear el Value Object `TasaEfectividad` para validar que los valores estén dentro del rango permitido (-100 a 100).
+- [x] **T002:** Actualizar la entidad existente `LiquidacionTransportista` en la capa de modelo de dominio para añadir el método de cálculo que obtenga el monto aplicando la fórmula `(Precio Pedido × 10%) × (tasa_efectividad / 100)`, aplicando redondeo al número entero más cercano.
+- [x] **T003:** Crear la entidad `EventoRecibido` (con campos: `id_pedido`, `tasa_efectividad`, `id_transportista`, `status`, `fecha_recibido`, `fecha_procesado`) para rastrear el procesamiento de cada estado final y permitir manejo de duplicados.
 
 ### Phase 2: Capa de Aplicación (Application)
 **Propósito:** Procesar la orden de generar la liquidación, garantizando validaciones de negocio e idempotencia.
-- [ ] **T004:** Crear el objeto de transferencia de datos `ProcesarEstadoFinalCommand` en `application/dto/command/` para encapsular los datos de entrada validados provenientes del evento.
-- [ ] **T005:** Actualizar/crear el caso de uso `ProcesarEstadoFinalUseCase` (o refactorizar `CrearLiquidacionTransportistaUseCase`) que orqueste lo siguiente:
+- [x] **T004:** Crear el objeto de transferencia de datos `ProcesarEstadoFinalCommand` en `application/dto/command/` para encapsular los datos de entrada validados provenientes del evento.
+- [x] **T005:** Actualizar/crear el caso de uso `ProcesarEstadoFinalUseCase` (o refactorizar `CrearLiquidacionTransportistaUseCase`) que orqueste lo siguiente:
     - Consultar si el `id_pedido` ya existe en `EventoRecibido` para prevenir eventos duplicados (Idempotencia).
     - Registrar el inicio del evento como "pendiente".
     - Consultar el precio del pedido y bloquear la operación si el precio es nulo o estrictamente 0.
@@ -91,9 +91,9 @@ src/
 
 ### Phase 3: Capa de Infraestructura (Infrastructure)
 **Propósito:** Habilitar el consumo de eventos asíncronos y persistencia de seguimiento.
-- [ ] **T006:** Implementar el adaptador `EstadoFinalEventConsumer` utilizando `@RequiredArgsConstructor`, mapeando el evento JSON a `ProcesarEstadoFinalCommand` e invocando al caso de uso correspondiente.
-- [ ] **T007:** Configurar la gestión de reintentos y colas de mensajes no procesables (Dead Letter Queue) en las propiedades para manejar fallos de manera resiliente.
-- [ ] **T008:** Crear adaptadores de persistencia para `EventoRecibido` que permitan la inserción y validación de existencia (para el control de duplicados).
+- [x] **T006:** Implementar el adaptador `EstadoFinalEventConsumer` utilizando `@RequiredArgsConstructor`, mapeando el evento JSON a `ProcesarEstadoFinalCommand` e invocando al caso de uso correspondiente.
+- [x] **T007:** Configurar la gestión de reintentos y colas de mensajes no procesables (Dead Letter Queue) en las propiedades para manejar fallos de manera resiliente.
+- [x] **T008:** Crear adaptadores de persistencia para `EventoRecibido` que permitan la inserción y validación de existencia (para el control de duplicados).
 
 ---
 
