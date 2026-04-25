@@ -1,7 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
-import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Cliente;
 
 /**
@@ -24,7 +24,7 @@ public final class ClienteMapper {
         try {
             idCliente = Long.parseLong(cliente.idCliente());
         } catch (final NumberFormatException e) {
-            throw new ClienteNotFoundException(
+            throw new InvalidClientIdException(
                     String.format("El idCliente no es numerico: %s", cliente.idCliente()));
         }
 

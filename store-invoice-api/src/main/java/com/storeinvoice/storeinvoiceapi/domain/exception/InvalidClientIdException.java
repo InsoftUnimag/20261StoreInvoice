@@ -1,6 +1,6 @@
 package com.storeinvoice.storeinvoiceapi.domain.exception;
 
-public class InvalidClientIdException extends RuntimeException {
+public final class InvalidClientIdException extends DomainException {
     
     public InvalidClientIdException(String message) {
         super(message);
