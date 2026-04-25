@@ -18,10 +18,12 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 | `id_pedido` | Integer | Sí | ID del pedido |
 | `id_cliente` | Integer | Sí | ID del cliente |
 | `total_pedido` | Integer | Sí | Valor total del pedido |
-| `direccion` | String | Sí | Dirección de entrega del pedido |
+
 
 > **Nota:** 
 > - Los productos NO se reciben ahora. Se consultarán posteriormente cuando se genere el PDF (al recibir el estado final del Módulo de Transporte).
+> - El campo `direccion` se recibe pero **no se persiste** en la base de datos de finanzas.
+> - Los datos del pedido **no se guardan en una tabla de pedidos**; se registran directamente en la tabla `liquidaciones_cliente`.
 
 ---
 
@@ -29,8 +31,15 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 
 1. **Recibir datos**: Se reciben los datos del pedido desde Módulo de Inventario (vía cola asíncrona)
 2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago usando la función interna `buscar_forma_pago_por_id_cliente`
-3. **Guardar en BD**: Se guarda el registro del pedido con los datos recibidos y la forma de pago asociada
-4. **Esperar estado final**: Queda en espera hasta que el Módulo de Transporte envíe el evento
+3. **Guardar en BD**: Se crea un registro en **`liquidaciones_cliente`** con los datos recibidos y la forma de pago asociada:
+   - `id_pedido` ← `id_pedido` del mensaje
+   - `id_cliente` ← `id_cliente` del mensaje
+   - `monto_liquidado` ← `total_pedido` del mensaje
+   - `forma_pago` ← forma de pago consultada
+   - `estado_liquidacion` ← `PENDIENTE`
+   - `fecha_liquidacion` ← fecha actual
+   - `uri_pdf` ← `null` (se genera al recibir estado final)
+4. **Esperar estado final**: La liquidación queda en estado `PENDIENTE` hasta que el Módulo de Transporte envíe el evento
 
 > **Nota:** Los productos se consultan posteriormente cuando se genere el PDF (ver spec `generar_liquidacion_cliente.md`).
 
@@ -75,10 +84,17 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 
 ### Key Entities *(include if data)*
 
-**PedidoRecibido:**
-- [id_pedido, id_cliente, total_pedido, direccion, forma_pago, estado_final, uri_pdf]
+**LiquidacionCliente (creado al recibir el evento):**
+- `id_liquidacion` (autogenerado)
+- `id_pedido` (del mensaje)
+- `id_cliente` (del mensaje)
+- `monto_liquidado` ← `total_pedido` del mensaje
+- `forma_pago` (consultada por `id_cliente`)
+- `estado_liquidacion` = `PENDIENTE`
+- `fecha_liquidacion` = fecha actual
+- `uri_pdf` = `null`
 
-> **Nota:** Los productos no se guardan en BD. Se consultan al generar el PDF.
+> **Nota:** Los productos no se guardan en BD. Se consultan al generar el PDF. No se crea una tabla `pedido`; los datos del pedido se almacenan directamente en `liquidaciones_cliente`.
 
 ---
 

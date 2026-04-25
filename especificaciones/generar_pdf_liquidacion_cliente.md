@@ -9,6 +9,8 @@ El Sistema Financiero genera un PDF con la información de la liquidación del c
 
 **Esta es una función interna del sistema, no expone un endpoint.**
 
+> **Nota:** Los datos del pedido (`id_pedido`, `id_cliente`, `total_pedido`, `forma_pago`) se reciben como parámetros. Los productos se consultan en tiempo real al Módulo de Inventario via `InventarioServicePort`. Los datos del cliente se consultan al Módulo de Gestión de Clientes via `ClienteServicePort`. Esta función recibe todo como parámetros para construir el contenido del PDF.
+
 ---
 
 ## Entradas de la Función
@@ -20,10 +22,15 @@ La función recibe los siguientes parámetros:
 | `productos` | List[ProductoPedidoDTO] | Lista de productos del pedido (consultados del Módulo de Inventario) |
 | `total_pedido` | Integer | Valor total del pedido |
 | `forma_pago` | String | Forma de pago del cliente (CONTRA_ENTREGA o CARTERA_COMERCIAL) |
-| `cliente` | ClienteDTO | Datos del cliente (ver nota) |
+| `cliente` | ClienteLiquidacionDTO | Datos del cliente consultados del Módulo de Gestión de Clientes |
 | `id_pedido` | Integer | ID del pedido |
 
-> **Nota sobre ClienteDTO:** Los campos del cliente se obtendrán del Módulo de Gestión de Clientes. Pendiente definir: id_cliente, id_nacional, nombre, apellido, dirección, teléfono.
+> **Nota sobre ClienteLiquidacionDTO:** Los campos del cliente se obtienen del Módulo de Gestión de Clientes via `ClienteServicePort`. Campos definidos:
+> - `idCliente` (Long): ID del cliente
+> - `idNacional` (String): Documento de identidad nacional
+> - `nombre` (String): Nombre completo del cliente
+> - `telefono` (String): Teléfono de contacto
+> - `direccion` (String): Dirección de entrega
 
 ---
 
@@ -31,7 +38,7 @@ La función recibe los siguientes parámetros:
 
 1. **Construir contenido del PDF**: Se genera el contenido del PDF con los datos de la liquidación
 2. **Generar archivo PDF**: Se crea el documento en formato PDF
-3. **Subir a nube**: Se sube el archivo al sistema de almacenamiento en la nube
+3. **Subir a Supabase Storage**: Se sube el archivo a Supabase Storage (bucket público `liquidaciones-pdf`)
 4. **Retornar URI**: Se retorna la URL/path donde señala al archivo
 
 ---
@@ -85,10 +92,18 @@ Yo como Sistema Financiero necesito generar un PDF con la información de la liq
 ### Key Entities *(include if data)*
 
 **ProductoPedidoDTO (entrada):**
-- [id_producto, nombre, cantidad, precio_unitario, subtotal]
+- `idProducto` (Long): ID del producto
+- `nombre` (String): Nombre del producto
+- `cantidad` (Integer): Cantidad ordenada
+- `precioUnitario` (BigDecimal): Precio unitario
+- `subtotal` (BigDecimal): Subtotal (cantidad × precio unitario)
 
-**ClienteDTO (entrada):**
-- [Pendiente de definir campos]
+**ClienteLiquidacionDTO (entrada):**
+- `idCliente` (Long): ID del cliente
+- `idNacional` (String): Documento de identidad nacional
+- `nombre` (String): Nombre completo del cliente
+- `telefono` (String): Teléfono de contacto
+- `direccion` (String): Dirección de entrega
 
 **Salida:**
 - [uri_pdf]: URL/path donde señala al PDF

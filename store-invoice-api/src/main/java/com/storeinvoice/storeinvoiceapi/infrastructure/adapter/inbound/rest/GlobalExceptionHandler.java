@@ -11,6 +11,12 @@ import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoNotFoundException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoAlreadyExistsException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidFormaPagoException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.DatosPdfInvalidosException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorGeneracionPdfException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorSubidaPdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -144,6 +150,42 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(
                         HttpStatus.BAD_REQUEST.value(),
                         "Forma de pago inválida. Valores válidos: CONTRA_ENTREGA, CARTERA_COMERCIAL",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(DatosPdfInvalidosException.class)
+    public ResponseEntity<ErrorResponse> handleDatosPdfInvalidos(final DatosPdfInvalidosException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Datos PDF invalidos: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Datos para generar PDF invalidos: " + ex.getMessage(),
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(ErrorGeneracionPdfException.class)
+    public ResponseEntity<ErrorResponse> handleErrorGeneracionPdf(final ErrorGeneracionPdfException ex,
+            final ServerWebExchange exchange) {
+        LOG.error("Error al generar PDF: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Error interno al generar el PDF de liquidacion",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(ErrorSubidaPdfException.class)
+    public ResponseEntity<ErrorResponse> handleErrorSubidaPdf(final ErrorSubidaPdfException ex,
+            final ServerWebExchange exchange) {
+        LOG.error("Error al subir PDF: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ErrorResponse.of(
+                        HttpStatus.SERVICE_UNAVAILABLE.value(),
+                        "Error al almacenar el PDF de liquidacion. Por favor intente mas tarde.",
                         exchange.getRequest().getPath().value()
                 ));
     }

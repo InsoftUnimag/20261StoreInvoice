@@ -21,7 +21,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/store_invoice
     username: postgres
-    password: postgres
+    password: mysecretpassword
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -42,6 +42,21 @@ spring:
     locations: classpath:db/migration
     baseline-version: 0
     validate-on-migrate: false
+  cloud:
+    stream:
+      bindings:
+        recibirPedido-in-0:
+          destination: pedidos.inventario
+          group: store-invoice
+          consumer:
+            max-attempts: 3
+      rabbit:
+        bindings:
+          recibirPedido-in-0:
+            consumer:
+              auto-bind-dlq: true
+              dlq-name: pedidos.inventario.dlq
+              republish-to-dlq: true
 
 server:
   port: 8080
@@ -58,6 +73,17 @@ feign:
         connectTimeout: 2000
         readTimeout: 5000
         loggerLevel: basic
+
+supabase:
+  url: ${SUPABASE_URL:https://wratslvivqturkxuybbc.supabase.co}
+  # Preferir SERVICE_ROLE_KEY (backend) sobre API_KEY (anon/publica)
+  api-key: ${SUPABASE_SERVICE_ROLE_KEY:${SUPABASE_API_KEY:}}
+  bucket: ${SUPABASE_BUCKET:liquidaciones-pdf}
+
+pdf:
+  storage:
+    local:
+      path: ${PDF_LOCAL_PATH:/tmp/store-invoice/pdfs}
 
 resilience4j:
   circuitbreaker:

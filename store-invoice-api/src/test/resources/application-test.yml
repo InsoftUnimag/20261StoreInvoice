@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store_invoice_test
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  cloud:
+    stream:
+      bindings:
+        recibirPedido-in-0:
+          destination: pedidos.inventario
+          group: store-invoice-test
+          consumer:
+            max-attempts: 3
+      rabbit:
+        bindings:
+          recibirPedido-in-0:
+            consumer:
+              auto-bind-dlq: true
+              dlq-name: pedidos.inventario.dlq.test
+              republish-to-dlq: true
+
+logging:
+  level:
+    com.storeinvoice: DEBUG
+    org.springframework.cloud.stream: DEBUG
