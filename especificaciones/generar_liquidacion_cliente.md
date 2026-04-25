@@ -8,7 +8,7 @@
 > **Nota:** El trigger de esta función es el evento publicado por el Módulo de Transporte. Ver spec: `recibir_estado_final_modulo_transporte.md`. Los datos del pedido fueron recibidos previamente del Módulo de Inventario (ver spec `recibir_datos_pedido_modulo_inventario.md`).
 
 **Datos previos recibidos:**
-- Los datos del pedido (id_pedido, id_cliente, total_pedido) ya fueron recibidos del Módulo de Inventario y guardados en BD (ver spec `recibir_datos_pedido_modulo_inventario.md`)
+- Los datos del pedido (id_pedido, id_cliente, total_pedido) ya fueron recibidos del Módulo de Inventario
 - Los productos se consultan posteriormente para generar el PDF
 
 **Evento del Módulo de Transporte:**

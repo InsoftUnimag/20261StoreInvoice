@@ -9,6 +9,8 @@ El Sistema Financiero genera un PDF con la información de la liquidación del c
 
 **Esta es una función interna del sistema, no expone un endpoint.**
 
+> **Nota:** Los datos del pedido (`id_pedido`, `id_cliente`, `total_pedido`, `forma_pago`) ya se encuentran registrados previamente en la tabla `liquidaciones_cliente` cuando el Módulo de Inventario envió el evento (ver spec `recibir_datos_pedido_modulo_inventario.md`). Esta función los recibe como parámetros para construir el contenido del PDF.
+
 ---
 
 ## Entradas de la Función
