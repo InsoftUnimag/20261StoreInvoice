@@ -131,11 +131,13 @@ Phase 3: Infrastructure Layer
     - Retornar URL publica: https://<ref>.supabase.co/storage/v1/object/public/<bucket>/<nombreArchivo>
     - Usar WebClient (reactive) para consistencia con el proyecto
 
-[T009] Crear configuracion de almacenamiento
-    - PdfStorageConfig: seleccionar adapter segun perfil activo
-    - Propiedades en application.yml:
-        supabase.url, supabase.api-key, supabase.bucket (para Supabase)
-        pdf.storage.local.path (para local)
+[~T009] Crear configuracion de almacenamiento - NO APLICA
+    - Originalmente se planeo crear PdfStorageConfig para seleccionar adapter segun perfil
+    - Implementacion actual usa @Profile directamente en los adapters:
+        * LocalFileStorageAdapter: @Profile({"local", "test"})
+        * SupabaseStorageAdapter: @Profile("!local & !test")
+    - Spring Boot selecciona automaticamente el bean correcto segun el perfil activo
+    - No se requiere clase de configuracion adicional
 
 Phase 4: Tests
 
