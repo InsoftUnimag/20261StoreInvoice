@@ -20,11 +20,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Component
+@Profile("prod")
 public class OpenPdfGeneratorAdapter implements PdfGeneratorPort {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenPdfGeneratorAdapter.class);

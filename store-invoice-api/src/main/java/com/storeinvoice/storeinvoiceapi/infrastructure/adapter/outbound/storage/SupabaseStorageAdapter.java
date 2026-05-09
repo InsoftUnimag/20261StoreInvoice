@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 @Component
-@Profile("!local & !test")
+@Profile("prod")
 public class SupabaseStorageAdapter implements PdfStoragePort {
 
     private static final Logger LOG = LoggerFactory.getLogger(SupabaseStorageAdapter.class);

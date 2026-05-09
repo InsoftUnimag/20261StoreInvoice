@@ -4,7 +4,7 @@ spring:
   main:
     web-application-type: reactive
   datasource:
-    url: jdbc:postgresql://localhost:5432/store_invoice
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: mysecretpassword
     driver-class-name: org.postgresql.Driver
