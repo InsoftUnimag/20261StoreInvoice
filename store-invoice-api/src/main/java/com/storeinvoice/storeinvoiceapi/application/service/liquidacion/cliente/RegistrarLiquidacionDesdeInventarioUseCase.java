@@ -77,7 +77,7 @@ public class RegistrarLiquidacionDesdeInventarioUseCase {
         liquidacion.setIdCliente(mensaje.idCliente());
         liquidacion.setFormaPago(formaPago.getFormaPago());
         liquidacion.setMontoLiquidado(BigDecimal.valueOf(mensaje.totalPedido()));
-        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacion.setFechaLiquidacion(LocalDateTime.now());
 
         return liquidacion;

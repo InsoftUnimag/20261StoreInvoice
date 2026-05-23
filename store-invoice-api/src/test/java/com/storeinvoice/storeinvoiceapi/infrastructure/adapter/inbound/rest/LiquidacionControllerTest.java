@@ -71,7 +71,7 @@ class LiquidacionControllerTest {
         liquidacion1.setIdPedido(100L);
         liquidacion1.setIdCliente(idCliente);
         liquidacion1.setFormaPago(FormaPago.CONTRA_ENTREGA);
-        liquidacion1.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacion1.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacion1.setFechaLiquidacion(LocalDateTime.now());
         liquidacion1.setUriPdf("/pdf/1.pdf");
         liquidacion1.setMontoLiquidado(new BigDecimal("1500.00"));
@@ -81,7 +81,7 @@ class LiquidacionControllerTest {
         liquidacion2.setIdPedido(101L);
         liquidacion2.setIdCliente(idCliente);
         liquidacion2.setFormaPago(FormaPago.CARTERA_COMERCIAL);
-        liquidacion2.setEstadoLiquidacion(EstadoLiquidacion.PAGADA);
+        liquidacion2.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacion2.setFechaLiquidacion(LocalDateTime.now());
         liquidacion2.setUriPdf("/pdf/2.pdf");
         liquidacion2.setMontoLiquidado(new BigDecimal("2000.00"));
@@ -90,11 +90,11 @@ class LiquidacionControllerTest {
 
         respuestas = List.of(
                 new LiquidacionClienteResponse(
-                        1L, 100L, idCliente, "CONTRA_ENTREGA", "PENDIENTE",
+                        1L, 100L, idCliente, "CONTRA_ENTREGA", "ENVIADO",
                         liquidacion1.getFechaLiquidacion(), "/pdf/1.pdf", new BigDecimal("1500.00")
                 ),
                 new LiquidacionClienteResponse(
-                        2L, 101L, idCliente, "CARTERA_COMERCIAL", "PAGADA",
+                        2L, 101L, idCliente, "CARTERA_COMERCIAL", "ENVIADO",
                         liquidacion2.getFechaLiquidacion(), "/pdf/2.pdf", new BigDecimal("2000.00")
                 )
         );
@@ -205,7 +205,7 @@ class LiquidacionControllerTest {
         liquidacionTemplate.setIdPedido(100L);
         liquidacionTemplate.setIdCliente(idCliente);
         liquidacionTemplate.setFormaPago(FormaPago.CONTRA_ENTREGA);
-        liquidacionTemplate.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacionTemplate.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacionTemplate.setFechaLiquidacion(LocalDateTime.now());
         liquidacionTemplate.setUriPdf("/pdf/1.pdf");
         liquidacionTemplate.setMontoLiquidado(new BigDecimal("1500.00"));
@@ -217,7 +217,7 @@ class LiquidacionControllerTest {
             l.setIdPedido(100L);
             l.setIdCliente(idCliente);
             l.setFormaPago(FormaPago.CONTRA_ENTREGA);
-            l.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+            l.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
             l.setFechaLiquidacion(LocalDateTime.now());
             l.setUriPdf("/pdf/1.pdf");
             l.setMontoLiquidado(new BigDecimal("1500.00"));
@@ -226,7 +226,7 @@ class LiquidacionControllerTest {
         
         List<LiquidacionClienteResponse> respuestasGrande = new java.util.ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            respuestasGrande.add(new LiquidacionClienteResponse(1L, 100L, idCliente, "CONTRA_ENTREGA", "PENDIENTE",
+            respuestasGrande.add(new LiquidacionClienteResponse(1L, 100L, idCliente, "CONTRA_ENTREGA", "ENVIADO",
                     LocalDateTime.now(), "/pdf/1.pdf", new BigDecimal("1500.00")));
         }
         

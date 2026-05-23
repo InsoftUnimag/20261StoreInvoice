@@ -66,7 +66,7 @@ class PedidoRecepcionIntegrationTest {
         assertEquals(100L, resultado.getIdPedido());
         assertEquals(1L, resultado.getIdCliente());
         assertEquals(FormaPago.CARTERA_COMERCIAL, resultado.getFormaPago());
-        assertEquals(EstadoLiquidacion.PENDIENTE, resultado.getEstadoLiquidacion());
+        assertEquals(EstadoLiquidacion.ENVIADO, resultado.getEstadoLiquidacion());
 
         final Optional<LiquidacionCliente> guardada = liquidacionRepository.findByIdPedido(100L);
         assertTrue(guardada.isPresent());

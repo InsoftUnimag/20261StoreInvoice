@@ -1,6 +1,7 @@
 package com.storeinvoice.storeinvoiceapi.domain.valueobject;
 
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidTasaEfectividadException;
+import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 
 
 public class TasaEfectividad {
@@ -16,6 +17,16 @@ public class TasaEfectividad {
 
     public int getValor() {
         return valor;
+    }
+
+    public EstadoLiquidacion mapearAEstadoLiquidacion() {
+        return switch (valor) {
+            case 100 -> EstadoLiquidacion.ENTREGADO_COMPLETO;
+            case 80 -> EstadoLiquidacion.RECHAZO_PARCIAL;
+            case 0 -> EstadoLiquidacion.NO_ENTREGADO;
+            case -100 -> EstadoLiquidacion.FALTANTE_INVENTARIO;
+            default -> throw new InvalidTasaEfectividadException(valor);
+        };
     }
 }
 

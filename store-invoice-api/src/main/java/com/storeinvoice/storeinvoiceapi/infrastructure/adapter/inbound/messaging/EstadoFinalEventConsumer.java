@@ -2,28 +2,42 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messagin
 
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transportista.ProcesarEstadoFinalUseCase;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
 
-
-@Slf4j
-@Component
+/**
+ * Configuracion de consumers de mensajeria para eventos de estado final del Modulo de Transporte.
+ * Utiliza Spring Cloud Stream con API funcional reactiva.
+ */
+@Configuration
 @RequiredArgsConstructor
 public class EstadoFinalEventConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EstadoFinalEventConsumer.class);
+
     private final ProcesarEstadoFinalUseCase procesarEstadoFinalUseCase;
 
-    /**
-     * Procesa un comando de estado final recibido desde el broker de mensajes.
-     *
-     * @return Consumer funcional compatible con Spring Cloud Stream
-     */
-    public Consumer<ProcesarEstadoFinalCommand> processFinalState() {
+    @Bean
+    public Function<ProcesarEstadoFinalCommand, Mono<Void>> processFinalState() {
         return command -> {
-            procesarEstadoFinalUseCase.execute(command);
+            LOG.info("Mensaje recibido desde modulo de transporte. idPedido={}, id_transpo = {}, tasaefecti={}",
+                    command != null ? command.getId_pedido() : "null",
+                    command!=null ? command.getId_transportista() : "null",
+                    command != null ? command.getTasa_efectividad() : "null"
+                    );
+            return procesarEstadoFinalUseCase.execute(command)
+                    .doOnSuccess(v -> LOG.info("Mensaje procesado exitosamente. idPedido={}",
+                            command != null ? command.getId_pedido() : "null"))
+                    .onErrorResume(e -> {
+                        LOG.error("Error procesando mensaje idPedido={}: {}",
+                                command != null ? command.getId_pedido() : "null", e.getMessage());
+                        return Mono.empty();
+                    });
         };
     }
 }
-

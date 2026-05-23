@@ -145,7 +145,7 @@ public class ProcesarPedidoInventarioUseCase {
         liquidacion.setIdCliente(mensaje.idCliente());
         liquidacion.setFormaPago(formaPago);
         liquidacion.setMontoLiquidado(BigDecimal.valueOf(mensaje.totalPedido()));
-        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacion.setFechaLiquidacion(LocalDateTime.now());
         liquidacion.setUriPdf(uriPdf);
 

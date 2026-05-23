@@ -115,7 +115,7 @@ class ProcesarPedidoInventarioUseCaseTest {
         assertEquals(100L, capturada.getIdPedido());
         assertEquals(1L, capturada.getIdCliente());
         assertEquals(FormaPago.CARTERA_COMERCIAL, capturada.getFormaPago());
-        assertEquals(EstadoLiquidacion.PENDIENTE, capturada.getEstadoLiquidacion());
+        assertEquals(EstadoLiquidacion.ENVIADO, capturada.getEstadoLiquidacion());
         assertEquals(new BigDecimal("5000"), capturada.getMontoLiquidado());
         assertEquals("file:///tmp/test.pdf", capturada.getUriPdf());
         assertNotNull(capturada.getFechaLiquidacion());
