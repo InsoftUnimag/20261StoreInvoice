@@ -3,34 +3,35 @@ package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.transpo
 import com.storeinvoice.storeinvoiceapi.application.dto.command.ProcesarEstadoFinalCommand;
 import com.storeinvoice.storeinvoiceapi.application.repository.EventoRecibidoRepository;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
-import com.storeinvoice.storeinvoiceapi.application.repository.PedidoRepository;
+import com.storeinvoice.storeinvoiceapi.domain.exception.EstadoFinalInvalidoException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.LiquidacionException;
-import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoEvento;
+import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.EventoRecibido;
+import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionTransportista;
 import com.storeinvoice.storeinvoiceapi.domain.valueobject.TasaEfectividad;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import reactor.core.publisher.Mono;
 
 /**
- * Caso de uso que procesa el evento de estado final recibido del MÃ³dulo de Transporte.
+ * Caso de uso que procesa el evento de estado final recibido del Modulo de Transporte.
  *
  * <p>Flujo:
  * <ol>
  *   <li>Validar campos obligatorios del comando</li>
  *   <li>Verificar idempotencia: ignorar si ya fue PROCESADO exitosamente</li>
  *   <li>Registrar el evento como PENDIENTE</li>
- *   <li>Obtener el precio total del pedido desde la BD (fuente: MÃ³dulo de Inventario)</li>
- *   <li>Calcular el monto de liquidaciÃ³n del transportista usando dominio</li>
- *   <li>Reportar pÃ©rdida operativa si tasa = 0</li>
- *   <li>Persistir la liquidaciÃ³n</li>
+ *   <li>Obtener el precio total del pedido desde la liquidacion del cliente</li>
+ *   <li>Calcular el monto de liquidacion del transportista usando dominio</li>
+ *   <li>Reportar perdida operativa si tasa = 0</li>
+ *   <li>Persistir la liquidacion</li>
  *   <li>Actualizar el estado del evento a PROCESADO</li>
  * </ol>
  *
@@ -43,83 +44,90 @@ public class ProcesarEstadoFinalUseCase {
 
     private final EventoRecibidoRepository eventoRecibidoRepository;
     private final LiquidacionRepository liquidacionRepository;
-    private final PedidoRepository pedidoRepository;
+    private final TransactionTemplate transactionTemplate;
 
-    @Transactional
-    public void execute(final ProcesarEstadoFinalCommand command) {
-        // 1. Validar campos obligatorios del comando (FR-002)
-        validarComando(command);
+    /**
+     * Ejecuta el flujo completo de procesamiento de un estado final recibido.
+     *
+     * @param command datos del estado final recibidos del Modulo de Transporte
+     * @return Mono<Void> completado cuando se finaliza el procesamiento
+     */
+    public Mono<Void> execute(final ProcesarEstadoFinalCommand command) {
+        final Long idPedido = command != null ? command.getId_pedido() : null;
 
-        // 2. Verificar idempotencia correcta y procesar
-        Optional.of(command.getIdPedido())
-                .filter(id -> !eventoRecibidoRepository.existsByIdPedidoAndEstado(id, EstadoEvento.PROCESADO))
-                .ifPresentOrElse(
-                        id -> procesarEvento(command),
-                        () -> log.warn("El evento final para el pedido {} ya fue procesado exitosamente. Ignorando duplicado.", command.getIdPedido())
-                );
+        try {
+            transactionTemplate.executeWithoutResult(status -> {
+                validarComando(command);
+                procesarEventoSincrono(command);
+            });
+            return Mono.empty();
+        } catch (Exception e) {
+            log.error("Error tecnico procesando estado final idPedido={}: {}", idPedido, e.getMessage(), e);
+            return Mono.empty();
+        }
     }
 
     private void validarComando(final ProcesarEstadoFinalCommand command) {
-        Optional.ofNullable(command.getIdPedido())
-                .orElseThrow(() -> new NullPointerException("id_pedido es requerido"));
-        Optional.ofNullable(command.getTasaEfectividad())
-                .orElseThrow(() -> new NullPointerException("tasa_efectividad es requerida"));
-        Optional.ofNullable(command.getIdTransportista())
-                .orElseThrow(() -> new NullPointerException("id_transportista es requerido"));
+        Optional.ofNullable(command)
+                .orElseThrow(() -> new EstadoFinalInvalidoException("command", "El comando no puede ser nulo"));
+
+        Optional.ofNullable(command.getId_pedido())
+                .orElseThrow(() -> new EstadoFinalInvalidoException("idPedido", "Es requerido"));
+
+        Optional.ofNullable(command.getTasa_efectividad())
+                .orElseThrow(() -> new EstadoFinalInvalidoException("tasaEfectividad", "Es requerida"));
+
+        Optional.ofNullable(command.getId_transportista())
+                .orElseThrow(() -> new EstadoFinalInvalidoException("idTransportista", "Es requerido"));
     }
 
-    private void procesarEvento(final ProcesarEstadoFinalCommand command) {
-        final Long idPedido = command.getIdPedido();
+    private void procesarEventoSincrono(final ProcesarEstadoFinalCommand command) {
+        final Long idPedido = command.getId_pedido();
 
-        // 3. Registrar el evento como PENDIENTE usando el constructor de creación del dominio
+        final boolean yaProcesado = eventoRecibidoRepository.existsByIdPedidoAndEstado(
+                idPedido, EstadoEvento.PROCESADO);
+        if (yaProcesado) {
+            return;
+        }
+
         EventoRecibido evento = eventoRecibidoRepository.save(new EventoRecibido(
                 idPedido,
-                command.getTasaEfectividad(),
-                command.getIdTransportista()
+                command.getTasa_efectividad(),
+                command.getId_transportista()
         ));
 
         try {
-            // 4. Obtener el precio real del pedido desde la tabla 'pedidos'
-            final BigDecimal precioPedido = pedidoRepository
-                    .findPrecioPedidoByIdPedido(idPedido)
-                    .filter(precio -> precio.compareTo(BigDecimal.ZERO) > 0)
+            final BigDecimal precioPedido = liquidacionRepository.findByIdPedido(idPedido)
+                    .filter(liquidacion -> liquidacion.getMontoLiquidado().compareTo(BigDecimal.ZERO) > 0)
+                    .map(liquidacion -> liquidacion.getMontoLiquidado())
                     .orElseThrow(() -> new LiquidacionException(
-                            "El precio del pedido no puede ser nulo o cero para liquidar. idPedido=" + idPedido));
+                            "No se encontro liquidacion de cliente para el pedido. idPedido=" + idPedido));
 
-            // 5. Delegar validación de rango y cálculo al dominio
-            final TasaEfectividad tasa = new TasaEfectividad(command.getTasaEfectividad());
+            final TasaEfectividad tasa = new TasaEfectividad(command.getTasa_efectividad());
             final BigDecimal montoCalculado = LiquidacionTransportista.calcularMonto(precioPedido, tasa);
 
-            // 6. Reportar pérdida operativa cuando la tasa es 0 (spec edge case)
-            Optional.of(tasa.getValor())
-                    .filter(valor -> valor == 0)
-                    .ifPresent(valor -> log.info(
-                            "REPORTE PÉRDIDA OPERATIVA: tasa_efectividad=0 para el pedido {}. "
-                            + "El costo del flete no fue cubierto por el transportista.",
-                            idPedido));
-
-            // 7. Persistir la liquidación del transportista
             liquidacionRepository.saveTransportista(new LiquidacionTransportista(
                     null,
                     idPedido,
-                    command.getIdTransportista(),
+                    command.getId_transportista(),
                     montoCalculado,
                     LocalDateTime.now()
             ));
 
-            log.info("Liquidación de transportista generada exitosamente para el pedido {}. Monto={}", idPedido, montoCalculado);
+            final EstadoLiquidacion nuevoEstado = tasa.mapearAEstadoLiquidacion();
+            liquidacionRepository.findByIdPedido(idPedido)
+                    .ifPresent(liquidacionCliente -> {
+                        liquidacionCliente.setEstadoLiquidacion(nuevoEstado);
+                        liquidacionRepository.saveCliente(liquidacionCliente);
+                    });
 
-            // 8. Marcar el evento como procesado usando comportamiento de dominio
             evento.marcarProcesado();
             eventoRecibidoRepository.save(evento);
 
         } catch (Exception e) {
-            // En caso de error: marcar el evento como ERROR para permitir reintento vía DLQ
             evento.marcarError();
             eventoRecibidoRepository.save(evento);
-            log.error("Error al procesar el estado final para el pedido {}: {}", idPedido, e.getMessage());
             throw e;
         }
     }
 }
-

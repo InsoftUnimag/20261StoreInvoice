@@ -23,7 +23,7 @@ public class CrearLiquidacionClienteUseCase {
         liquidacion.setFormaPago(request.formaPago());
         liquidacion.setMontoLiquidado(request.montoLiquidado());
         
-        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacion.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacion.setFechaLiquidacion(LocalDateTime.now());
         
         return liquidacionRepository.saveCliente(liquidacion);

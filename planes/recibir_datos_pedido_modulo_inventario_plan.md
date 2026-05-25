@@ -258,9 +258,10 @@ src/
 
 ## Notes
 
-- **Reutilizacion**: Se reutiliza la entidad `LiquidacionCliente` y `LiquidacionRepository` existentes. No se crea tabla `pedido`.
+- **Reutilizacion**: Se reutiliza la entidad `LiquidacionCliente` y `LiquidacionRepository` existentes. No se crea tabla `pedido`; los datos del pedido se almacenan directamente en `liquidaciones_cliente`.
 - **No direccion**: El campo `direccion` del mensaje se recibe pero no se persiste en BD.
 - **Estado inicial**: Al recibir el pedido, `estado_liquidacion` = `PENDIENTE`. El PDF se genera inmediatamente, no se espera al Modulo de Transporte.
+- **Eliminacion de PedidoRepository**: El repositorio `PedidoRepository` y sus dependencias (`PedidoJpaEntity`, `PedidoJpaMapper`, `Pedido` domain model) fueron eliminados porque su funcionalidad fue absorbida por `LiquidacionRepository` y `LiquidacionCliente`. El precio del pedido se obtiene directamente de `LiquidacionCliente.montoLiquidado`.
 - **Mensajeria**: Spring Cloud Stream con binder RabbitMQ. Consumer funcional reactivo con API de funciones (`Function<T, Mono<Void>>`).
 - **DLQ**: Configurada para garantizar que los mensajes que fallan no se pierden (FR-051).
 - **Trazabilidad**: Usar `log.info()` al inicio del procesamiento del mensaje con `id_pedido`.
@@ -299,3 +300,10 @@ src/
 - `application/service/liquidacion/cliente/RegistrarLiquidacionDesdeInventarioUseCase.java`
 - `test/.../RegistrarLiquidacionDesdeInventarioUseCaseTest.java`
 - `test/.../PedidoRecepcionIntegrationTest.java`
+
+### Archivos eliminados (ya no se necesitan):
+- `application/repository/PedidoRepository.java`
+- `infrastructure/adapter/outbound/persistence/PedidoRepositoryAdapter.java`
+- `infrastructure/persistence/entity/PedidoJpaEntity.java`
+- `infrastructure/persistence/mapper/PedidoJpaMapper.java`
+- `domain/model/Pedido.java`

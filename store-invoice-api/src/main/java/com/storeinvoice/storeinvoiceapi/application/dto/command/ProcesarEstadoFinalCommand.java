@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcesarEstadoFinalCommand {
-    private Long idPedido;
-    private Integer tasaEfectividad;
-    private Long idTransportista;
+    private Long id_pedido;
+    private Integer tasa_efectividad;
+    private Long id_transportista;
 }
 

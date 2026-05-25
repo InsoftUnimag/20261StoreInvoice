@@ -4,9 +4,9 @@ spring:
   main:
     web-application-type: reactive
   datasource:
-    url: jdbc:postgresql://localhost:5432/store_invoice
-    username: postgres
-    password: mysecretpassword
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:postgres}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:contrasena_segura}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -27,74 +27,41 @@ spring:
     locations: classpath:db/migration
     baseline-version: 0
     validate-on-migrate: false
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost} # Cambiado a la IP de tus logs para desarrollo, o vuelve a poner localhost si usas túneles
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
+    ssl:
+      enabled: false
   cloud:
+    function:
+      definition: recibirPedido;processFinalState
     stream:
       bindings:
         processFinalState-in-0:
-          destination: estado.final.transporte
-          group: store-invoice-group
+          destination: ${ESTADO_FINAL_TRANSPORTE_QUEUE:estadopedido} # <--- CORREGIDO: Ahora el fallback coincide con tu cola de RabbitMQ
+          group: estadopedido
           consumer:
             max-attempts: 3
         recibirPedido-in-0:
-          destination: pedidos.inventario
-          group: store-invoice
+          destination: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario}
+          group: ${PEDIDOS_INVENTARIO_GROUP:store-invoice}
           consumer:
             max-attempts: 3
       rabbit:
         bindings:
           processFinalState-in-0:
             consumer:
+              queueNameGroupOnly: true   # <--- CORREGIDO: Movido al bloque correcto de Rabbit
+              declareExchange: false     # <--- CORREGIDO: Movido al bloque correcto de Rabbit
+              bindQueue: false           # <--- CORREGIDO: Movido al bloque correcto de Rabbit
               auto-bind-dlq: true
               republish-to-dlq: true
-              dlq-name: estado.final.transporte.dlq
+              dlq-name: ${ESTADO_FINAL_DLQ:estado.final.transporte.dlq}
           recibirPedido-in-0:
             consumer:
               auto-bind-dlq: true
-              dlq-name: pedidos.inventario.dlq
+              dlq-name: ${PEDIDOS_INVENTARIO_DLQ:pedidos.inventario.dlq}
               republish-to-dlq: true
-
-server:
-  port: 8080
-
-external:
-  cliente:
-    module:
-      base-url: ${CLIENTE_MODULE_URL:http://localhost:8081}
-
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 2000
-        readTimeout: 5000
-        loggerLevel: basic
-
-supabase:
-  url: ${SUPABASE_URL:https://wratslvivqturkxuybbc.supabase.co}
-  # Preferir SERVICE_ROLE_KEY (backend) sobre API_KEY (anon/publica)
-  api-key: ${SUPABASE_SERVICE_ROLE_KEY:${SUPABASE_API_KEY:}}
-  bucket: ${SUPABASE_BUCKET:liquidaciones-pdf}
-
-pdf:
-  storage:
-    local:
-      path: ${PDF_LOCAL_PATH:/tmp/store-invoice/pdfs}
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      clienteService:
-        failureRateThreshold: 50
-        waitDurationInOpenState: 30s
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-  retry:
-    instances:
-      clienteService:
-        maxAttempts: 3
-        waitDuration: 500ms
-
-logging:
-  level:
-    com.storeinvoice: INFO
-    com.storeinvoice.store_invoice_api.infrastructure.adapter.outbound.external: DEBUG

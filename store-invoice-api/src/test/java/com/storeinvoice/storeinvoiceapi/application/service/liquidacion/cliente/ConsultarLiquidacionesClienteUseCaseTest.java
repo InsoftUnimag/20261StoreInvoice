@@ -40,7 +40,7 @@ class ConsultarLiquidacionesClienteUseCaseTest {
         liquidacionMock.setIdPedido(100L);
         liquidacionMock.setIdCliente(idCliente);
         liquidacionMock.setFormaPago(FormaPago.CONTRA_ENTREGA);
-        liquidacionMock.setEstadoLiquidacion(EstadoLiquidacion.PENDIENTE);
+        liquidacionMock.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
         liquidacionMock.setFechaLiquidacion(LocalDateTime.now());
         liquidacionMock.setUriPdf("/pdf/liquidacion-1.pdf");
         liquidacionMock.setMontoLiquidado(new BigDecimal("1500.00"));
