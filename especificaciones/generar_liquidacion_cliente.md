@@ -9,19 +9,20 @@
 
 **Datos recibidos del Módulo de Inventario:**
 - `id_pedido`
-- `id_cliente`
+- `id_cliente` (número de documento/idNacional, debe resolverse al idCliente de BD)
 - `total_pedido`
 
 **Pasos para generar la liquidación:**
 
 1. **Recibir datos**: Se reciben los datos del pedido desde el Módulo de Inventario (vía cola asíncrona)
-2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago usando `FormaPagoClienteRepository`
-3. **Consultar productos**: Se llama al endpoint del Módulo de Inventario via `InventarioServicePort` para obtener los productos del pedido
-4. **Consultar datos del cliente**: Se llama al Módulo de Gestión de Clientes via `ClienteServicePort` para obtener los datos del cliente
-5. **Generar PDF**: Se invoca la función interna de generación de PDF (spec `generar_pdf_liquidacion_cliente.md`) que retorna la URI del PDF
-6. **Guardar liquidación**: Se guarda el registro de liquidación con estado `PENDIENTE` y la URI del PDF
+2. **Resolver cliente**: Con el `id_cliente` del mensaje (número de documento/idNacional), se consulta al Módulo de Gestión de Clientes via `ClienteServicePort.findByIdNacional()` para obtener el `idCliente` real de la base de datos
+3. **Consultar forma de pago**: Con el `idCliente` de BD resuelto, se consulta la forma de pago usando `FormaPagoClienteRepository`
+4. **Consultar productos**: Se llama al endpoint del Módulo de Inventario via `InventarioServicePort` para obtener los productos del pedido
+5. **Consultar datos del cliente**: Se usa el `Cliente` resuelto en el paso 2 (ya se tienen los datos del cliente, no需要进行额外的外部调用)
+6. **Generar PDF**: Se invoca la función interna de generación de PDF (spec `generar_pdf_liquidacion_cliente.md`) que retorna la URI del PDF
+7. **Guardar liquidación**: Se guarda el registro de liquidación con estado `PENDIENTE` y la URI del PDF
 
-> **Nota:** El `monto_liquidado` es igual al `total_pedido` recibido del Módulo de Inventario. No se aplica fórmula de cálculo adicional.
+> **Nota:** El `id_cliente` del mensaje es el número de documento (idNacional). La resolución al idCliente de BD es **obligatoria** antes de consultar la forma de pago o guardar cualquier registro en `liquidaciones_cliente`.
 
 ---
 
@@ -110,8 +111,9 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
   - Entidad que registra el monto a cobrar al cliente.
 
 **Notas de columnas:**
+- `id_cliente`: Se resolve del idNacional (número de documento recibido en el mensaje) al idCliente de BD via `ClienteServicePort.findByIdNacional()`. El valor almacenado es el **idCliente de BD**, no el idNacional.
 - `monto_liquidado`: Se obtiene del `total_pedido` recibido del Módulo de Inventario
-- `forma_pago`: Se consulta por `id_cliente` via `FormaPagoClienteRepository`
+- `forma_pago`: Se consulta por **idCliente de BD** via `FormaPagoClienteRepository`
 - `estado_liquidacion`: Siempre `PENDIENTE` al crear
 - `uri_pdf`: Se genera mediante la función `generar_pdf_liquidacion_cliente.md`
 - `fecha_liquidacion`: Fecha actual del sistema
@@ -133,6 +135,21 @@ Yo como Sistema Financiero necesito validar que existan todos los datos requerid
 ---
 
 ## Notas de Implementación
+
+### Resolución de idCliente (ID Nacional vs ID de BD)
+
+El sistema maneja dos identificadores de cliente:
+
+| Identificador | Descripción | Uso |
+|--------------|-------------|-----|
+| `idNacional` | Número de documento del cliente (cédula, etc.) | Recibido en el mensaje del Módulo de Inventario |
+| `idCliente` | Identificador interno en la base de datos | Usado para consultas a `forma_pago_cliente` y almacenamiento en `liquidaciones_cliente` |
+
+**Flujo obligatorio:**
+1. El mensaje del Inventario recebe `id_cliente` = idNacional (número de documento)
+2. Se llama a `ClienteServicePort.findByIdNacional(idNacional)` para obtener el `Cliente` completo
+3. Con el `idCliente` de BD (del `Cliente` resuelto) se consulta la forma de pago
+4. Se guarda en `liquidaciones_cliente.id_cliente` el idCliente de BD, no el idNacional
 
 ### Simplificación respecto al diseño original
 

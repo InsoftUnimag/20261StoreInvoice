@@ -18,6 +18,7 @@ import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoClienteNoEncon
 import com.storeinvoice.storeinvoiceapi.domain.exception.ProductosNoEncontradosException;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
+import com.storeinvoice.storeinvoiceapi.domain.model.Cliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -62,6 +63,7 @@ public class ProcesarPedidoInventarioUseCase {
                     return mensaje;
                 })
                 .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(this::resolverCliente)
                 .flatMap(this::consultarFormaPago)
                 .flatMap(this::consultarProductosYCliente)
                 .flatMap(this::generarPdf)
@@ -72,6 +74,16 @@ public class ProcesarPedidoInventarioUseCase {
                     return Mono.empty();
                 })
                 .then();
+    }
+
+    private Mono<ContextoInicial> resolverCliente(final DatosPedidoInventarioMessage mensaje) {
+        LOG.info("Resolviendo cliente por idNacional={}", mensaje.idCliente());
+        return clienteServicePort.findByIdNacional(String.valueOf(mensaje.idCliente()))
+                .onErrorMap(e -> new ErrorConsultaClienteException(mensaje.idCliente(), e))
+                .switchIfEmpty(Mono.error(new ClienteNotFoundException(mensaje.idCliente())))
+                .doOnSuccess(cliente -> LOG.info("Cliente resuelto exitosamente. idNacional={} → idClienteBD={}",
+                        mensaje.idCliente(), cliente.idCliente()))
+                .map(cliente -> new ContextoInicial(mensaje, cliente));
     }
 
     private void validarMensaje(final DatosPedidoInventarioMessage mensaje) {
@@ -91,28 +103,29 @@ public class ProcesarPedidoInventarioUseCase {
                 .orElseThrow(() -> new DatosPedidoInvalidosException("totalPedido", "No puede ser negativo"));
     }
 
-    private Mono<ContextoProcesamiento> consultarFormaPago(final DatosPedidoInventarioMessage mensaje) {
-        return Mono.justOrEmpty(formaPagoClienteRepository.findByIdCliente(mensaje.idCliente()))
-                .switchIfEmpty(Mono.error(new FormaPagoClienteNoEncontradaException(mensaje.idCliente())))
-                .map(formaPagoCliente -> new ContextoProcesamiento(mensaje, formaPagoCliente.getFormaPago(), null, null));
+    private Mono<ContextoProcesamiento> consultarFormaPago(final ContextoInicial ctx) {
+        final Long idClienteReal = Long.valueOf(ctx.cliente().idCliente());
+        LOG.info("Consultando forma de pago para idClienteBD={}", idClienteReal);
+        return Mono.justOrEmpty(formaPagoClienteRepository.findByIdCliente(idClienteReal))
+                .switchIfEmpty(Mono.error(new FormaPagoClienteNoEncontradaException(idClienteReal)))
+                .map(formaPagoCliente -> new ContextoProcesamiento(ctx.mensaje(), ctx.cliente(),
+                        formaPagoCliente.getFormaPago(), null, null));
     }
 
     private Mono<ContextoProcesamiento> consultarProductosYCliente(final ContextoProcesamiento ctx) {
+        LOG.info("Consultando productos para idPedido={}", ctx.mensaje().idPedido());
         return inventarioServicePort.consultarProductosPorPedido(String.valueOf(ctx.mensaje().idPedido()))
                 .onErrorMap(e -> new ErrorConsultaProductosException(ctx.mensaje().idPedido(), e))
                 .flatMap(productos -> Optional.ofNullable(productos)
                         .filter(p -> !p.isEmpty())
                         .map(Mono::just)
                         .orElseGet(() -> Mono.error(new ProductosNoEncontradosException(ctx.mensaje().idPedido()))))
-                .flatMap(productos -> clienteServicePort.findById(String.valueOf(ctx.mensaje().idCliente()))
-                        .onErrorMap(e -> new ErrorConsultaClienteException(ctx.mensaje().idCliente(), e))
-                        .switchIfEmpty(Mono.error(new ClienteNotFoundException(ctx.mensaje().idCliente())))
-                        .map(cliente -> {
-                            final List<ProductoPedidoDTO> productosDto = ProductoMapper.toDtoList(productos);
-                            final ClienteLiquidacionDTO clienteDto = ClienteMapper.toDto(cliente);
-                            return new ContextoProcesamiento(ctx.mensaje(), ctx.formaPago(), productosDto, clienteDto);
-                        })
-                );
+                .map(productos -> {
+                    final List<ProductoPedidoDTO> productosDto = ProductoMapper.toDtoList(productos);
+                    final ClienteLiquidacionDTO clienteDto = ClienteMapper.toDto(ctx.cliente());
+                    return new ContextoProcesamiento(ctx.mensaje(), ctx.cliente(), ctx.formaPago(),
+                            productosDto, clienteDto);
+                });
     }
 
     private Mono<ContextoConUri> generarPdf(final ContextoProcesamiento ctx) {
@@ -128,6 +141,7 @@ public class ProcesarPedidoInventarioUseCase {
     private Mono<LiquidacionCliente> guardarLiquidacion(final ContextoConUri ctxUri) {
         final LiquidacionCliente liquidacion = construirLiquidacion(
                 ctxUri.ctx().mensaje(),
+                ctxUri.ctx().cliente(),
                 ctxUri.ctx().formaPago(),
                 ctxUri.uri()
         );
@@ -137,12 +151,15 @@ public class ProcesarPedidoInventarioUseCase {
 
     private LiquidacionCliente construirLiquidacion(
             final DatosPedidoInventarioMessage mensaje,
+            final Cliente cliente,
             final FormaPago formaPago,
             final String uriPdf) {
 
+        final Long idClienteReal = Long.valueOf(cliente.idCliente());
+        LOG.info("Construyendo liquidacion con idClienteBD={}", idClienteReal);
         final LiquidacionCliente liquidacion = new LiquidacionCliente();
         liquidacion.setIdPedido(mensaje.idPedido());
-        liquidacion.setIdCliente(mensaje.idCliente());
+        liquidacion.setIdCliente(idClienteReal);
         liquidacion.setFormaPago(formaPago);
         liquidacion.setMontoLiquidado(BigDecimal.valueOf(mensaje.totalPedido()));
         liquidacion.setEstadoLiquidacion(EstadoLiquidacion.ENVIADO);
@@ -152,8 +169,14 @@ public class ProcesarPedidoInventarioUseCase {
         return liquidacion;
     }
 
+    private record ContextoInicial(
+            DatosPedidoInventarioMessage mensaje,
+            Cliente cliente) {
+    }
+
     private record ContextoProcesamiento(
             DatosPedidoInventarioMessage mensaje,
+            Cliente cliente,
             FormaPago formaPago,
             List<ProductoPedidoDTO> productosDto,
             ClienteLiquidacionDTO clienteDto) {

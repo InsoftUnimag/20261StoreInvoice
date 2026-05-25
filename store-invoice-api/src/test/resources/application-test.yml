@@ -16,13 +16,16 @@ spring:
       bindings:
         recibirPedido-in-0:
           destination: pedidos.inventario
-          group: store-invoice-test
+          group: pedidos.inventario
           consumer:
             max-attempts: 3
       rabbit:
         bindings:
           recibirPedido-in-0:
             consumer:
+              queueNameGroupOnly: true
+              declareExchange: false
+              bindQueue: false
               auto-bind-dlq: true
               dlq-name: pedidos.inventario.dlq.test
               republish-to-dlq: true

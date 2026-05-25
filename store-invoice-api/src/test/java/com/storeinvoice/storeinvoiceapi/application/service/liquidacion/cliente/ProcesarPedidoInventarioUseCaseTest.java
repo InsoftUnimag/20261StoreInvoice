@@ -97,9 +97,9 @@ class ProcesarPedidoInventarioUseCaseTest {
         guardada.setIdLiquidacion(1L);
         guardada.setIdPedido(100L);
 
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.just(cliente));
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
         when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(productos));
-        when(clienteServicePort.findById("1")).thenReturn(Mono.just(cliente));
         when(generarPdfLiquidacionClienteUseCase.ejecutar(any(List.class), eq(BigDecimal.valueOf(5000)),
                 eq(FormaPago.CARTERA_COMERCIAL.name()), any(ClienteLiquidacionDTO.class), eq(100L)))
                 .thenReturn(Mono.just("file:///tmp/test.pdf"));
@@ -163,6 +163,7 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_formaPagoNoEncontrada_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.just(cliente));
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.empty());
 
         StepVerifier.create(useCase.ejecutar(mensaje))
@@ -175,6 +176,7 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_productosVacios_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.just(cliente));
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
         when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(List.of()));
 
@@ -188,6 +190,7 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_errorConsultaProductos_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.just(cliente));
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
         when(inventarioServicePort.consultarProductosPorPedido("100"))
                 .thenReturn(Mono.error(new RuntimeException("Connection refused")));
@@ -202,9 +205,7 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_clienteNoEncontrado_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
-        when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
-        when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(productos));
-        when(clienteServicePort.findById("1")).thenReturn(Mono.empty());
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.ejecutar(mensaje))
                 .verifyComplete();
@@ -216,9 +217,7 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_errorConsultaCliente_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
-        when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
-        when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(productos));
-        when(clienteServicePort.findById("1"))
+        when(clienteServicePort.findByIdNacional("1"))
                 .thenReturn(Mono.error(new RuntimeException("Connection refused")));
 
         StepVerifier.create(useCase.ejecutar(mensaje))
@@ -231,9 +230,9 @@ class ProcesarPedidoInventarioUseCaseTest {
     void ejecutar_errorGeneracionPdf_completaMonoSinGuardar() {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, 5000L, "Calle 123");
 
+        when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.just(cliente));
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.of(formaPagoCliente));
         when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(productos));
-        when(clienteServicePort.findById("1")).thenReturn(Mono.just(cliente));
         when(generarPdfLiquidacionClienteUseCase.ejecutar(any(List.class), eq(BigDecimal.valueOf(5000)),
                 eq(FormaPago.CARTERA_COMERCIAL.name()), any(ClienteLiquidacionDTO.class), eq(100L)))
                 .thenReturn(Mono.error(new RuntimeException("PDF generation failed")));
