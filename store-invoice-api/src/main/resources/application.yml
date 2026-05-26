@@ -47,7 +47,7 @@ spring:
             max-attempts: 3
         recibirPedido-in-0:
           destination: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario}
-          group: ${PEDIDOS_INVENTARIO_GROUP:store-invoice}
+          group: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario}
           consumer:
             max-attempts: 3
       rabbit:
@@ -62,6 +62,15 @@ spring:
               dlq-name: ${ESTADO_FINAL_DLQ:estado.final.transporte.dlq}
           recibirPedido-in-0:
             consumer:
+              queueNameGroupOnly: true
+              declareExchange: false
+              bindQueue: false
               auto-bind-dlq: true
               dlq-name: ${PEDIDOS_INVENTARIO_DLQ:pedidos.inventario.dlq}
               republish-to-dlq: true
+
+logging:
+  level:
+    com.storeinvoice.storeinvoiceapi: DEBUG
+    com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ProcesarPedidoInventarioUseCase: DEBUG
+    com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external: DEBUG

@@ -16,11 +16,13 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
 | `id_pedido` | Integer | Sí | ID del pedido |
-| `id_cliente` | Integer | Sí | ID del cliente |
+| `id_cliente` | Integer | Sí | **Número de documento** (idNacional) del cliente |
 | `total_pedido` | Integer | Sí | Valor total del pedido |
 
 
-> **Nota:** 
+> **Nota:**
+> - El campo `id_cliente` recebido en el mensaje es el **número de documento** del cliente (idNacional), NO el identificador interno de la base de datos.
+> - **Antes de consultar la forma de pago o persistir cualquier dato**, el sistema DEBE resolver el idNacional al idCliente real de BD llamando al Módulo de Gestión de Clientes via `ClienteServicePort.findByIdNacional()`.
 > - Los productos NO se reciben ahora. Se consultarán posteriormente cuando se genere el PDF (al recibir el estado final del Módulo de Transporte).
 > - El campo `direccion` se recibe pero **no se persiste** en la base de datos de finanzas.
 > - Los datos del pedido **no se guardan en una tabla de pedidos**; se registran directamente en la tabla `liquidaciones_cliente`.
@@ -30,16 +32,17 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 ## Proceso en Sistema Financiero
 
 1. **Recibir datos**: Se reciben los datos del pedido desde Módulo de Inventario (vía cola asíncrona)
-2. **Consultar forma de pago**: Con el `id_cliente`, se consulta la forma de pago usando la función interna `buscar_forma_pago_por_id_cliente`
-3. **Guardar en BD**: Se crea un registro en **`liquidaciones_cliente`** con los datos recibidos y la forma de pago asociada:
+2. **Resolver cliente**: Con el `id_cliente` del mensaje (número de documento/idNacional), se consulta al Módulo de Gestión de Clientes via `ClienteServicePort.findByIdNacional()` para obtener el `idCliente` real de la base de datos
+3. **Consultar forma de pago**: Con el `idCliente` de BD resuelto, se consulta la forma de pago usando la función interna `buscar_forma_pago_por_id_cliente`
+4. **Guardar en BD**: Se crea un registro en **`liquidaciones_cliente`** con los datos recibidos y la forma de pago asociada:
    - `id_pedido` ← `id_pedido` del mensaje
-   - `id_cliente` ← `id_cliente` del mensaje
+   - `id_cliente` ← `idCliente` de BD resuelto (NO el idNacional del mensaje)
    - `monto_liquidado` ← `total_pedido` del mensaje
    - `forma_pago` ← forma de pago consultada
    - `estado_liquidacion` ← `PENDIENTE`
    - `fecha_liquidacion` ← fecha actual
    - `uri_pdf` ← `null` (se genera al recibir estado final)
-4. **Esperar estado final**: La liquidación queda en estado `PENDIENTE` hasta que el Módulo de Transporte envíe el evento
+5. **Esperar estado final**: La liquidación queda en estado `PENDIENTE` hasta que el Módulo de Transporte envíe el evento
 
 > **Nota:** Los productos se consultan posteriormente cuando se genere el PDF (ver spec `generar_liquidacion_cliente.md`).
 
@@ -87,14 +90,16 @@ El Módulo de Gestión de Inventario envía los datos del pedido al Sistema Fina
 **LiquidacionCliente (creado al recibir el evento):**
 - `id_liquidacion` (autogenerado)
 - `id_pedido` (del mensaje)
-- `id_cliente` (del mensaje)
+- `id_cliente` (idCliente de BD resuelto del idNacional del mensaje via Módulo de Gestión de Clientes)
 - `monto_liquidado` ← `total_pedido` del mensaje
-- `forma_pago` (consultada por `id_cliente`)
+- `forma_pago` (consultada por idCliente de BD resuelto)
 - `estado_liquidacion` = `PENDIENTE`
 - `fecha_liquidacion` = fecha actual
 - `uri_pdf` = `null`
 
 > **Nota:** Los productos no se guardan en BD. Se consultan al generar el PDF. No se crea una tabla `pedido`; los datos del pedido se almacenan directamente en `liquidaciones_cliente`.
+
+> **Importante:** El `id_cliente` armazenado en `liquidaciones_cliente` es el **idCliente de BD** (identificador interno), NO el número de documento (idNacional) recebido en el mensaje. La resolución se hace via `ClienteServicePort.findByIdNacional()`.
 
 ---
 

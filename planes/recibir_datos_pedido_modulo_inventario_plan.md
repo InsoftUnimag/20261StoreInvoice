@@ -5,15 +5,22 @@ Spec: [especificaciones/recibir_datos_pedido_modulo_inventario.md](especificacio
 
 ## Summary
 
-Implementar la recepcion asincrona de datos de pedidos desde el Modulo de Inventario mediante RabbitMQ y Spring Cloud Stream. Al recibir un evento con `id_pedido`, `id_cliente`, `total_pedido` y `direccion`, el sistema:
+Implementar la recepcion asincrona de datos de pedidos desde el Modulo de Inventario mediante RabbitMQ y Spring Cloud Stream. Al recibir un evento con `id_pedido`, `id_cliente` (numero de documento/idNacional), `total_pedido` y `direccion`, el sistema:
 
-1. Consulta la forma de pago del cliente
-2. Consulta los productos del pedido al Modulo de Inventario
-3. Consulta los datos del cliente al Modulo de Gestion de Clientes
-4. Genera el PDF de liquidacion con todos los datos
-5. Guarda el registro en `liquidaciones_cliente` con estado `PENDIENTE` y la URI del PDF
+1. Resuelve el `id_cliente` del mensaje (idNacional) al idCliente real de BD consultando al Modulo de Gestion de Clientes via `ClienteServicePort.findByIdNacional()`
+2. Consulta la forma de pago del cliente con el idCliente de BD resuelto
+3. Consulta los productos del pedido al Modulo de Inventario
+4. Consulta los datos del cliente al Modulo de Gestion de Clientes
+5. Genera el PDF de liquidacion con todos los datos
+6. Guarda el registro en `liquidaciones_cliente` con estado `PENDIENTE` y la URI del PDF
 
 No se crea tabla `pedido`; los datos del pedido se almacenan en la liquidacion. El campo `direccion` se recibe pero no se persiste en BD.
+
+**Flujo de resolucion de idCliente:**
+- Mensaje recebe `id_cliente` = numero de documento (idNacional)
+- Se llama a `ClienteServicePort.findByIdNacional(idNacional)` → obtiene `Cliente` con `idCliente` (BD) y `idNacional`
+- El `idCliente` de BD se usa para: consultar forma de pago, guardar en `liquidaciones_cliente.id_cliente`
+- El `idNacional` se usa para: datos del PDF (nombre, telefono, direccion)
 
 ## Technical Context
 
@@ -154,17 +161,21 @@ src/
 
     [x] T015 Crear `ProcesarPedidoInventarioUseCase.java` en `application/service/liquidacion/cliente/`. Orquestar el flujo completo reactivo:
         1. Validar mensaje (declarativo con Optional)
-        2. Consultar forma de pago via `FormaPagoClienteRepository`
-        3. Consultar productos via `InventarioServicePort`
-        4. Consultar cliente via `ClienteServicePort`
-        5. Mapear a DTOs con los mappers
+        2. Resolver cliente via `ClienteServicePort.findByIdNacional()` (obtiene idCliente de BD + datos del cliente)
+        3. Consultar forma de pago via `FormaPagoClienteRepository` con idCliente de BD resuelto
+        4. Consultar productos via `InventarioServicePort`
+        5. Mapear productos a DTOs con ProductoMapper (usar Cliente resuelto, sin llamada adicional a findById)
         6. Generar PDF via `GenerarPdfLiquidacionClienteUseCase`
-        7. Construir `LiquidacionCliente` con estado PENDIENTE y URI del PDF
+        7. Construir `LiquidacionCliente` con idCliente de BD y estado PENDIENTE y URI del PDF
         8. Persistir via `LiquidacionRepository` envuelto en `TransactionTemplate` para manejar transaccion JPA en pipeline reactivo
         9. Retornar `Mono<Void>`
     [x] T016 Inyectar dependencias: `FormaPagoClienteRepository`, `InventarioServicePort`, `ClienteServicePort`, `GenerarPdfLiquidacionClienteUseCase`, `LiquidacionRepository`, `TransactionTemplate`
     [x] T017 Manejo de errores: `.onErrorResume` para no matar el pipeline, errores por mensaje aislados
     [x] T018 Logging: `log.info()` para inicio/exitoso, `log.error()` unicamente para fallos tecnicos
+
+**Nota sobre resolucion de idCliente:**
+- El `id_cliente` recibido en el mensaje es el numero de documento (idNacional)
+- Es OBLIGATORIO llamar a `ClienteServicePort.findByIdNacional()` para resolver al idCliente deBD antes de consultar forma de pago o guardar en BD
 
 ## Phase 5: Infrastructure Layer - Messaging
 
@@ -192,7 +203,7 @@ src/
 **Independent Test**: El sistema debe recibir los datos del pedido, generar el PDF y almacenar la liquidacion con URI en menos de 2 segundos.
 
     [x] T025 Crear test unitario `ProcesarPedidoInventarioUseCaseTest.java` usando Mockito + StepVerifier:
-        - Flujo exitoso completo (mensaje valido -> forma pago -> productos -> cliente -> PDF -> guardado)
+        - Flujo exitoso completo (mensaje valido -> resolucion cliente via findByIdNacional -> forma pago -> productos -> PDF -> guardado)
         - Mensaje nulo
         - idPedido invalido (cero)
         - idCliente invalido (cero)
@@ -200,14 +211,14 @@ src/
         - Forma de pago no encontrada
         - Productos vacios
         - Error al consultar productos
-        - Cliente no encontrado
-        - Error al consultar cliente
+        - Cliente no encontrado por idNacional (findByIdNacional retorna empty)
+        - Error al consultar cliente (findByIdNacional falla con excepcion)
         - Error al generar PDF
     [x] T026 Crear test unitario `PedidoEventConsumerTest.java` usando Mockito + StepVerifier:
         - Mensaje procesado exitosamente retorna Mono<Void>
         - Error en procesamiento NO mata el consumer
     [x] T027 Crear test de integracion `ProcesarPedidoInventarioIntegrationTest.java` con TestContainers (PostgreSQL + RabbitMQ):
-        - Publicar mensaje, verificar que se persiste en BD con forma de pago correcta y URI del PDF no nula
+        - Publicar mensaje con idCliente (idNacional), verificar que se resuelve y persiste en BD con idCliente de BD correcto y URI del PDF no nula
         - Mensaje invalido no guarda en BD
     [x] T028 Mantener tests existentes de `RegistrarLiquidacionDesdeInventarioUseCase` y `PedidoRecepcionIntegrationTest` funcionando
 
@@ -251,13 +262,15 @@ src/
 | **Generacion de PDF** | Se generaba al recibir estado final del Modulo de Transporte | Se genera **inmediatamente** al recibir el mensaje del Inventario |
 | **uri_pdf** | Se guardaba como `null` inicialmente | Se guarda con la **URI del PDF generado** |
 | **Consulta de productos** | Se consultaban posteriormente (al generar PDF) | Se consultan **inmediatamente** via `InventarioServicePort` |
-| **Consulta de cliente** | No estaba en el flujo original | Se consulta **inmediatamente** via `ClienteServicePort` |
+| **Consulta de cliente** | No estaba en el flujo original | Se consulta **inmediatamente** via `ClienteServicePort.findByIdNacional()` para resolver idNacional a idCliente de BD |
+| **Resolucion de idCliente** | El idCliente del mensaje se usaba directamente | Se resuelve el **idNacional (numero documento) al idCliente de BD** via `findByIdNacional()` antes de consultar forma de pago y guardar |
 | **Use case principal** | `RegistrarLiquidacionDesdeInventarioUseCase` | `ProcesarPedidoInventarioUseCase` (orquestador reactivo) |
 | **Consumer** | `Consumer<DatosPedidoInventarioMessage>` (sincrono) | `Function<DatosPedidoInventarioMessage, Mono<Void>>` (reactivo) |
 | **Persistencia** | JPA sincrono con `@Transactional` | JPA envuelto en `Mono.fromCallable` + `TransactionTemplate` para pipeline reactivo |
 
 ## Notes
 
+- **Resolucion de idCliente**: El `id_cliente` recibido en el mensaje es el numero de documento (idNacional). Es OBLIGATORIO resolverlo al idCliente de BD usando `ClienteServicePort.findByIdNacional()` antes de consultar forma de pago o guardar en `liquidaciones_cliente`. Esta resolucion proporciona los datos completos del cliente (nombre, telefono, direccion) por lo que no se necesita llamada adicional a `findById()`.
 - **Reutilizacion**: Se reutiliza la entidad `LiquidacionCliente` y `LiquidacionRepository` existentes. No se crea tabla `pedido`; los datos del pedido se almacenan directamente en `liquidaciones_cliente`.
 - **No direccion**: El campo `direccion` del mensaje se recibe pero no se persiste en BD.
 - **Estado inicial**: Al recibir el pedido, `estado_liquidacion` = `PENDIENTE`. El PDF se genera inmediatamente, no se espera al Modulo de Transporte.
@@ -265,7 +278,7 @@ src/
 - **Mensajeria**: Spring Cloud Stream con binder RabbitMQ. Consumer funcional reactivo con API de funciones (`Function<T, Mono<Void>>`).
 - **DLQ**: Configurada para garantizar que los mensajes que fallan no se pierden (FR-051).
 - **Trazabilidad**: Usar `log.info()` al inicio del procesamiento del mensaje con `id_pedido`.
-- **Performance**: El procesamiento completo (recepcion + consultas externas + generacion PDF + almacenamiento) debe ser menor a 2 segundos.
+- **Performance**: El procesamiento completo (recepcion + consultas externas + generacion PDF + armazenamento) debe ser menor a 2 segundos.
 - **Reactividad**: Todo el pipeline es reactivo (`Mono`). No se usa `.block()` en ningun punto.
 - **TransactionTemplate**: Necesario para manejar transacciones JPA dentro de un pipeline reactivo que ejecuta en `Schedulers.boundedElastic()`.
 
