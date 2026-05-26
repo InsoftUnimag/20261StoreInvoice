@@ -68,3 +68,9 @@ spring:
               auto-bind-dlq: true
               dlq-name: ${PEDIDOS_INVENTARIO_DLQ:pedidos.inventario.dlq}
               republish-to-dlq: true
+
+logging:
+  level:
+    com.storeinvoice.storeinvoiceapi: DEBUG
+    com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ProcesarPedidoInventarioUseCase: DEBUG
+    com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.external: DEBUG
