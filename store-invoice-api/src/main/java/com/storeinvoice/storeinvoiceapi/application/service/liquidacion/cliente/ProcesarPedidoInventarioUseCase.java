@@ -1,15 +1,15 @@
 package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente;
 
-import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
-import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
+// import com.storeinvoice.storeinvoiceapi.application.dto.ClienteLiquidacionDTO;
+// import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
 import com.storeinvoice.storeinvoiceapi.application.dto.messaging.DatosPedidoInventarioMessage;
 import com.storeinvoice.storeinvoiceapi.application.port.ClienteServicePort;
 import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.application.repository.FormaPagoClienteRepository;
 import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionRepository;
-import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper.ClienteMapper;
-import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper.ProductoMapper;
-import com.storeinvoice.storeinvoiceapi.application.service.pdf.GenerarPdfLiquidacionClienteUseCase;
+// import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper.ClienteMapper;
+// import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper.ProductoMapper;
+// import com.storeinvoice.storeinvoiceapi.application.service.pdf.GenerarPdfLiquidacionClienteUseCase;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.DatosPedidoInvalidosException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaClienteException;
@@ -43,7 +43,7 @@ public class ProcesarPedidoInventarioUseCase {
     private final FormaPagoClienteRepository formaPagoClienteRepository;
     private final InventarioServicePort inventarioServicePort;
     private final ClienteServicePort clienteServicePort;
-    private final GenerarPdfLiquidacionClienteUseCase generarPdfLiquidacionClienteUseCase;
+    // private final GenerarPdfLiquidacionClienteUseCase generarPdfLiquidacionClienteUseCase;
     private final LiquidacionRepository liquidacionRepository;
     private final TransactionTemplate transactionTemplate;
 
@@ -79,15 +79,15 @@ public class ProcesarPedidoInventarioUseCase {
         final List<Producto> productos = consultarProductos(mensaje.idPedido());
         LOG.debug("Paso 7: Productos consultados. cantidad={}", productos.size());
 
-        final List<ProductoPedidoDTO> productosDto = ProductoMapper.toDtoList(productos);
-        final ClienteLiquidacionDTO clienteDto = ClienteMapper.toDto(cliente);
+        // final List<ProductoPedidoDTO> productosDto = ProductoMapper.toDtoList(productos);
+        // final ClienteLiquidacionDTO clienteDto = ClienteMapper.toDto(cliente);
 
-        LOG.debug("Paso 8: Generando PDF para idPedido={}", mensaje.idPedido());
-        final String uriPdf = generarPdf(productosDto, mensaje.totalPedido(), formaPago.name(), clienteDto, mensaje.idPedido());
-        LOG.debug("Paso 9: PDF generado. uriPdf={}", uriPdf);
+        // LOG.debug("Paso 8: Generando PDF para idPedido={}", mensaje.idPedido());
+        // final String uriPdf = generarPdf(productosDto, mensaje.totalPedido(), formaPago.name(), clienteDto, mensaje.idPedido());
+        // LOG.debug("Paso 9: PDF generado. uriPdf={}", uriPdf);
 
         LOG.debug("Paso 10: Guardando liquidacion en BD");
-        guardarLiquidacion(mensaje, cliente, formaPago, uriPdf);
+        guardarLiquidacion(mensaje, cliente, formaPago, null);
         LOG.debug("Paso 11: Liquidacion guardada exitosamente");
     }
 
@@ -135,20 +135,20 @@ public class ProcesarPedidoInventarioUseCase {
         }
     }
 
-    private String generarPdf(final List<ProductoPedidoDTO> productosDto, final Long totalPedido,
-            final String formaPago, final ClienteLiquidacionDTO clienteDto, final Long idPedido) {
-        try {
-            return generarPdfLiquidacionClienteUseCase.ejecutar(
-                    productosDto,
-                    BigDecimal.valueOf(totalPedido),
-                    formaPago,
-                    clienteDto,
-                    idPedido
-            ).timeout(java.time.Duration.ofSeconds(TIMEOUT_SECONDS)).block();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al generar PDF: " + e.getMessage(), e);
-        }
-    }
+    // private String generarPdf(final List<ProductoPedidoDTO> productosDto, final Long totalPedido,
+    //         final String formaPago, final ClienteLiquidacionDTO clienteDto, final Long idPedido) {
+    //     try {
+    //         return generarPdfLiquidacionClienteUseCase.ejecutar(
+    //                 productosDto,
+    //                 BigDecimal.valueOf(totalPedido),
+    //                 formaPago,
+    //                 clienteDto,
+    //                 idPedido
+    //         ).timeout(java.time.Duration.ofSeconds(TIMEOUT_SECONDS)).block();
+    //     } catch (Exception e) {
+    //         throw new RuntimeException("Error al generar PDF: " + e.getMessage(), e);
+    //     }
+    // }
 
     private void guardarLiquidacion(final DatosPedidoInventarioMessage mensaje,
             final Cliente cliente, final FormaPago formaPago, final String uriPdf) {

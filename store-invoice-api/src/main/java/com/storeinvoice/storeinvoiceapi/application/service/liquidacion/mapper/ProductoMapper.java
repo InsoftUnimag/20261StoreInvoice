@@ -1,7 +1,6 @@
 package com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper;
 
 import com.storeinvoice.storeinvoiceapi.application.dto.ProductoPedidoDTO;
-import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaProductosException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,16 +27,8 @@ public final class ProductoMapper {
     }
 
     private static ProductoPedidoDTO toDto(final Producto producto) {
-        final Long idProducto;
-        try {
-            idProducto = Long.parseLong(producto.idProducto());
-        } catch (final NumberFormatException e) {
-            throw new ErrorConsultaProductosException(
-                    String.format("El idProducto no es numerico: %s", producto.idProducto()));
-        }
-
         return new ProductoPedidoDTO(
-                idProducto,
+                producto.idProducto(),
                 producto.nombre(),
                 producto.cantidad(),
                 BigDecimal.valueOf(producto.precioUnitario()),

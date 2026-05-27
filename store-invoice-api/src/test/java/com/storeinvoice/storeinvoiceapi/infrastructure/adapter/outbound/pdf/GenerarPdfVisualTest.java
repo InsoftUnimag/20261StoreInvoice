@@ -23,10 +23,10 @@ class GenerarPdfVisualTest {
     void generarPdfConMultiplesProductos_yGuardarEnDisco() throws Exception {
         // Given: Datos de ejemplo para un pedido realista
         final List<ProductoPedidoDTO> productos = List.of(
-                new ProductoPedidoDTO(1L, "Laptop Dell XPS 13", 1, new BigDecimal("1250.00"), new BigDecimal("1250.00")),
-                new ProductoPedidoDTO(2L, "Mouse Logitech MX Master", 2, new BigDecimal("89.99"), new BigDecimal("179.98")),
-                new ProductoPedidoDTO(3L, "Teclado Mecanico Keychron", 1, new BigDecimal("120.00"), new BigDecimal("120.00")),
-                new ProductoPedidoDTO(4L, "Monitor LG 27 pulgadas", 2, new BigDecimal("350.00"), new BigDecimal("700.00"))
+                new ProductoPedidoDTO("1", "Laptop Dell XPS 13", 1, new BigDecimal("1250.00"), new BigDecimal("1250.00")),
+                new ProductoPedidoDTO("2", "Mouse Logitech MX Master", 2, new BigDecimal("89.99"), new BigDecimal("179.98")),
+                new ProductoPedidoDTO("3", "Teclado Mecanico Keychron", 1, new BigDecimal("120.00"), new BigDecimal("120.00")),
+                new ProductoPedidoDTO("4", "Monitor LG 27 pulgadas", 2, new BigDecimal("350.00"), new BigDecimal("700.00"))
         );
 
         final BigDecimal totalPedido = new BigDecimal("2249.98");
@@ -80,7 +80,7 @@ class GenerarPdfVisualTest {
     @Test
     void generarPdfConUnSoloProducto() {
         final List<ProductoPedidoDTO> productos = List.of(
-                new ProductoPedidoDTO(1L, "Producto Unico", 1, new BigDecimal("500.00"), new BigDecimal("500.00"))
+                new ProductoPedidoDTO("1", "Producto Unico", 1, new BigDecimal("500.00"), new BigDecimal("500.00"))
         );
 
         final ClienteLiquidacionDTO cliente = new ClienteLiquidacionDTO(

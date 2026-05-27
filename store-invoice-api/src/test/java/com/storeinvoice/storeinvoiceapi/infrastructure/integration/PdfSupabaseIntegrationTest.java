@@ -42,9 +42,9 @@ class PdfSupabaseIntegrationTest {
     void generarYSubirPdfASupabase_exitoso() {
         // Given: Pedido realista
         final List<ProductoPedidoDTO> productos = List.of(
-                new ProductoPedidoDTO(1L, "Laptop Dell XPS 13", 1, new BigDecimal("1250.00"), new BigDecimal("1250.00")),
-                new ProductoPedidoDTO(2L, "Mouse Logitech MX Master", 2, new BigDecimal("89.99"), new BigDecimal("179.98")),
-                new ProductoPedidoDTO(3L, "Teclado Mecanico Keychron K2", 1, new BigDecimal("120.00"), new BigDecimal("120.00"))
+                new ProductoPedidoDTO("1", "Laptop Dell XPS 13", 1, new BigDecimal("1250.00"), new BigDecimal("1250.00")),
+                new ProductoPedidoDTO("2", "Mouse Logitech MX Master", 2, new BigDecimal("89.99"), new BigDecimal("179.98")),
+                new ProductoPedidoDTO("3", "Teclado Mecanico Keychron K2", 1, new BigDecimal("120.00"), new BigDecimal("120.00"))
         );
 
         final BigDecimal totalPedido = new BigDecimal("1549.98");
