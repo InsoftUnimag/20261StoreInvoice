@@ -54,7 +54,7 @@ class ProcesarPedidoInventarioIntegrationTest {
     @BeforeEach
     void setUp() {
         final FormaPagoCliente formaPago = FormaPagoCliente.builder()
-                .idCliente(2L)
+                .idCliente(100L)
                 .formaPago(FormaPago.CARTERA_COMERCIAL)
                 .fechaRegistro(LocalDateTime.now())
                 .build();
@@ -78,7 +78,7 @@ class ProcesarPedidoInventarioIntegrationTest {
         final Optional<LiquidacionCliente> guardada = liquidacionRepository.findByIdPedido(200L);
         assertTrue(guardada.isPresent(), "La liquidacion debe haberse guardado en BD");
         assertEquals(200L, guardada.get().getIdPedido());
-        assertEquals(2L, guardada.get().getIdCliente());
+        assertEquals(100L, guardada.get().getIdCliente());
         assertEquals(FormaPago.CARTERA_COMERCIAL, guardada.get().getFormaPago());
         assertNotNull(guardada.get().getUriPdf(), "La URI del PDF no debe ser nula");
         assertTrue(guardada.get().getUriPdf().contains("liquidacion-pedido-200-"),

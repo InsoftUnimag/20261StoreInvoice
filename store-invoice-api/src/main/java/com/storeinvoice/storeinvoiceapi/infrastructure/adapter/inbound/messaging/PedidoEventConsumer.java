@@ -30,10 +30,7 @@ public class PedidoEventConsumer {
             LOG.info("Mensaje recibido desde modulo de inventario. idPedido={}", mensaje.idPedido());
             return procesarPedidoInventarioUseCase.ejecutar(mensaje)
                     .doOnSuccess(v -> LOG.info("Mensaje procesado exitosamente. idPedido={}", mensaje.idPedido()))
-                    .onErrorResume(e -> {
-                        LOG.error("Error procesando mensaje idPedido={}: {}", mensaje.idPedido(), e.getMessage());
-                        return Mono.empty();
-                    });
+                    .doOnError(e -> LOG.error("Error procesando mensaje idPedido={}: {}", mensaje.idPedido(), e.getMessage(), e));
         };
     }
 }

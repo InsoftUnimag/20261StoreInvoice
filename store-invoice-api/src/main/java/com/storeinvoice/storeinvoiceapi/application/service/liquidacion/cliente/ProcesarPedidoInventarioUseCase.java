@@ -59,13 +59,13 @@ public class ProcesarPedidoInventarioUseCase {
             return Mono.empty();
         } catch (Exception e) {
             LOG.error("Error procesando pedido idPedido={}: {}", idPedido, e.getMessage(), e);
-            return Mono.empty();
+            return Mono.error(e);
         }
     }
 
     private void procesarPedidoSincrono(final DatosPedidoInventarioMessage mensaje) {
-        LOG.debug("Paso 1: Validando mensaje. idPedido={}", mensaje.idPedido());
         validarMensaje(mensaje);
+        LOG.debug("Paso 1: Validando mensaje. idPedido={}", mensaje.idPedido());
 
         LOG.debug("Paso 2: Resolviendo cliente por idNacional={}", mensaje.idCliente());
         final Cliente cliente = resolverCliente(mensaje);
@@ -110,9 +110,15 @@ public class ProcesarPedidoInventarioUseCase {
 
     private Cliente resolverCliente(final DatosPedidoInventarioMessage mensaje) {
         try {
-            return clienteServicePort.findByIdNacional(String.valueOf(mensaje.idCliente()))
+            final Cliente cliente = clienteServicePort.findByIdNacional(String.valueOf(mensaje.idCliente()))
                     .timeout(java.time.Duration.ofSeconds(TIMEOUT_SECONDS))
                     .block();
+            if (cliente == null) {
+                throw new ClienteNotFoundException("No se encontró cliente con ID nacional: " + mensaje.idCliente());
+            }
+            return cliente;
+        } catch (ClienteNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             throw new ErrorConsultaClienteException(mensaje.idCliente(), e);
         }

@@ -63,7 +63,7 @@ public class ProcesarEstadoFinalUseCase {
             return Mono.empty();
         } catch (Exception e) {
             log.error("Error tecnico procesando estado final idPedido={}: {}", idPedido, e.getMessage(), e);
-            return Mono.empty();
+            return Mono.error(e);
         }
     }
 

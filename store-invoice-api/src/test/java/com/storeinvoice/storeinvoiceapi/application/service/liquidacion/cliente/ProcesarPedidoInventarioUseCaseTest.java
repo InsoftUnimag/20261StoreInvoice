@@ -11,6 +11,8 @@ import com.storeinvoice.storeinvoiceapi.application.repository.LiquidacionReposi
 import com.storeinvoice.storeinvoiceapi.domain.exception.DatosPedidoInvalidosException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoClienteNoEncontradaException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ProductosNoEncontradosException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaClienteException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaProductosException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Cliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
@@ -125,7 +127,8 @@ class ProcesarPedidoInventarioUseCaseTest {
     @Test
     void ejecutar_mensajeNulo_completaMonoSinGuardar() {
         StepVerifier.create(useCase.ejecutar(null))
-                .verifyComplete();
+                .expectError(DatosPedidoInvalidosException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -135,7 +138,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(0L, 1L, 5000L, "Calle 123");
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(DatosPedidoInvalidosException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -145,7 +149,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 0L, 5000L, "Calle 123");
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(DatosPedidoInvalidosException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -155,7 +160,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         final DatosPedidoInventarioMessage mensaje = new DatosPedidoInventarioMessage(100L, 1L, -1L, "Calle 123");
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(DatosPedidoInvalidosException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -168,7 +174,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         when(formaPagoClienteRepository.findByIdCliente(1L)).thenReturn(Optional.empty());
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(FormaPagoClienteNoEncontradaException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -182,7 +189,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         when(inventarioServicePort.consultarProductosPorPedido("100")).thenReturn(Mono.just(List.of()));
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(RuntimeException.class) // Thrown when PDF fails due to empty products
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -197,7 +205,8 @@ class ProcesarPedidoInventarioUseCaseTest {
                 .thenReturn(Mono.error(new RuntimeException("Connection refused")));
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(ErrorConsultaProductosException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -209,7 +218,8 @@ class ProcesarPedidoInventarioUseCaseTest {
         when(clienteServicePort.findByIdNacional("1")).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }
@@ -222,7 +232,8 @@ class ProcesarPedidoInventarioUseCaseTest {
                 .thenReturn(Mono.error(new RuntimeException("Connection refused")));
 
         StepVerifier.create(useCase.ejecutar(mensaje))
-                .verifyComplete();
+                .expectError(ErrorConsultaClienteException.class)
+                .verify();
 
         verify(liquidacionRepository, never()).saveCliente(any());
     }

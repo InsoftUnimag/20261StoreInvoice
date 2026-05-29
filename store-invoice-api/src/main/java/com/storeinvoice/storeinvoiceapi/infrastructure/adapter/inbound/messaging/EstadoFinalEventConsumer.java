@@ -33,11 +33,8 @@ public class EstadoFinalEventConsumer {
             return procesarEstadoFinalUseCase.execute(command)
                     .doOnSuccess(v -> LOG.info("Mensaje procesado exitosamente. idPedido={}",
                             command != null ? command.getId_pedido() : "null"))
-                    .onErrorResume(e -> {
-                        LOG.error("Error procesando mensaje idPedido={}: {}",
-                                command != null ? command.getId_pedido() : "null", e.getMessage());
-                        return Mono.empty();
-                    });
+                    .doOnError(e -> LOG.error("Error procesando mensaje idPedido={}: {}",
+                            command != null ? command.getId_pedido() : "null", e.getMessage(), e));
         };
     }
 }

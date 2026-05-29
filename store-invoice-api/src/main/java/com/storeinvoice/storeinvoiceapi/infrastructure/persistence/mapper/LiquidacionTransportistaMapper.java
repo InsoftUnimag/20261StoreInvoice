@@ -8,15 +8,13 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * Mapper de persistencia: LiquidacionTransportista (dominio) â†” LiquidacionTransportistaJpaEntity.
+ * Mapper de persistencia: LiquidacionTransportista (dominio) â†”
+ * LiquidacionTransportistaJpaEntity.
  * Responsabilidad Ãºnica: conversiÃ³n entre modelo de dominio y entidad JPA.
- * La conversiÃ³n a Response DTO es responsabilidad de LiquidacionTransportistaResponseMapper.
+ * La conversiÃ³n a Response DTO es responsabilidad de
+ * LiquidacionTransportistaResponseMapper.
  */
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.ERROR,
-        unmappedSourcePolicy = ReportingPolicy.ERROR
-)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.ERROR, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface LiquidacionTransportistaMapper {
 
     LiquidacionTransportistaJpaEntity toJpaEntity(LiquidacionTransportista domain);
@@ -25,4 +23,3 @@ public interface LiquidacionTransportistaMapper {
 
     List<LiquidacionTransportista> toDomainList(List<LiquidacionTransportistaJpaEntity> entities);
 }
-
