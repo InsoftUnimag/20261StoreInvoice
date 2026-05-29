@@ -3,6 +3,7 @@ package com.storeinvoice.storeinvoiceapi.application.service.pedido;
 import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +28,8 @@ class ConsultarProductosPedidoUseCaseTest {
     void ejecutar_cuando_pedido_existe_retorna_lista_de_productos() {
         final String idPedido = "100";
         final List<Producto> productosEsperados = List.of(
-                new Producto("501", "Gaseosa 1L", 10, 5000, 50000),
-                new Producto("502", "Agua 1L", 5, 3000, 15000)
+                new Producto("501", "Gaseosa 1L", 10, BigDecimal.valueOf(5000), BigDecimal.valueOf(50000)),
+                new Producto("502", "Agua 1L", 5, BigDecimal.valueOf(3000), BigDecimal.valueOf(15000))
         );
         when(inventarioServicePort.consultarProductosPorPedido(idPedido))
                 .thenReturn(Mono.just(productosEsperados));

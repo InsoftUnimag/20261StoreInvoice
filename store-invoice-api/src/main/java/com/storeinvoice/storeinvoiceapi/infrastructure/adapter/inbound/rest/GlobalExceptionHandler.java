@@ -189,5 +189,17 @@ public class GlobalExceptionHandler {
                         exchange.getRequest().getPath().value()
                 ));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(final Exception ex,
+            final ServerWebExchange exchange) {
+        LOG.error("Error interno no esperado: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Ocurrio un error interno en el servidor. Por favor, contacte a soporte si el problema persiste.",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
 }
 

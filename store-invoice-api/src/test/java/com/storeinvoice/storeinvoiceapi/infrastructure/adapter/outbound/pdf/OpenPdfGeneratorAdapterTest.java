@@ -17,8 +17,8 @@ class OpenPdfGeneratorAdapterTest {
     @Test
     void generarPdf_conDatosValidos_retornaBytesMayorACero() {
         final List<ProductoPedidoDTO> productos = List.of(
-                new ProductoPedidoDTO(1L, "Producto A", 2, new BigDecimal("100.00"), new BigDecimal("200.00")),
-                new ProductoPedidoDTO(2L, "Producto B", 1, new BigDecimal("50.00"), new BigDecimal("50.00")));
+                new ProductoPedidoDTO("1", "Producto A", 2, new BigDecimal("100.00"), new BigDecimal("200.00")),
+                new ProductoPedidoDTO("2", "Producto B", 1, new BigDecimal("50.00"), new BigDecimal("50.00")));
         final BigDecimal totalPedido = new BigDecimal("250.00");
         final String formaPago = "CONTRA_ENTREGA";
         final ClienteLiquidacionDTO cliente = new ClienteLiquidacionDTO(1L, "12345678", "Juan Perez", "3001234567",
@@ -36,7 +36,7 @@ class OpenPdfGeneratorAdapterTest {
     @Test
     void generarPdf_conUnProducto_retornaBytesValidos() {
         final List<ProductoPedidoDTO> productos = List.of(
-                new ProductoPedidoDTO(1L, "Producto Unico", 5, new BigDecimal("10.00"), new BigDecimal("50.00")));
+                new ProductoPedidoDTO("1", "Producto Unico", 5, new BigDecimal("10.00"), new BigDecimal("50.00")));
 
         StepVerifier.create(
                 adapter.generarPdf(productos, new BigDecimal("50.00"), "CARTERA_COMERCIAL",

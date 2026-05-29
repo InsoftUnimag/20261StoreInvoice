@@ -7,6 +7,7 @@ import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
 import com.storeinvoice.storeinvoiceapi.infrastructure.persistence.mapper.ProductoExternalMapper;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import okhttp3.mockwebserver.MockResponse;
@@ -56,19 +57,19 @@ class InventarioWebClientTest {
 
         @Test
         void consultarProductosPorPedido_cuando_pedido_existe_retorna_lista() throws JsonProcessingException {
-                final Producto productoMock1 = new Producto("501", "Gaseosa 1L", 10, 5000, 50000);
-                final Producto productoMock2 = new Producto("502", "Agua 1L", 5, 3000, 15000);
+                final Producto productoMock1 = new Producto("501", "Gaseosa 1L", 10, BigDecimal.valueOf(5000), BigDecimal.valueOf(50000));
+                final Producto productoMock2 = new Producto("502", "Agua 1L", 5, BigDecimal.valueOf(3000), BigDecimal.valueOf(15000));
                 when(productoExternalMapper.toDomain(any(ProductoExternalDTO.class)))
                                 .thenReturn(productoMock1)
                                 .thenReturn(productoMock2);
 
                 final String responseBody = objectMapper.writeValueAsString(Map.of(
                                 "productos", List.of(
-                                                Map.of("id_producto", "501", "nombre", "Gaseosa 1L",
-                                                                "cantidad", 10, "precio_unitario", 5000, "subtotal",
+                                                Map.of("id", "501", "nombre", "Gaseosa 1L",
+                                                                "cantidad", 10, "precioUnitario", 5000, "subtotal",
                                                                 50000),
-                                                Map.of("id_producto", "502", "nombre", "Agua 1L",
-                                                                "cantidad", 5, "precio_unitario", 3000, "subtotal",
+                                                Map.of("id", "502", "nombre", "Agua 1L",
+                                                                "cantidad", 5, "precioUnitario", 3000, "subtotal",
                                                                 15000))));
 
                 mockWebServer.enqueue(new MockResponse()

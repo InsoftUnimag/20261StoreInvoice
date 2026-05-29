@@ -56,11 +56,14 @@ public class InventarioWebClient implements InventarioServicePort {
                                         "Error al consultar el MÃ³dulo de Inventario: " + body, null))))
                 .bodyToMono(ProductosPedidoResponseExternalDTO.class)
                 .map(response -> {
-                    final List<Producto> productos = response.productos() == null
-                            ? Collections.emptyList()
-                            : response.productos().stream()
-                                    .map(productoExternalMapper::toDomain)
-                                    .toList();
+                    if (response.productos() == null) {
+                        LOG.info("No se encontraron productos para el pedido {}", idPedido);
+                        return Collections.<Producto>emptyList();
+                    }
+                    final List<Producto> productos = response.productos().stream()
+                            .filter(dto -> dto.idProducto() != null && !dto.idProducto().isBlank())
+                            .map(productoExternalMapper::toDomain)
+                            .toList();
                     LOG.info("Se encontraron {} productos para el pedido {}", productos.size(), idPedido);
                     return productos;
                 })

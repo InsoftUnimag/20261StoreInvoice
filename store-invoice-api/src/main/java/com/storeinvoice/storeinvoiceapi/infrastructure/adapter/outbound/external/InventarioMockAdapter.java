@@ -2,6 +2,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.outbound.externa
 
 import com.storeinvoice.storeinvoiceapi.application.port.InventarioServicePort;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
+import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,11 @@ public class InventarioMockAdapter implements InventarioServicePort {
         LOG.warn("MOCK: Consultando productos para el pedido con ID: {}", idPedido);
 
         final List<Producto> productosMock = List.of(
-                new Producto("501", "Gaseosa 1L", 10, 5000, 50000),
-                new Producto("502", "Agua 1L", 5, 3000, 15000),
-                new Producto("503", "Jugo Naranja 500ml", 8, 2500, 20000)
+                new Producto("501", "Gaseosa 1L", 10, BigDecimal.valueOf(5000), BigDecimal.valueOf(50000)),
+                new Producto("502", "Agua 1L", 5, BigDecimal.valueOf(3000), BigDecimal.valueOf(15000)),
+                new Producto("503", "Jugo Naranja 500ml", 8, BigDecimal.valueOf(2500), BigDecimal.valueOf(20000))
         );
 
         return Mono.just(productosMock);
     }
 }
-

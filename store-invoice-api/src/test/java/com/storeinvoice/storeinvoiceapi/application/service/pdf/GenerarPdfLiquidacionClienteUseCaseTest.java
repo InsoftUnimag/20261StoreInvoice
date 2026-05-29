@@ -44,7 +44,7 @@ class GenerarPdfLiquidacionClienteUseCaseTest {
     @BeforeEach
     void setUp() {
         productos = List.of(
-                new ProductoPedidoDTO(1L, "Producto A", 2, new BigDecimal("100.00"), new BigDecimal("200.00")));
+                new ProductoPedidoDTO("1", "Producto A", 2, new BigDecimal("100.00"), new BigDecimal("200.00")));
         totalPedido = new BigDecimal("200.00");
         formaPago = "CONTRA_ENTREGA";
         cliente = new ClienteLiquidacionDTO(1L, "12345678", "Juan Perez", "3001234567", "Calle 123");

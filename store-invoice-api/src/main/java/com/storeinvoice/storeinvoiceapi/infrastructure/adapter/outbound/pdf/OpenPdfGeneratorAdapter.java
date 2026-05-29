@@ -91,16 +91,18 @@ public class OpenPdfGeneratorAdapter implements PdfGeneratorPort {
         subtitulo.setSpacingAfter(10);
         document.add(subtitulo);
 
-        final PdfPTable tabla = new PdfPTable(4);
+        final PdfPTable tabla = new PdfPTable(5);
         tabla.setWidthPercentage(100);
-        tabla.setWidths(new float[]{3, 1, 2, 2});
+        tabla.setWidths(new float[]{2, 3, 1, 2, 2});
 
+        agregarCeldaHeader(tabla, "ID Producto");
         agregarCeldaHeader(tabla, "Producto");
         agregarCeldaHeader(tabla, "Cantidad");
         agregarCeldaHeader(tabla, "Precio Unitario");
         agregarCeldaHeader(tabla, "Subtotal");
 
         for (final ProductoPedidoDTO producto : productos) {
+            agregarCelda(tabla, producto.id());
             agregarCelda(tabla, producto.nombre());
             agregarCelda(tabla, String.valueOf(producto.cantidad()));
             agregarCelda(tabla, producto.precioUnitario().toString());
