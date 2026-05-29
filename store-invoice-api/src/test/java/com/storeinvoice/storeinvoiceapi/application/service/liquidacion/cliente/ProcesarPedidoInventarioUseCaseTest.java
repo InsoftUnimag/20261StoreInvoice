@@ -17,7 +17,7 @@ import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPagoCliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.LiquidacionCliente;
 import com.storeinvoice.storeinvoiceapi.domain.model.Producto;
-// import java.math.BigDecimal;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -78,8 +78,8 @@ class ProcesarPedidoInventarioUseCaseTest {
                 .build();
 
         productos = List.of(
-                new Producto("1", "Producto A", 2, 100.0, 200.0),
-                new Producto("2", "Producto B", 1, 50.0, 50.0)
+                new Producto("1", "Producto A", 2, BigDecimal.valueOf(100.0), BigDecimal.valueOf(200.0)),
+                new Producto("2", "Producto B", 1, BigDecimal.valueOf(50.0), BigDecimal.valueOf(50.0))
         );
 
         cliente = new Cliente("1", "1234567890", "Juan Perez", "3105551234", "Calle 123");

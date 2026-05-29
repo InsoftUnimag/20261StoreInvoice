@@ -12,8 +12,15 @@ spring:
     enabled: true
     locations: classpath:db/migration
   cloud:
+    function:
+      definition: recibirPedido;processFinalState
     stream:
       bindings:
+        processFinalState-in-0:
+          destination: estadopedido
+          group: estadopedido
+          consumer:
+            max-attempts: 3
         recibirPedido-in-0:
           destination: pedidos.inventario
           group: pedidos.inventario
@@ -21,6 +28,14 @@ spring:
             max-attempts: 3
       rabbit:
         bindings:
+          processFinalState-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              declareExchange: false
+              bindQueue: false
+              auto-bind-dlq: true
+              dlq-name: estado.final.transporte.dlq.test
+              republish-to-dlq: true
           recibirPedido-in-0:
             consumer:
               queueNameGroupOnly: true

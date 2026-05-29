@@ -46,17 +46,17 @@ spring:
           consumer:
             max-attempts: 3
         recibirPedido-in-0:
-          destination: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario}
-          group: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario}
+          destination: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario.store-invoice}
+          group: ${PEDIDOS_INVENTARIO_QUEUE:pedidos.inventario.store-invoice}
           consumer:
             max-attempts: 3
       rabbit:
         bindings:
           processFinalState-in-0:
             consumer:
-              queueNameGroupOnly: true   # <--- CORREGIDO: Movido al bloque correcto de Rabbit
-              declareExchange: false     # <--- CORREGIDO: Movido al bloque correcto de Rabbit
-              bindQueue: false           # <--- CORREGIDO: Movido al bloque correcto de Rabbit
+              queueNameGroupOnly: true
+              declareExchange: false
+              bindQueue: false
               auto-bind-dlq: true
               republish-to-dlq: true
               dlq-name: ${ESTADO_FINAL_DLQ:estado.final.transporte.dlq}
@@ -66,8 +66,13 @@ spring:
               declareExchange: false
               bindQueue: false
               auto-bind-dlq: true
-              dlq-name: ${PEDIDOS_INVENTARIO_DLQ:pedidos.inventario.dlq}
               republish-to-dlq: true
+              dlq-name: ${PEDIDOS_INVENTARIO_DLQ:pedidos.inventario.store-invoice.dlq}
+
+external:
+  inventario:
+    module:
+      base-url: ${EXTERNAL_INVENTARIO_MODULE_BASE_URL:http://localhost:8082}
 
 logging:
   level:
