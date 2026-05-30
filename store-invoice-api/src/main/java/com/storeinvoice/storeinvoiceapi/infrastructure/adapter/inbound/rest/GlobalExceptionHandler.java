@@ -3,6 +3,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.rest;
 import com.storeinvoice.storeinvoiceapi.application.dto.response.ErrorResponse;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoAlreadyExistsException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoClienteNoEncontradaException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidClientIdException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.InvalidFormaPagoException;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
@@ -130,6 +132,18 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(FormaPagoClienteNoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handleFormaPagoClienteNoEncontrada(final FormaPagoClienteNoEncontradaException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Forma de pago de cliente no encontrada: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "El cliente no tiene forma de pago registrada",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
     @ExceptionHandler(FormaPagoAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleFormaPagoAlreadyExists(final FormaPagoAlreadyExistsException ex,
             final ServerWebExchange exchange) {
@@ -186,6 +200,18 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(
                         HttpStatus.SERVICE_UNAVAILABLE.value(),
                         "Error al almacenar el PDF de liquidacion. Por favor intente mas tarde.",
+                        exchange.getRequest().getPath().value()
+                ));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(final NoResourceFoundException ex,
+            final ServerWebExchange exchange) {
+        LOG.warn("Recurso no encontrado: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Recurso no encontrado",
                         exchange.getRequest().getPath().value()
                 ));
     }

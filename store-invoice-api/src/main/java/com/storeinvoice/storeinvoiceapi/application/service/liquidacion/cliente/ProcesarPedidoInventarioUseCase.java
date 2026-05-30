@@ -12,10 +12,13 @@ import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.mapper.P
 import com.storeinvoice.storeinvoiceapi.application.service.pdf.GenerarPdfLiquidacionClienteUseCase;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ClienteNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.DatosPedidoInvalidosException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.DomainException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaClienteException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ErrorConsultaProductosException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.FormaPagoClienteNoEncontradaException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.PedidoNotFoundException;
 import com.storeinvoice.storeinvoiceapi.domain.exception.ProductosNoEncontradosException;
+import com.storeinvoice.storeinvoiceapi.domain.exception.ServiceConnectionException;
 import com.storeinvoice.storeinvoiceapi.domain.model.EstadoLiquidacion;
 import com.storeinvoice.storeinvoiceapi.domain.model.FormaPago;
 import com.storeinvoice.storeinvoiceapi.domain.model.Cliente;
@@ -58,7 +61,11 @@ public class ProcesarPedidoInventarioUseCase {
             LOG.info("Liquidacion procesada exitosamente. idPedido={}", idPedido);
             return Mono.empty();
         } catch (Exception e) {
-            LOG.error("Error procesando pedido idPedido={}: {}", idPedido, e.getMessage(), e);
+            if (e instanceof DomainException) {
+                LOG.warn("Error de dominio procesando pedido idPedido={}: {}", idPedido, e.getMessage());
+            } else {
+                LOG.error("Error tecnico procesando pedido idPedido={}: {}", idPedido, e.getMessage(), e);
+            }
             return Mono.error(e);
         }
     }
@@ -114,10 +121,10 @@ public class ProcesarPedidoInventarioUseCase {
                     .timeout(java.time.Duration.ofSeconds(TIMEOUT_SECONDS))
                     .block();
             if (cliente == null) {
-                throw new ClienteNotFoundException("No se encontró cliente con ID nacional: " + mensaje.idCliente());
+                throw new ClienteNotFoundException("No se encontro cliente con ID nacional: " + mensaje.idCliente());
             }
             return cliente;
-        } catch (ClienteNotFoundException e) {
+        } catch (ClienteNotFoundException | ServiceConnectionException e) {
             throw e;
         } catch (Exception e) {
             throw new ErrorConsultaClienteException(mensaje.idCliente(), e);
@@ -136,6 +143,8 @@ public class ProcesarPedidoInventarioUseCase {
             return inventarioServicePort.consultarProductosPorPedido(String.valueOf(idPedido))
                     .timeout(java.time.Duration.ofSeconds(TIMEOUT_SECONDS))
                     .block();
+        } catch (PedidoNotFoundException | ServiceConnectionException e) {
+            throw e;
         } catch (Exception e) {
             throw new ErrorConsultaProductosException(idPedido, e);
         }

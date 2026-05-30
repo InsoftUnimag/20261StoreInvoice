@@ -2,6 +2,7 @@ package com.storeinvoice.storeinvoiceapi.infrastructure.adapter.inbound.messagin
 
 import com.storeinvoice.storeinvoiceapi.application.dto.messaging.DatosPedidoInventarioMessage;
 import com.storeinvoice.storeinvoiceapi.application.service.liquidacion.cliente.ProcesarPedidoInventarioUseCase;
+import com.storeinvoice.storeinvoiceapi.domain.exception.DomainException;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,11 @@ public class PedidoEventConsumer {
             LOG.info("Mensaje recibido desde modulo de inventario. idPedido={}", mensaje.idPedido());
             return procesarPedidoInventarioUseCase.ejecutar(mensaje)
                     .doOnSuccess(v -> LOG.info("Mensaje procesado exitosamente. idPedido={}", mensaje.idPedido()))
-                    .doOnError(e -> LOG.error("Error procesando mensaje idPedido={}: {}", mensaje.idPedido(), e.getMessage(), e));
+                    .doOnError(e -> {
+                        if (!(e instanceof DomainException)) {
+                            LOG.error("Error tecnico procesando mensaje idPedido={}: {}", mensaje.idPedido(), e.getMessage(), e);
+                        }
+                    });
         };
     }
 }
